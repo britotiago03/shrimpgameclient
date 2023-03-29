@@ -58,26 +58,21 @@ public class MainMenuScreen
         root.setSpacing(20);
         root.setPadding(new Insets(150, 0, 0, 0));
         Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add("file:./src/main/resources/css/styles.css");
+        scene.getStylesheets().add(this.getClass().getResource("/css/styles.css").toExternalForm());
         Font helvetica = Font.loadFont("file:/fonts/Helvetica.ttf", 24);
 
         Label welcomeLbl = new Label("Welcome to Shrimp Game " + this.username);
-        welcomeLbl.getStyleClass().add("welcome-label");
 
         Button joinGameBtn = new Button("JOIN GAME");
-        joinGameBtn.getStyleClass().add("button");
-        joinGameBtn.setOnAction(event -> controller.handleJoinGameButton());
         joinGameBtn.setPrefWidth(320);
         joinGameBtn.setPrefHeight(80);
 
         Button becomeAdminBtn = new Button("BECOME ADMIN");
-        becomeAdminBtn.getStyleClass().add("button");
         becomeAdminBtn.setOnAction(event -> controller.handleBecomeAdminButton());
         becomeAdminBtn.setPrefWidth(320);
         becomeAdminBtn.setPrefHeight(80);
 
         Button quitBtn = new Button("QUIT");
-        quitBtn.getStyleClass().add("button");
         quitBtn.setOnAction(event -> controller.handleExitButton());
         quitBtn.setPrefWidth(320);
         quitBtn.setPrefHeight(80);
@@ -94,9 +89,8 @@ public class MainMenuScreen
                                   spacer2);
         root.setAlignment(Pos.CENTER);
 
-        String path = "file:./src/main/resources/images/test4.jpg";
-
-        Image backgroundImage = new Image(path);
+        Image backgroundImage = new Image(
+            this.getClass().getResource("/images/main_menu.jpg").toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
         BackgroundImage background = new BackgroundImage(backgroundImage,
                                                          BackgroundRepeat.NO_REPEAT,
@@ -105,7 +99,8 @@ public class MainMenuScreen
         root.setBackground(new Background(background));
 
 
-        Image icon = new Image("file:./src/main/resources/Images/shrimp_logo.png");
+        Image icon = new Image(
+            this.getClass().getResource("/images/shrimp_logo.png").toExternalForm());
         this.primaryStage.getIcons().add(icon);
         this.primaryStage.setScene(scene);
         this.primaryStage.setTitle("Shrimp Game");
@@ -120,26 +115,20 @@ public class MainMenuScreen
         root.setSpacing(20);
         root.setPadding(new Insets(150, 0, 0, 0));
         Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().add("file:./src/main/resources/css/styles.css");
+        scene.getStylesheets().add(this.getClass().getResource("/css/styles.css").toExternalForm());
         Font helvetica = Font.loadFont("file:/fonts/Helvetica.ttf", 24);
 
         Label welcomeLbl = new Label("What would you like to do " + this.username + "?");
-        welcomeLbl.getStyleClass().add("welcome-label");
 
         Button createGameBtn = new Button("CREATE GAME");
-        createGameBtn.getStyleClass().add("button");
-        createGameBtn.setOnAction(event -> controller.handleCreateGameButton());
         createGameBtn.setPrefWidth(320);
         createGameBtn.setPrefHeight(80);
 
         Button joinGameBtn = new Button("JOIN GAME");
-        joinGameBtn.getStyleClass().add("button");
-        joinGameBtn.setOnAction(event -> controller.handleJoinGameButton());
         joinGameBtn.setPrefWidth(320);
         joinGameBtn.setPrefHeight(80);
 
         Button quitBtn = new Button("QUIT");
-        quitBtn.getStyleClass().add("button");
         quitBtn.setOnAction(event -> controller.handleExitButton());
         quitBtn.setPrefWidth(320);
         quitBtn.setPrefHeight(80);
@@ -156,9 +145,8 @@ public class MainMenuScreen
                                   spacer2);
         root.setAlignment(Pos.CENTER);
 
-        String path = "file:./src/main/resources/images/test4.jpg";
-
-        Image backgroundImage = new Image(path);
+        Image backgroundImage = new Image(
+            this.getClass().getResource("/images/main_menu.jpg").toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
         BackgroundImage background = new BackgroundImage(backgroundImage,
                                                          BackgroundRepeat.NO_REPEAT,
@@ -167,7 +155,8 @@ public class MainMenuScreen
         root.setBackground(new Background(background));
 
 
-        Image icon = new Image("file:./src/main/resources/Images/shrimp_logo.png");
+        Image icon = new Image(
+            this.getClass().getResource("/images/main_menu.jpg").toExternalForm());
         this.primaryStage.getIcons().add(icon);
         this.primaryStage.setScene(scene);
         this.primaryStage.setTitle("Shrimp Game");

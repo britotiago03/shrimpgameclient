@@ -17,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.ShrimpGameApp;
 import org.example.network.ServerConnection;
 import org.example.userinterface.MainMenuScreen;
 
@@ -29,9 +30,9 @@ import org.example.userinterface.MainMenuScreen;
  */
 public class MainMenuScreenController
 {
+    private ShrimpGameApp shrimpGameApp;
     private MainMenuScreen mainMenuScreen;
     private ServerConnection serverConnection;
-    private GameController gameController;
 
     /**
      * Initializes a MainMenuScreenController with references to a MainMenuScreen,
@@ -40,16 +41,13 @@ public class MainMenuScreenController
      * @param mainMenuScreen   a MainMenuScreen object to display the main menu screen
      * @param serverConnection a ServerConnection object used to send and receive messages to and
      *                         from the server
-     * @param gameController   a GameController object used to manage the game logic and user
-     *                         interface
      */
-    public MainMenuScreenController(MainMenuScreen mainMenuScreen,
-                                    ServerConnection serverConnection,
-                                    GameController gameController)
+    public MainMenuScreenController(ShrimpGameApp shrimpGameApp, MainMenuScreen mainMenuScreen,
+                                    ServerConnection serverConnection)
     {
+        this.shrimpGameApp = shrimpGameApp;
         this.mainMenuScreen = mainMenuScreen;
         this.serverConnection = serverConnection;
-        this.gameController = gameController;
     }
 
     public void showMainMenuScreen()
@@ -64,7 +62,7 @@ public class MainMenuScreenController
      */
     public void handleCreateGameButton()
     {
-        gameController.createGame("game1", "password");
+        this.shrimpGameApp.initCreateGame();
     }
 
     /**
@@ -73,7 +71,6 @@ public class MainMenuScreenController
      */
     public void handleJoinGameButton()
     {
-        gameController.joinGame("gameId", "password");
     }
 
     /**

@@ -2,10 +2,15 @@ package org.example;
 
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.controllers.CreateGameScreenController;
 import org.example.controllers.GameController;
 import org.example.controllers.MainMenuScreenController;
 import org.example.network.ServerConnection;
+import org.example.userinterface.CreateGameScreen;
 import org.example.userinterface.MainMenuScreen;
 
 /**
@@ -21,6 +26,7 @@ public class ShrimpGameApp extends Application
     private ServerConnection serverConnection;
     private GameController gameController;
     private MainMenuScreenController mainMenuScreenController;
+    private CreateGameScreenController createGameScreenController;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -40,16 +46,33 @@ public class ShrimpGameApp extends Application
         launch(args);
     }
 
+    private Scene getMainMenuScene()
+    {
+        VBox root = new VBox();
+        root.setSpacing(20);
+        root.setPadding(new Insets(150, 0, 0, 0));
+        Scene mainMenu = new Scene(root, 800, 600);
+        return mainMenu;
+    }
+
     /**
      * Initializes the main menu screen and its components.
      */
     private void initMainMenu(String username)
     {
         MainMenuScreen mainMenuScreen = new MainMenuScreen(this.primaryStage, username);
-        this.mainMenuScreenController = new MainMenuScreenController(mainMenuScreen,
-                                                                     serverConnection,
-                                                                     gameController);
+        this.mainMenuScreenController = new MainMenuScreenController(this, mainMenuScreen,
+                                                                     this.serverConnection);
         this.mainMenuScreenController.showMainMenuScreen();
+    }
+
+    public void initCreateGame()
+    {
+        CreateGameScreen createGameScreen = new CreateGameScreen(this.primaryStage);
+        this.createGameScreenController = new CreateGameScreenController(this, createGameScreen,
+                                                                         this.serverConnection,
+                                                                         this.gameController);
+        this.createGameScreenController.showCreateGameScreen();
     }
 
     /**

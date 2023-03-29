@@ -5,14 +5,24 @@
     -fx-text-fill: #9daf71;
     -fx-font-family: 'Helvetica';
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
 }
 
 .button:hover {
     -fx-background-color: #371F2B;
 }
 
-.welcome-label {
+.label {
+    -fx-font-size: 30px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
+.title-label {
     -fx-font-size: 30px;
     -fx-font-family: 'Helvetica';
     -fx-font-weight: bold;
