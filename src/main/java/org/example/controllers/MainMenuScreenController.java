@@ -1,25 +1,19 @@
 package org.example.controllers;
 
-import java.io.IOException;
 import java.util.Optional;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ShrimpGameApp;
 import org.example.network.ServerConnection;
-import org.example.userinterface.MainMenuScreen;
 
 /**
  * The MainMenuScreenController class is responsible for managing the main menu screen of the
@@ -31,39 +25,29 @@ import org.example.userinterface.MainMenuScreen;
 public class MainMenuScreenController
 {
     private ShrimpGameApp shrimpGameApp;
-    private MainMenuScreen mainMenuScreen;
+    private String username;
     private ServerConnection serverConnection;
 
     /**
      * Initializes a MainMenuScreenController with references to a MainMenuScreen,
      * ServerConnection, and GameController object.
      *
-     * @param mainMenuScreen   a MainMenuScreen object to display the main menu screen
      * @param serverConnection a ServerConnection object used to send and receive messages to and
      *                         from the server
      */
-    public MainMenuScreenController(ShrimpGameApp shrimpGameApp, MainMenuScreen mainMenuScreen,
-                                    ServerConnection serverConnection)
+    public MainMenuScreenController(ShrimpGameApp shrimpGameApp, ServerConnection serverConnection,
+                                    String username)
     {
         this.shrimpGameApp = shrimpGameApp;
-        this.mainMenuScreen = mainMenuScreen;
+        this.username = username;
         this.serverConnection = serverConnection;
     }
 
-    public void showMainMenuScreen()
+    public String getUsername()
     {
-        boolean isAdmin = false;
-        this.mainMenuScreen.display(this, isAdmin);
+        return this.username;
     }
 
-    /**
-     * Handles the action of the create game button when clicked by delegating to the
-     * GameController object.
-     */
-    public void handleCreateGameButton()
-    {
-        this.shrimpGameApp.initCreateGame();
-    }
 
     /**
      * Handles the action of the join game button when clicked by delegating to the
@@ -84,9 +68,7 @@ public class MainMenuScreenController
         dialog.setHeaderText("To become an administrator, please enter the admin password:");
 
         // Set the dialog icon
-        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(new Image("file:./src/main/resources/Images/shrimp_logo.png"));
-
+        this.shrimpGameApp.addIconToDialog(dialog);
 
         // Set the button types
         ButtonType loginButtonType = new ButtonType("OK");
@@ -127,64 +109,44 @@ public class MainMenuScreenController
             try
             {
                 this.serverConnection.connect();
-                boolean sentBecomeAdminMessage = this.serverConnection.sendBecomeAdminMessage(
-                    result.get());
-                if (sentBecomeAdminMessage)
+                this.serverConnection.sendBecomeAdminRequest(result.get());
+                String serverResponse = this.serverConnection.receive();
+                if (serverResponse.equals("BECOME_ADMIN_SUCCESSFUL"))
                 {
-                    String serverResponse = this.serverConnection.receive();
-                    if (serverResponse.equals("BECOME_ADMIN_SUCCESSFUL"))
-                    {
-                        this.mainMenuScreen.initAsAdmin(this);
-                    }
-                    else if (serverResponse.equals("BECOME_ADMIN_FAILED"))
-                    {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Incorrect Password");
-                        alert.setHeaderText(null);
-                        alert.setContentText(
-                            "The password you entered is incorrect. Please try again.");
-                        alert.showAndWait();
-                    }
-                    else
-                    {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("No Server Connection");
-                        alert.setHeaderText(null);
-                        alert.setContentText(
-                            "Failed to receive a response from the server. Make sure you"
-                            + " are connected to the Internet!");
-                        alert.showAndWait();
-                    }
+                    this.shrimpGameApp.setIsAdmin(true);
+                    this.shrimpGameApp.setScene(this.shrimpGameApp.getMainScene());
+                }
+                else if (serverResponse.equals("BECOME_ADMIN_FAILED"))
+                {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Incorrect Password");
+                    alert.setHeaderText(null);
+                    alert.setContentText(
+                        "The password you entered is incorrect. Please try again.");
+                    this.shrimpGameApp.addIconToDialog(alert);
+                    alert.showAndWait();
                 }
                 else
                 {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Failed To Check Password");
+                    alert.setTitle("No Server Connection");
                     alert.setHeaderText(null);
-                    alert.setContentText("Failed to check the password with the server. Make sure"
-                                         + " you are connected to the Internet! ");
+                    alert.setContentText(
+                        "Failed to receive a response from the server. Make sure you"
+                        + " are connected to the Internet!");
+                    this.shrimpGameApp.addIconToDialog(alert);
                     alert.showAndWait();
                 }
-
             }
-            catch (IOException exception)
+            catch (RuntimeException exception)
             {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Failed Connection With Server");
+                alert.setTitle("Error");
                 alert.setHeaderText(null);
-                alert.setContentText(
-                    "Failed to connect to the server. Make sure you are connected to the Internet"
-                    + " and that the server is running!");
+                alert.setContentText(exception.getMessage());
+                this.shrimpGameApp.addIconToDialog(alert);
                 alert.showAndWait();
             }
         }
-    }
-
-    /**
-     * Handles the action of the exit button when clicked.
-     */
-    public void handleExitButton()
-    {
-        Platform.exit();
     }
 }

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * The ServerConnection class represents a connection to a server using Java sockets.
@@ -74,64 +75,84 @@ public class ServerConnection
     }
 
     /**
-     * Establishes a connection with the server by creating a new socket and input/output streams.
+     * Establishes a connection with the server using the provided hostname and port number.
      *
-     * @throws IOException if there is an error creating the socket or streams
+     * @throws RuntimeException if there is a failure to connect to the server
      */
-    public void connect() throws IOException
+    public void connect()
     {
         if (!this.isConnected())
         {
-            this.socket = new Socket();
-            this.socket.connect(new InetSocketAddress(this.hostname, this.port), 5000);
-            this.bufferedWriter = new BufferedWriter(
-                new OutputStreamWriter(socket.getOutputStream()));
-            this.bufferedReader = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
+            try
+            {
+                this.socket = new Socket();
+                this.socket.connect(new InetSocketAddress(this.hostname, this.port), 5000);
+                this.bufferedWriter = new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream()));
+                this.bufferedReader = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+            }
+            catch (IOException exception)
+            {
+                throw new RuntimeException("Failed to connect to the server.");
+            }
         }
     }
 
     /**
-     * Closes the socket and input/output streams.
+     * Closes the connection with the server.
      *
-     * @throws IOException if there is an error closing the socket or streams
+     * @throws RuntimeException if there is a failure to close the connection with the server
      */
-    public void disconnect() throws IOException
+    public void disconnect()
     {
-        this.socket.close();
-        this.bufferedWriter.close();
-        this.bufferedReader.close();
-    }
-
-    /**
-     * Sends a string message to the server through the output stream.
-     *
-     * @param message the message to send to the server
-     * @throws IOException if there is an error sending the message
-     */
-    public void send(String message) throws IOException
-    {
-        bufferedWriter.write(message + "\r\n");
-        bufferedWriter.flush();
-    }
-
-    /**
-     * Receives a string message from the server through the input stream.
-     *
-     * @return the message received from the server
-     * @throws IOException if there is an error receiving the message
-     */
-    public String receive()
-    {
-        String response = null;
         try
         {
-            response = this.bufferedReader.readLine();
-            return response;
+            this.socket.close();
+            this.bufferedWriter.close();
+            this.bufferedReader.close();
         }
         catch (IOException exception)
         {
-            throw new RuntimeException("Failed to receive message from the server: " + exception);
+            throw new RuntimeException("Failed to close connection with the server.");
+        }
+
+    }
+
+    /**
+     * Sends a message to the server through the established connection.
+     *
+     * @param message the message to be sent
+     * @throws RuntimeException if there is a failure to send the message to the server
+     */
+    public void send(String message)
+    {
+        try
+        {
+            bufferedWriter.write(message + "\r\n");
+            bufferedWriter.flush();
+        }
+        catch (IOException exception)
+        {
+            throw new RuntimeException("Failed to send message to the server.");
+        }
+    }
+
+    /**
+     * Receives a message from the server through the established connection.
+     *
+     * @return the message received from the server
+     * @throws RuntimeException if there is a failure to receive the message from the server
+     */
+    public String receive()
+    {
+        try
+        {
+            return this.bufferedReader.readLine();
+        }
+        catch (IOException exception)
+        {
+            throw new RuntimeException("Failed to receive message from the server.");
         }
     }
 
@@ -151,49 +172,79 @@ public class ServerConnection
     }
 
     /**
-     * Sends a request to the server to get a username for the client.
-     * Waits for a response from the server, extracts the username from the response and returns it.
+     * Sends a request to the server for the username associated with the current client.
      *
-     * @return the username that the server has assigned to the client
-     * @throws RuntimeException if an error occurs while sending the request or processing the
-     *                          response
+     * @return the username associated with the current client
+     * @throws RuntimeException if there is a failure to send the username request to the server
+     *                          or if an unrecognized reply is received from the server
      */
-    public String sendUsernameRequest()
+    public String[] sendUsernameRequest()
     {
-        String username = "";
+        String[] username = new String[2];
         try
         {
             this.send("REQUEST_USERNAME");
             String[] input = this.receive().split(" ");
             if (input[0].equals("USERNAME"))
             {
-                username = input[1];
+                username[0] = input[1];
+                username[1] = input[2];
             }
             else
             {
-                throw new RuntimeException("Unrecognized reply from the server: " + input[1]);
+                throw new RuntimeException(
+                    "Unrecognized reply from the server: " + Arrays.toString(input));
             }
         }
-        catch (IOException exception)
+        catch (RuntimeException exception)
         {
-            throw new RuntimeException("Failed to send REQUEST_USERNAME request");
+            throw new RuntimeException("Failed to send username request to the server.");
         }
         return username;
     }
 
-    public boolean sendBecomeAdminMessage(String password)
+    /**
+     * Sends a request to the server to become an administrator using the provided password.
+     *
+     * @param password the password required to become an administrator
+     * @throws RuntimeException if there is a failure to send the become admin request to the server
+     */
+    public void sendBecomeAdminRequest(String password)
     {
-        boolean sentBecomeAdminMessage = false;
         try
         {
             this.send("BECOME_ADMIN " + password);
-            sentBecomeAdminMessage = true;
         }
-        catch (IOException exception)
+        catch (RuntimeException exception)
         {
-            System.err.println("Failed to send become admin message: " + exception);
+            throw new RuntimeException("Failed to send become admin request to the server.");
         }
-        return sentBecomeAdminMessage;
+    }
+
+    /**
+     * Sends a request to the server to create a new lobby with the provided parameters.
+     *
+     * @param lobbyName       the name of the lobby to be created
+     * @param numPlayers      the maximum number of players allowed in the lobby
+     * @param numRounds       the number of rounds to be played in the lobby
+     * @param roundTime       the time limit in seconds for each round
+     * @param minShrimpPounds the minimum amount of shrimp pounds required to win a round
+     * @param maxShrimpPounds the maximum amount of shrimp pounds required to win a round
+     * @throws RuntimeException if there is a failure to send the create lobby request to the server
+     */
+    public void sendCreateLobbyRequest(String lobbyName, int numPlayers, int numRounds,
+                                       int roundTime, int minShrimpPounds, int maxShrimpPounds)
+    {
+        try
+        {
+            this.send(
+                "CREATE_LOBBY " + lobbyName + " " + numPlayers + " " + numRounds + " " + roundTime
+                + " " + minShrimpPounds + " " + maxShrimpPounds);
+        }
+        catch (RuntimeException exception)
+        {
+            throw new RuntimeException("Failed to send create lobby request to the server.");
+        }
     }
 
     /**
