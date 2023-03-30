@@ -4,15 +4,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
 import org.example.ShrimpGameApp;
-import org.example.logic.Game;
 import org.example.network.ServerConnection;
-import org.example.userinterface.CreateGameScreen;
 
 /**
  * The CreateGameScreenController class manages the CreateGameScreen UI and handles user input
@@ -41,9 +36,7 @@ import org.example.userinterface.CreateGameScreen;
 public class CreateGameScreenController
 {
     private ShrimpGameApp shrimpGameApp;
-    private CreateGameScreen createGameScreen;
     private ServerConnection serverConnection;
-    private GameController gameController;
 
     /**
      * Constructs a CreateGameScreenController object with the specified GameController object

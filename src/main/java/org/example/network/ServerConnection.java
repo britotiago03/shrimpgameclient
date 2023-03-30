@@ -7,7 +7,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import org.example.logic.Lobby;
 
 /**
  * The ServerConnection class represents a connection to a server using Java sockets.
@@ -245,6 +248,34 @@ public class ServerConnection
         {
             throw new RuntimeException("Failed to send create lobby request to the server.");
         }
+    }
+
+    public List<Lobby> getLobbies()
+    {
+        List<Lobby> lobbies = new ArrayList<Lobby>();
+        try
+        {
+            this.send("REQUEST_LOBBY_LIST");
+            String[] input = this.receive().split(" ");
+            if (input[0].equals("LOBBY_LIST"))
+            {
+                for (int index = 1; index < input.length; index++)
+                {
+                    String[] lobby = input[index].split("\\.");
+                    lobbies.add(new Lobby(lobby[0], Integer.parseInt(lobby[1]),
+                                          Integer.parseInt(lobby[2])));
+                }
+            }
+        }
+        catch (NumberFormatException exception)
+        {
+            //throw new RuntimeException("Invalid input from server ");
+        }
+        catch (RuntimeException exception)
+        {
+            //throw new RuntimeException(exception.getMessage());
+        }
+        return lobbies;
     }
 
     /**

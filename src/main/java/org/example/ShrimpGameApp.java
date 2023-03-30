@@ -1,18 +1,30 @@
 package org.example;
 
-import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -25,12 +37,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.example.controllers.CreateGameScreenController;
 import org.example.controllers.GameController;
 import org.example.controllers.MainMenuScreenController;
+import org.example.logic.Lobby;
 import org.example.network.ServerConnection;
-import org.example.userinterface.CreateGameScreen;
-import org.example.userinterface.MainMenuScreen;
 
 /**
  * The ShrimpGameApp class is the entry point of the application and is responsible for launching
@@ -45,16 +57,20 @@ public class ShrimpGameApp extends Application
     private Scene mainScene;
     private Scene mainAdminScene;
     private Scene createGameScene;
+    private Scene joinGameTableScene;
     private boolean isAdmin;
     private ServerConnection serverConnection;
     private GameController gameController;
     private MainMenuScreenController mainMenuScreenController;
     private CreateGameScreenController createGameScreenController;
+    private ScheduledExecutorService executor;
+    private TableView<Lobby> lobbyTableView;
 
     @Override
     public void start(Stage stage) throws Exception
     {
         this.primaryStage = stage;
+        this.lobbyTableView = new TableView<Lobby>();
         String username;
         try
         {
@@ -67,13 +83,13 @@ public class ShrimpGameApp extends Application
             username = "Player";
             this.isAdmin = false;
         }
-        this.mainMenuScreenController = new MainMenuScreenController(this, this.serverConnection,
-                                                                     username);
-        this.createGameScreenController = new CreateGameScreenController(this,
-                                                                         this.serverConnection);
-        this.setMainScene(this.mainMenuScreenController);
-        this.setMainAdminScene(this.mainMenuScreenController);
-        this.setCreateGameScene(this.createGameScreenController);
+        MainMenuScreenController controller = new MainMenuScreenController(this,
+                                                                           this.serverConnection,
+                                                                           username);
+        this.setMainScene(controller);
+        this.setMainAdminScene(controller);
+        this.setCreateGameScene(new CreateGameScreenController(this, this.serverConnection));
+        this.setJoinGameTableScene();
         this.setScene(this.getMainScene());
     }
 
@@ -130,6 +146,25 @@ public class ShrimpGameApp extends Application
         Label welcomeLbl = new Label("Welcome to Shrimp Game " + controller.getUsername());
 
         Button joinGameBtn = new Button("JOIN GAME");
+        joinGameBtn.setOnAction(event ->
+                                {
+                                    this.executor = Executors.newSingleThreadScheduledExecutor();
+                                    executor.scheduleAtFixedRate(() ->
+                                                                 {
+                                                                     List<Lobby> lobbies =
+                                                                         serverConnection.getLobbies();
+                                                                     Platform.runLater(() ->
+                                                                                       {
+                                                                                           ObservableList<Lobby>
+                                                                                               observableLobbies =
+                                                                                               FXCollections.observableArrayList(
+                                                                                                   lobbies);
+                                                                                           lobbyTableView.setItems(
+                                                                                               observableLobbies);
+                                                                                       });
+                                                                 }, 0, 5, TimeUnit.SECONDS);
+                                    this.setScene(this.joinGameTableScene);
+                                });
         joinGameBtn.setPrefWidth(320);
         joinGameBtn.setPrefHeight(80);
 
@@ -196,6 +231,25 @@ public class ShrimpGameApp extends Application
         createGameBtn.setPrefHeight(80);
 
         Button joinGameBtn = new Button("JOIN GAME");
+        joinGameBtn.setOnAction(event ->
+                                {
+                                    this.executor = Executors.newSingleThreadScheduledExecutor();
+                                    executor.scheduleAtFixedRate(() ->
+                                                                 {
+                                                                     List<Lobby> lobbies =
+                                                                         serverConnection.getLobbies();
+                                                                     Platform.runLater(() ->
+                                                                                       {
+                                                                                           ObservableList<Lobby>
+                                                                                               observableLobbies =
+                                                                                               FXCollections.observableArrayList(
+                                                                                                   lobbies);
+                                                                                           lobbyTableView.setItems(
+                                                                                               observableLobbies);
+                                                                                       });
+                                                                 }, 0, 5, TimeUnit.SECONDS);
+                                    this.setScene(this.joinGameTableScene);
+                                });
         joinGameBtn.setPrefWidth(320);
         joinGameBtn.setPrefHeight(80);
 
@@ -304,6 +358,112 @@ public class ShrimpGameApp extends Application
                                                          BackgroundPosition.CENTER, backgroundSize);
         root.setBackground(new Background(background));
         this.createGameScene = createGameScene;
+    }
+
+    public Scene getJoinGameTableScene()
+    {
+        return this.joinGameTableScene;
+    }
+
+    public void setJoinGameTableScene()
+    {
+        VBox root = new VBox();
+        root.setSpacing(20);
+        root.setPadding(new Insets(50, 0, 50, 0));
+        Scene lobbyListScene = new Scene(root, 800, 600);
+        lobbyListScene.getStylesheets().add(
+            this.getClass().getResource("/css/styles.css").toExternalForm());
+        Font helvetica = Font.loadFont("file:/fonts/Helvetica.ttf", 24);
+
+        Label headingLbl = new Label("Lobby List");
+        headingLbl.setFont(helvetica);
+        headingLbl.getStyleClass().add("heading");
+
+        TableView<Lobby> lobbyTableView = this.lobbyTableView;
+
+        TableColumn<Lobby, String> lobbyNameCol = new TableColumn<>("Lobby Name");
+        lobbyNameCol.setCellValueFactory(new PropertyValueFactory<>("lobbyName"));
+        lobbyNameCol.setResizable(false);
+        lobbyNameCol.setReorderable(false);
+        lobbyNameCol.prefWidthProperty().bind(lobbyTableView.widthProperty().multiply(0.5));
+
+        TableColumn<Lobby, Integer> playerCountCol = new TableColumn<>("Players");
+        playerCountCol.setCellValueFactory(new PropertyValueFactory<>("numPlayers"));
+        playerCountCol.setResizable(false);
+        playerCountCol.setReorderable(false);
+        playerCountCol.prefWidthProperty().bind(lobbyTableView.widthProperty().multiply(0.5));
+
+        lobbyTableView.getColumns().addAll(lobbyNameCol, playerCountCol);
+        lobbyNameCol.setCellFactory(tc -> new TableCell<>()
+        {
+            @Override
+            protected void updateItem(String item, boolean empty)
+            {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : item);
+                setStyle("-fx-alignment: CENTER;");
+            }
+        });
+
+        playerCountCol.setCellFactory(tc -> new TableCell<>()
+        {
+            @Override
+            protected void updateItem(Integer item, boolean empty)
+            {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : Integer.toString(item));
+                setStyle("-fx-alignment: CENTER;");
+            }
+        });
+
+        Button joinBtn = new Button("JOIN");
+        joinBtn.setPrefWidth(320);
+        joinBtn.setPrefHeight(80);
+        joinBtn.setOnAction(event ->
+                            {
+//                                // Get the selected lobby from the table view and join it
+//                                Lobby selectedLobby =
+//                                    lobbyTableView.getSelectionModel().getSelectedItem();
+//                                if (selectedLobby != null)
+//                                {
+//                                    Alert successDialog = new Alert(Alert.AlertType.INFORMATION);
+//                                    successDialog.setTitle("Success");
+//                                    successDialog.setHeaderText(null);
+//                                    successDialog.setContentText("Joined the lobby successfully!");
+//                                    this.addIconToDialog(successDialog);
+//                                    successDialog.showAndWait();
+//                                }
+                            });
+
+        Button returnBtn = new Button("RETURN");
+        returnBtn.setPrefWidth(320);
+        returnBtn.setPrefHeight(80);
+        returnBtn.setOnAction(event ->
+                              {
+                                  this.executor.shutdown();
+                                  this.setScene(this.getMainScene());
+                              });
+
+        Region spacer1 = new Region();
+        Region spacer2 = new Region();
+        VBox.setVgrow(spacer1, Priority.ALWAYS);
+        VBox.setVgrow(spacer2, Priority.ALWAYS);
+
+        root.getChildren().addAll(spacer1, headingLbl, lobbyTableView, joinBtn, returnBtn, spacer2);
+        root.setAlignment(Pos.CENTER);
+
+        // Set the background image for the lobby list screen
+        Image backgroundImage = new Image(
+            this.getClass().getResource("/images/create_game.jpg").toExternalForm());
+        BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
+        BackgroundImage background = new BackgroundImage(backgroundImage,
+                                                         BackgroundRepeat.NO_REPEAT,
+                                                         BackgroundRepeat.NO_REPEAT,
+                                                         BackgroundPosition.CENTER, backgroundSize);
+        root.setBackground(new Background(background));
+
+
+        this.joinGameTableScene = lobbyListScene;
     }
 
     public Scene getCreateGameScene()

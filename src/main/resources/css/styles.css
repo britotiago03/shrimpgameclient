@@ -31,3 +31,15 @@
     -fx-stroke: black;
     -fx-stroke-width: 2px;
 }
+
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+}
+
+.table-cell {
+    -fx-alignment: center;
+    -fx-font-size: 20px;
+}

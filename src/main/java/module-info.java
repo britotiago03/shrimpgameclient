@@ -13,7 +13,8 @@ module org.example {
     exports org.example.userinterface;
     opens org.example.userinterface to javafx.base, javafx.graphics;
     exports org.example.controllers;
-    opens org.example.controllers to javafx.base, javafx.graphics;
+    opens org.example.controllers to javafx.base, javafx.graphics, javafx.fxml;
     exports org.example.network;
     opens org.example.network to javafx.base, javafx.graphics;
+    opens org.example.logic to javafx.base;
 }
