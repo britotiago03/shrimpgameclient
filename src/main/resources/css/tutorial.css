@@ -12,31 +12,12 @@
     -fx-background-color: #371F2B;
 }
 
-.label {
-    -fx-font-size: 20px;
-    -fx-font-family: 'Helvetica';
-    -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
-    -fx-text-fill: white;
-    -fx-stroke: black;
-    -fx-stroke-width: 2px;
-}
-
 .title-label {
-    -fx-font-size: 30px;
+    -fx-font-size: 35px;
     -fx-font-family: 'Helvetica';
     -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
     -fx-text-fill: white;
     -fx-stroke: black;
     -fx-stroke-width: 2px;
-}
-
-.table-view {
-    -fx-background-color: transparent;
-}
-
-.table-cell {
-    -fx-alignment: center;
-    -fx-font-size: 20px;
 }
