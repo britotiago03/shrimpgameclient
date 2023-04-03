@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Objects;
+
 /**
  * The User class represents a user in the system with a name and an isAdmin flag indicating whether
  * the user has administrator privileges.
@@ -57,5 +59,22 @@ public class User {
    */
   public void setIsAdmin(boolean isAdmin) {
     this.isAdmin = isAdmin;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return isAdmin == user.isAdmin && Objects.equals(name, user.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, isAdmin);
   }
 }
