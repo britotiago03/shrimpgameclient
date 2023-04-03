@@ -24,6 +24,7 @@ import org.example.logic.Player;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.userinterface.CreateGameScreen;
+import org.example.userinterface.GameScreen;
 import org.example.userinterface.GameStartedScreen;
 import org.example.userinterface.GameTutorialScreen;
 import org.example.userinterface.JoinGameScreen;
@@ -51,6 +52,7 @@ public class ShrimpGameApp extends Application {
   private Scene joinedGameScreen;
   private Scene gameTutorialScreen;
   private Scene gameStartedScreen;
+  private Scene gameScreen;
   private User user;
   private ServerConnection serverConnection;
   private MainMenuScreenController mainMenuScreenController;
@@ -83,7 +85,8 @@ public class ShrimpGameApp extends Application {
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
     this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
-    this.setScene(this.getGameStartedScreen());
+    this.gameScreen = GameScreen.getMainScene(this);
+    this.setScene(this.getGameScreen());
   }
 
   /**
@@ -250,6 +253,11 @@ public class ShrimpGameApp extends Application {
    */
   public Scene getGameStartedScreen() {
     return this.gameStartedScreen;
+  }
+
+  public Scene getGameScreen()
+  {
+    return this.gameScreen;
   }
 
 

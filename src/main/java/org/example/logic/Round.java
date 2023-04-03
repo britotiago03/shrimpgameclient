@@ -44,4 +44,14 @@ public class Round
     {
         this.roundNumber = roundNumber;
     }
+
+    public String getTimeLeft()
+    {
+        return "01:57";
+    }
+
+    public String getStatus()
+    {
+        return "Waiting for the other players...";
+    }
 }

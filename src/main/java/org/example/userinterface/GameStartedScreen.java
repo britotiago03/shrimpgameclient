@@ -35,7 +35,6 @@ public abstract class GameStartedScreen {
    */
   public static Scene getGameStartedScene(ShrimpGameApp shrimpGameApp) {
     Game game = shrimpGameApp.getGame();
-    Round round = game.getCurrentRound();
     List<Player> players = game.getPlayers();
 
     VBox root = new VBox();

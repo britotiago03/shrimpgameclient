@@ -1,0 +1,53 @@
+.button {
+    -fx-background-color: transparent;
+}
+
+.button:hover {
+    -fx-background-color: grey;
+}
+
+.title-label {
+    -fx-font-size: 35px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
+.rounds-left-label {
+    -fx-font-size: 25px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
+.info-label {
+    -fx-font-size: 15px;
+    -fx-font-family: 'Helvetica';
+    -fx-text-fill: black;
+}
+
+.menu-label {
+    -fx-font-size: 15px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.name-label {
+    -fx-background-color: white;
+    -fx-font-size: 20px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.menu-box {
+    -fx-background-color: lightgrey;
+}
