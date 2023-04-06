@@ -157,12 +157,10 @@ public class ServerConnection {
    * @throws RuntimeException if there is a failure to receive the message from the server
    */
   public String getNextServerPacket() {
-    try
-    {
+    try {
       Thread.sleep(1000);
     }
-    catch (InterruptedException exception)
-    {
+    catch (InterruptedException exception) {
       throw new RuntimeException("Thread was interrupted.");
     }
 
@@ -248,7 +246,7 @@ public class ServerConnection {
     }
   }
 
-  public List<Lobby> getLobbies() {
+  public List<Lobby> getExistingLobbies() {
     List<Lobby> lobbies = new ArrayList<Lobby>();
     try {
       this.send("REQUEST_LOBBY_LIST");
@@ -300,7 +298,16 @@ public class ServerConnection {
   public void sendLeaveLobbyRequest() {
     try {
       this.send("LEAVE_LOBBY");
-      this.getNextServerPacket();
+    }
+    catch (RuntimeException exception) {
+      throw new RuntimeException(exception.getMessage());
+    }
+  }
+
+  public void sendCatchShrimpRequest(int shrimpToCatch) {
+    try {
+      this.send("CATCH_SHRIMP " + shrimpToCatch);
+      String response = this.getNextServerPacket();
     }
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());

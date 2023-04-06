@@ -1,7 +1,9 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.example.controllers.CatchShrimpScreenController;
 import org.example.controllers.CreateGameScreenController;
 import org.example.controllers.JoinGameScreenController;
 import org.example.controllers.MainMenuScreenController;
@@ -23,6 +26,7 @@ import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
+import org.example.userinterface.CatchShrimpScreen;
 import org.example.userinterface.CreateGameScreen;
 import org.example.userinterface.GameScreen;
 import org.example.userinterface.GameStartedScreen;
@@ -53,14 +57,19 @@ public class ShrimpGameApp extends Application {
   private Scene gameTutorialScreen;
   private Scene gameStartedScreen;
   private Scene gameScreen;
+  private Scene gameCaughtShrimpScreen;
+  private Scene catchShrimpScreen;
   private User user;
   private ServerConnection serverConnection;
   private MainMenuScreenController mainMenuScreenController;
   private CreateGameScreenController createGameScreenController;
   private JoinGameScreenController joinGameScreenController;
+  private CatchShrimpScreenController catchShrimpScreenController;
   private TableView<Lobby> joinGameLobbyTableView;
   private TableView<Lobby> joinedGameLobbyTableView;
   private Game game;
+  private List<Lobby> lobbies;
+  private Lobby lobbyJoined;
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -78,6 +87,7 @@ public class ShrimpGameApp extends Application {
     this.mainMenuScreenController = new MainMenuScreenController(this);
     this.joinGameScreenController = new JoinGameScreenController(this);
     this.createGameScreenController = new CreateGameScreenController(this);
+    this.catchShrimpScreenController = new CatchShrimpScreenController(this);
     this.mainScreen = MainScreen.getMainScreen(this);
     this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
     this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
@@ -85,8 +95,10 @@ public class ShrimpGameApp extends Application {
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
     this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
-    this.gameScreen = GameScreen.getMainScene(this);
-    this.setScene(this.getGameScreen());
+    this.gameScreen = GameScreen.getMainScene(this, false);
+    this.gameCaughtShrimpScreen = GameScreen.getMainScene(this, true);
+    this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
+    this.setScene(this.getMainScreen());
   }
 
   /**
@@ -163,6 +175,11 @@ public class ShrimpGameApp extends Application {
     return this.joinGameScreenController;
   }
 
+  public CatchShrimpScreenController getCatchShrimpScreenController()
+  {
+    return this.catchShrimpScreenController;
+  }
+
   /**
    * Sets the primary stage to display the given scene.
    *
@@ -191,6 +208,36 @@ public class ShrimpGameApp extends Application {
 
   public User getUser() {
     return this.user;
+  }
+
+  public Game getGame() {
+
+    return this.game;
+  }
+
+  public void setGame(Game game)
+  {
+    this.game = game;
+  }
+
+  public List<Lobby> getLobbies()
+  {
+    return this.lobbies;
+  }
+
+  public void setLobbies(List<Lobby> lobbies)
+  {
+    this.lobbies = lobbies;
+  }
+
+  public Lobby getLobbyJoined()
+  {
+    return this.lobbyJoined;
+  }
+
+  public void setLobbyJoined(Lobby lobby)
+  {
+    this.lobbyJoined = lobby;
   }
 
   /**
@@ -255,9 +302,16 @@ public class ShrimpGameApp extends Application {
     return this.gameStartedScreen;
   }
 
-  public Scene getGameScreen()
-  {
+  public Scene getGameScreen() {
     return this.gameScreen;
+  }
+
+  public Scene getGameCaughtShrimpScreen() {
+    return this.gameCaughtShrimpScreen;
+  }
+
+  public Scene getCatchShrimpScreen() {
+    return this.catchShrimpScreen;
   }
 
 
@@ -271,7 +325,7 @@ public class ShrimpGameApp extends Application {
    */
   private String[] initServerConnection() {
     String[] input;
-    this.serverConnection = new ServerConnection("spill.datakomm.work", 8080);
+    this.serverConnection = new ServerConnection("16.170.166.39", 8080);
 
     try {
       this.serverConnection.connect();
@@ -332,7 +386,7 @@ public class ShrimpGameApp extends Application {
       }
     });
 
-    List<Lobby> lobbies = this.getServerConnection().getLobbies();
+    List<Lobby> lobbies = this.getServerConnection().getExistingLobbies();
     ObservableList<Lobby> observableLobbies = FXCollections.observableArrayList(lobbies);
     lobbyTableView.setItems(observableLobbies);
 
@@ -344,31 +398,17 @@ public class ShrimpGameApp extends Application {
     this.joinedGameLobbyTableView.setItems(observableLobbies);
   }
 
-  public void delay(int seconds) {
-    try {
-      Thread.sleep(seconds * 1000);
-    }
-    catch (InterruptedException exception) {
-      throw new RuntimeException("Thread was interrupted!");
-    }
-  }
-
   public void createGame() {
     GameSettings settings = new GameSettings(3, 8, 120, 30, 80);
-    List<Player> players = new ArrayList<>();
-    Player user = new Player(this.user.getName(), this.user.isAdmin(), 0, 5);
-    Player joseph = new Player("Joseph", false, 0, 5);
-    Player jacob = new Player("Jacob", false, 0, 5);
-    players.add(user);
-    players.add(joseph);
-    players.add(jacob);
+    Map<String, Player> players = new HashMap<String, Player>();
+    Player user = new Player(this.user.getName(), 5);
+    Player joseph = new Player("Joseph", 5);
+    Player jacob = new Player("Jacob", 5);
+    players.put(user.getName(), user);
+    players.put(joseph.getName(), joseph);
+    players.put(jacob.getName(), jacob);
     Game test = new Game("Ibiza", settings, players, 1);
     this.game = test;
-  }
-
-  public Game getGame() {
-
-    return this.game;
   }
 
 

@@ -22,6 +22,24 @@
     -fx-stroke-width: 2px;
 }
 
+.catch-shrimp-label {
+    -fx-background-color: white;
+    -fx-font-size: 20px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.error-label {
+    -fx-font-size: 20px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
 .scroll-pane {
     -fx-background-color: transparent;
 }

@@ -1,6 +1,7 @@
 package org.example.logic;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Game class represents a game with a unique identifier, name, game settings, status, and a
@@ -18,7 +19,7 @@ public class Game {
   private String gameStatus;
   private int currentRoundNum;
   private Round currentRound;
-  private List<Player> players;
+  private Map<String, Player> players;
 
   /**
    * Constructs a new Game object with the specified game ID, name, settings, status, and players.
@@ -29,7 +30,7 @@ public class Game {
    * @param gameStatus the current status of the game
    * @param players    the list of players in the game
    */
-  public Game(String name, GameSettings settings, List<Player> players, int islandNum) {
+  public Game(String name, GameSettings settings, Map<String, Player> players, int islandNum) {
     this.name = name;
     this.settings = settings;
     this.players = players;
@@ -63,7 +64,7 @@ public class Game {
     return this.islandNum;
   }
 
-  public List<Player> getPlayers()
+  public Map<String, Player> getPlayers()
   {
     return this.players;
   }

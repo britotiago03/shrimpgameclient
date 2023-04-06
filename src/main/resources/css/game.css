@@ -1,8 +1,8 @@
-.button {
+.button1 {
     -fx-background-color: transparent;
 }
 
-.button:hover {
+.button1:hover {
     -fx-background-color: grey;
 }
 
@@ -26,10 +26,21 @@
     -fx-stroke-width: 2px;
 }
 
+.status-label {
+    -fx-font-size: 20px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
 .info-label {
     -fx-font-size: 15px;
     -fx-font-family: 'Helvetica';
     -fx-text-fill: black;
+    -fx-font-weight: bold;
 }
 
 .menu-label {
@@ -38,6 +49,22 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.catch-shrimp {
+    -fx-font-size: 17px;
+    -fx-font-family: 'Helvetica';
+    -fx-text-fill: #9daf71;
+    -fx-font-weight: bold;
+}
+
+.button2 {
+    -fx-background-color: #462d43;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.button2:hover {
+    -fx-background-color: #371F2B;
 }
 
 .name-label {

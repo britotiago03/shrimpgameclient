@@ -1,7 +1,8 @@
 package org.example.userinterface;
 
-import java.util.List;
-import javafx.geometry.HPos;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,14 +17,11 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.logic.Game;
 import org.example.logic.Player;
-import org.example.logic.Round;
 
 public abstract class GameStartedScreen {
 
@@ -35,7 +33,10 @@ public abstract class GameStartedScreen {
    */
   public static Scene getGameStartedScene(ShrimpGameApp shrimpGameApp) {
     Game game = shrimpGameApp.getGame();
-    List<Player> players = game.getPlayers();
+    Map<String, Player> otherPlayers = new HashMap<>(game.getPlayers());
+    otherPlayers.remove(shrimpGameApp.getUser().getName(),
+                   otherPlayers.get(shrimpGameApp.getUser().getName()));
+    Iterator<Player> iterator = otherPlayers.values().iterator();
 
     VBox root = new VBox();
     root.setSpacing(20);
@@ -50,6 +51,7 @@ public abstract class GameStartedScreen {
 
     // Create a GridPane with 2 columns
     GridPane grid = new GridPane();
+    grid.setAlignment(Pos.CENTER);
     grid.setHgap(20);
 
     // Create the image of the man
@@ -64,9 +66,9 @@ public abstract class GameStartedScreen {
         "Welcome to the Shrimp Game!\n\nIn this game, you are a fisherman competing against other "
         + "fishermen on " + game.getName() + " Island " + game.getIslandNum() + ".\n\n"
         + "Your goal is to make the most profit possible each round.\n\n"
-        + "The other fishermen you are competing against are " + players.get(1).getName() + " and "
-        + players.get(2).getName() + ".\n\n" + "The game consists of " + game.getSettings()
-                                                                             .getNumberOfRounds()
+        + "The other fishermen you are competing against are " + iterator.next().getName() + " and "
+        + iterator.next().getName() + ".\n\n" + "The game consists of " + game.getSettings()
+                                                                              .getNumberOfRounds()
         + " rounds, with each round lasting for " + game.getSettings().getRoundTime() + " seconds"
         + ".\n\nDuring each round, you must decide how much shrimp you want to catch this round "
         + "within the time limit.\n\n If you fail to decide how much shrimp you want to catch "

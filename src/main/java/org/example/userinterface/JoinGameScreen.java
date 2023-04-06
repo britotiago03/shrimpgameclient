@@ -73,6 +73,7 @@ public abstract class JoinGameScreen {
                           if (selectedLobby != null) {
                             shrimpGameApp.getJoinGameScreenController().handleJoinButton(
                                 selectedLobby);
+                            shrimpGameApp.setLobbyJoined(selectedLobby);
                           }
                         });
 
