@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.example.ShrimpGameApp;
 import org.example.logic.Lobby;
 
 /**
@@ -192,7 +193,7 @@ public class ServerConnection {
   public String[] sendUsernameRequest() {
     String[] username = new String[2];
     try {
-      this.send("REQUEST_USERNAME");
+      this.send("REQUEST_USERNAME " + ShrimpGameApp.VERSION);
       String[] input = this.getNextServerPacket().split(" ");
       if (input[0].equals("USERNAME")) {
         username[0] = input[1];

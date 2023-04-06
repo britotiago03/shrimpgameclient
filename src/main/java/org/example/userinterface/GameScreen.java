@@ -124,7 +124,10 @@ public abstract class GameScreen {
     VBox content = new VBox();
     content.setPrefSize(600, 600);
     content.setAlignment(Pos.CENTER);
-    List<Player> players = new ArrayList<>(shrimpGameApp.getGame().getPlayers().values());
+    List<Player> otherPlayers = new ArrayList<>(shrimpGameApp.getGame().getPlayers().values());
+    Player player = shrimpGameApp.getGame().getPlayers().get(shrimpGameApp.getUser().getName());
+    otherPlayers.remove(player);
+    Iterator<Player> iterator = otherPlayers.iterator();
 
     // Create the content for each menu item
     if (option.equals("Overview")) {
@@ -163,7 +166,7 @@ public abstract class GameScreen {
       shrimpCaughtLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtLbl, 0, 0);
 
-      Label shrimpCaughtValueLbl = new Label(players.get(0).getShrimpCaught() + "kg");
+      Label shrimpCaughtValueLbl = new Label(player.getShrimpCaught() + "kg");
       shrimpCaughtValueLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtValueLbl, 1, 0);
 
@@ -171,7 +174,7 @@ public abstract class GameScreen {
       totalMoneyLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyLbl, 0, 1);
 
-      Label totalMoneyValueLbl = new Label("$" + players.get(0).getMoney());
+      Label totalMoneyValueLbl = new Label("$" + player.getMoney());
       totalMoneyValueLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyValueLbl, 1, 1);
 
@@ -206,7 +209,7 @@ public abstract class GameScreen {
       grid.setVgap(10);
       grid.setHgap(10);
 
-      Label player1Lbl = new Label(players.get(0).getName());
+      Label player1Lbl = new Label(player.getName());
       player1Lbl.getStyleClass().add("name-label");
       player1Lbl.setPadding(new Insets(0, 10, 0, 10));
       Image player1Image = new Image(
@@ -218,7 +221,7 @@ public abstract class GameScreen {
       player1Box.setAlignment(Pos.CENTER);
       player1Box.getChildren().addAll(player1Lbl, new ImageView(player1Image));
 
-      Label player2Lbl = new Label(players.get(1).getName());
+      Label player2Lbl = new Label(iterator.next().getName());
       player2Lbl.getStyleClass().add("name-label");
       player2Lbl.setPadding(new Insets(0, 10, 0, 10));
       Image player2Image = new Image(
@@ -230,7 +233,7 @@ public abstract class GameScreen {
       player2Box.setAlignment(Pos.CENTER);
       player2Box.getChildren().addAll(player2Lbl, new ImageView(player2Image));
 
-      Label player3Lbl = new Label(players.get(2).getName());
+      Label player3Lbl = new Label(iterator.next().getName());
       player3Lbl.getStyleClass().add("name-label");
       player3Lbl.setPadding(new Insets(0, 10, 0, 10));
       Image player3Image = new Image(

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -69,7 +70,8 @@ public class ShrimpGameApp extends Application {
   private TableView<Lobby> joinedGameLobbyTableView;
   private Game game;
   private List<Lobby> lobbies;
-  private Lobby lobbyJoined;
+  private boolean gameStarted;
+  public static final String VERSION = "1.6.0";
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -83,7 +85,7 @@ public class ShrimpGameApp extends Application {
     this.joinGameLobbyTableView = new TableView<Lobby>();
     this.joinedGameLobbyTableView = new TableView<Lobby>();
     this.createUser();
-    this.createGame();
+    this.gameStarted = false;
     this.mainMenuScreenController = new MainMenuScreenController(this);
     this.joinGameScreenController = new JoinGameScreenController(this);
     this.createGameScreenController = new CreateGameScreenController(this);
@@ -94,10 +96,6 @@ public class ShrimpGameApp extends Application {
     this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
-    this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
-    this.gameScreen = GameScreen.getMainScene(this, false);
-    this.gameCaughtShrimpScreen = GameScreen.getMainScene(this, true);
-    this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
     this.setScene(this.getMainScreen());
   }
 
@@ -175,9 +173,16 @@ public class ShrimpGameApp extends Application {
     return this.joinGameScreenController;
   }
 
-  public CatchShrimpScreenController getCatchShrimpScreenController()
-  {
+  public CatchShrimpScreenController getCatchShrimpScreenController() {
     return this.catchShrimpScreenController;
+  }
+
+  public boolean isGameStarted() {
+    return this.gameStarted;
+  }
+
+  public void setGameStarted(boolean gameStarted) {
+    this.gameStarted = gameStarted;
   }
 
   /**
@@ -186,14 +191,20 @@ public class ShrimpGameApp extends Application {
    * @param scene the scene to display
    */
   public void setScene(Scene scene) {
-    this.primaryStage.hide();
-    Image icon = new Image(this.getClass().getResource("/images/shrimp_logo.png").toExternalForm());
-    this.primaryStage.getIcons().add(icon);
-    this.primaryStage.setScene(scene);
-    this.primaryStage.setTitle("Shrimp Game");
-    this.primaryStage.setMinHeight(600);
-    this.primaryStage.setMinWidth(700);
-    this.primaryStage.show();
+    Platform.runLater(() ->
+                      {
+                        this.primaryStage.hide();
+                        Image icon = new Image(
+                            this.getClass().getResource("/images/shrimp_logo.png")
+                                .toExternalForm());
+                        this.primaryStage.getIcons().add(icon);
+                        this.primaryStage.setScene(scene);
+                        this.primaryStage.setTitle("Shrimp Game");
+                        this.primaryStage.setMinHeight(600);
+                        this.primaryStage.setMinWidth(700);
+                        this.primaryStage.show();
+                      });
+
   }
 
   public void createUser() {
@@ -215,29 +226,16 @@ public class ShrimpGameApp extends Application {
     return this.game;
   }
 
-  public void setGame(Game game)
-  {
+  public void setGame(Game game) {
     this.game = game;
   }
 
-  public List<Lobby> getLobbies()
-  {
+  public List<Lobby> getLobbies() {
     return this.lobbies;
   }
 
-  public void setLobbies(List<Lobby> lobbies)
-  {
+  public void setLobbies(List<Lobby> lobbies) {
     this.lobbies = lobbies;
-  }
-
-  public Lobby getLobbyJoined()
-  {
-    return this.lobbyJoined;
-  }
-
-  public void setLobbyJoined(Lobby lobby)
-  {
-    this.lobbyJoined = lobby;
   }
 
   /**
@@ -398,17 +396,11 @@ public class ShrimpGameApp extends Application {
     this.joinedGameLobbyTableView.setItems(observableLobbies);
   }
 
-  public void createGame() {
-    GameSettings settings = new GameSettings(3, 8, 120, 30, 80);
-    Map<String, Player> players = new HashMap<String, Player>();
-    Player user = new Player(this.user.getName(), 5);
-    Player joseph = new Player("Joseph", 5);
-    Player jacob = new Player("Jacob", 5);
-    players.put(user.getName(), user);
-    players.put(joseph.getName(), joseph);
-    players.put(jacob.getName(), jacob);
-    Game test = new Game("Ibiza", settings, players, 1);
-    this.game = test;
+  public void initGameScreens() {
+    this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
+    this.gameScreen = GameScreen.getMainScene(this, false);
+    this.gameCaughtShrimpScreen = GameScreen.getMainScene(this, true);
+    this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
   }
 
 

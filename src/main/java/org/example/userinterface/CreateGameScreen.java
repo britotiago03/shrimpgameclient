@@ -104,7 +104,7 @@ public abstract class CreateGameScreen {
     errorLbl.setTextFill(Color.RED);
     errorLbl.setVisible(false);
 
-    Button createBtn = new Button("Create Game");
+    Button createBtn = new Button("CREATE GAME");
     createBtn.setPrefWidth(320);
     createBtn.setPrefHeight(80);
     createBtn.setOnAction(event ->
@@ -114,7 +114,7 @@ public abstract class CreateGameScreen {
                                 roundTimeTextField, minShrimpTextField, maxShrimpTextField,
                                 errorLbl);
                           });
-    Button cancelBtn = new Button("Cancel");
+    Button cancelBtn = new Button("CANCEL");
     cancelBtn.setPrefWidth(320);
     cancelBtn.setPrefHeight(80);
     cancelBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getMainScreen()));

@@ -52,13 +52,16 @@ public class ServerUpdateListener implements Runnable {
               int minShrimp = Integer.parseInt(packetData[6]);
               int maxShrimp = Integer.parseInt(packetData[7]);
               int islandNum = Integer.parseInt(packetData[8]);
+              String islandName = packetData[9];
               GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime, minShrimp,
                                                            maxShrimp);
-              Game game = new Game(this.shrimpGameApp.getLobbyJoined().getLobbyName(), gameSettings,
-                                   players, islandNum);
+              Game game = new Game(islandName, gameSettings, players, islandNum);
               this.shrimpGameApp.setGame(game);
+              this.shrimpGameApp.setGameStarted(true);
+              this.shrimpGameApp.getLobbies().clear();
+              this.shrimpGameApp.updateLobbyTable(this.shrimpGameApp.getLobbies());
+              this.shrimpGameApp.initGameScreens();
               this.shrimpGameApp.setScene(this.shrimpGameApp.getGameStartedScreen());
-              this.shrimpGameApp.getServerConnection().getNextServerPacket();
               break;
 
             case "SHRIMP_CAUGHT":

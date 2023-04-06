@@ -92,7 +92,7 @@ public abstract class GameStartedScreen {
     Button continueBtn = new Button("CONTINUE");
     continueBtn.setPrefWidth(320);
     continueBtn.setPrefHeight(80);
-    continueBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getMainScreen()));
+    continueBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getGameScreen()));
 
     // Add the man image and the scroll pane to the GridPane
     grid.add(manImage, 0, 0);

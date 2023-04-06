@@ -65,7 +65,6 @@ public abstract class JoinedGameScreen {
     leaveBtn.setOnAction(event ->
                          {
                            shrimpGameApp.getJoinGameScreenController().handleLeaveButton();
-                           shrimpGameApp.setLobbyJoined(null);
                          });
 
     Region spacer1 = new Region();

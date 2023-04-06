@@ -43,9 +43,20 @@ public class JoinGameScreenController {
       successDialog.setHeaderText(null);
       successDialog.setContentText("Joined the lobby successfully!");
       this.shrimpGameApp.addIconToDialog(successDialog);
-      successDialog.showAndWait();
-      this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
-
+      try {
+        Thread.sleep(500);
+      }
+      catch (InterruptedException exception) {
+        throw new RuntimeException("Thread was interrupted.");
+      }
+      if (this.shrimpGameApp.isGameStarted())
+      {
+        this.shrimpGameApp.setScene(this.shrimpGameApp.getGameStartedScreen());
+      }
+      else {
+        successDialog.showAndWait();
+        this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
+      }
     }
     catch (RuntimeException exception) {
       Alert errorDialog = new Alert(Alert.AlertType.ERROR);
