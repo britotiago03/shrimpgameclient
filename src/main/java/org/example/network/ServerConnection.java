@@ -308,7 +308,6 @@ public class ServerConnection {
   public void sendCatchShrimpRequest(int shrimpToCatch) {
     try {
       this.send("CATCH_SHRIMP " + shrimpToCatch);
-      String response = this.getNextServerPacket();
     }
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());

@@ -64,7 +64,7 @@ public abstract class GameStartedScreen {
     // Create the label with the game introduction
     Label introLbl = new Label(
         "Welcome to the Shrimp Game!\n\nIn this game, you are a fisherman competing against other "
-        + "fishermen on " + game.getName() + " Island " + game.getIslandNum() + ".\n\n"
+        + "fishermen on " + game.getName() + " Island " + game.getNumber() + ".\n\n"
         + "Your goal is to make the most profit possible each round.\n\n"
         + "The other fishermen you are competing against are " + iterator.next().getName() + " and "
         + iterator.next().getName() + ".\n\n" + "The game consists of " + game.getSettings()

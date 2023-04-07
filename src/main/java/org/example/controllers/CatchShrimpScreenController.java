@@ -32,8 +32,9 @@ public class CatchShrimpScreenController {
         }
         else if (shrimpCaught > this.shrimpGameApp.getGame().getSettings().getMaxShrimpPounds()) {
           throw new IllegalArgumentException(
-              "Amount of shrimp cannot be greater than " + this.shrimpGameApp.getGame().getSettings()
-                                                                          .getMaxShrimpPounds());
+              "Amount of shrimp cannot be greater than " + this.shrimpGameApp.getGame()
+                                                                             .getSettings()
+                                                                             .getMaxShrimpPounds());
         }
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Catch Shrimp");

@@ -10,6 +10,7 @@ import org.example.logic.Game;
 import org.example.logic.GameSettings;
 import org.example.logic.Lobby;
 import org.example.logic.Player;
+import org.example.logic.Round;
 
 public class ServerUpdateListener implements Runnable {
 
@@ -27,6 +28,9 @@ public class ServerUpdateListener implements Runnable {
             this.shrimpGameApp.getServerConnection().getBufferedReader().readLine();
         String[] packetData = serverPacket.split(" ");
         Map<String, Player> players = null;
+        Player player1 = null;
+        Player player2 = null;
+        Player player3 = null;
         if (packetData[0].equals("UPDATE")) {
           switch (packetData[1]) {
             case "LOBBY":
@@ -40,9 +44,9 @@ public class ServerUpdateListener implements Runnable {
               this.shrimpGameApp.updateLobbyTable(this.shrimpGameApp.getLobbies());
               break;
             case "GAME_STARTED":
-              Player player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
-              Player player2 = new Player(packetData[2], 5);
-              Player player3 = new Player(packetData[3], 5);
+              player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
+              player2 = new Player(packetData[2], 5);
+              player3 = new Player(packetData[3], 5);
               players = new HashMap<String, Player>();
               players.put(player1.getName(), player1);
               players.put(player2.getName(), player2);
@@ -64,12 +68,24 @@ public class ServerUpdateListener implements Runnable {
               this.shrimpGameApp.setScene(this.shrimpGameApp.getGameStartedScreen());
               break;
 
-            case "SHRIMP_CAUGHT":
-              String playerName = packetData[2];
-              int shrimpCaught = Integer.parseInt(packetData[3]);
-              Player player = this.shrimpGameApp.getGame().getPlayers().get(playerName);
-              player.setShrimpCaught(shrimpCaught);
-
+            case "ROUND_FINISHED":
+              Map<Player, Integer> playerShrimpCaughtMap = new HashMap<Player, Integer>();
+              Map<Player, Integer> playerMoneyMap = new HashMap<Player, Integer>();
+              int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
+              int shrimpPrice = Integer.parseInt(packetData[2]);
+              player1 = this.shrimpGameApp.getGame().getPlayers().get(packetData[3]);
+              playerShrimpCaughtMap.put(player1, Integer.parseInt(packetData[4]));
+              playerMoneyMap.put(player1, Integer.parseInt(packetData[5]));
+              player2 = this.shrimpGameApp.getGame().getPlayers().get(packetData[6]);
+              playerShrimpCaughtMap.put(player2, Integer.parseInt(packetData[7]));
+              playerMoneyMap.put(player2, Integer.parseInt(packetData[8]));
+              player3 = this.shrimpGameApp.getGame().getPlayers().get(packetData[9]);
+              playerShrimpCaughtMap.put(player3, Integer.parseInt(packetData[10]));
+              playerMoneyMap.put(player3, Integer.parseInt(packetData[11]));
+              Round round = new Round(roundNum, shrimpPrice, playerShrimpCaughtMap, playerMoneyMap);
+              this.shrimpGameApp.getGame().getRounds().put(round.getNumber(), round);
+              this.shrimpGameApp.getGame().setCurrentRoundNum(roundNum + 1);
+              // DISPLAY RESULTS SCREEN, UPDATE GAME SCREENS, UPDATE SCOREBOARDTABLE
             default:
               break;
           }

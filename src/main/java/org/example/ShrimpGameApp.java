@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -22,9 +19,7 @@ import org.example.controllers.CreateGameScreenController;
 import org.example.controllers.JoinGameScreenController;
 import org.example.controllers.MainMenuScreenController;
 import org.example.logic.Game;
-import org.example.logic.GameSettings;
 import org.example.logic.Lobby;
-import org.example.logic.Player;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.userinterface.CatchShrimpScreen;
@@ -36,6 +31,7 @@ import org.example.userinterface.JoinGameScreen;
 import org.example.userinterface.JoinedGameScreen;
 import org.example.userinterface.MainAdminScreen;
 import org.example.userinterface.MainScreen;
+import org.example.userinterface.ShrimpCaughtSummaryScreen;
 
 /**
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
@@ -60,6 +56,7 @@ public class ShrimpGameApp extends Application {
   private Scene gameScreen;
   private Scene gameCaughtShrimpScreen;
   private Scene catchShrimpScreen;
+  private Scene summaryScreen;
   private User user;
   private ServerConnection serverConnection;
   private MainMenuScreenController mainMenuScreenController;
@@ -96,7 +93,8 @@ public class ShrimpGameApp extends Application {
     this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
-    this.setScene(this.getMainScreen());
+    this.summaryScreen = ShrimpCaughtSummaryScreen.getShrimpCaughtSummaryScreen(this);
+    this.setScene(this.getSummaryScreen());
   }
 
   /**
@@ -310,6 +308,11 @@ public class ShrimpGameApp extends Application {
 
   public Scene getCatchShrimpScreen() {
     return this.catchShrimpScreen;
+  }
+
+  public Scene getSummaryScreen()
+  {
+    return this.summaryScreen;
   }
 
 

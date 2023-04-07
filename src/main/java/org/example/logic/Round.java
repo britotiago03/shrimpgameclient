@@ -2,56 +2,40 @@ package org.example.logic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.example.User;
 
 /**
  * The Round class represents a single round in the game, including the round number, the player
  * actions for the round, and whether communication is enabled.
  */
-public class Round
-{
+public class Round {
+  private final int number;
+  private final int shrimpPrice;
+  private final Map<Player, Integer> playerShrimpCaughtMap;
+  private final Map<Player, Integer> playerMoneyMap;
 
-    private int roundNumber;
-    private Game game;
+  public Round(int number, int shrimpPrice, Map<Player, Integer> playerShrimpCaughtMap,
+               Map<Player, Integer> playerMoneyMap) {
+    this.number = number;
+    this.shrimpPrice = shrimpPrice;
+    this.playerShrimpCaughtMap = playerShrimpCaughtMap;
+    this.playerMoneyMap = playerMoneyMap;
+  }
 
-    /**
-     * Constructs a new Round object with the given round number
-     *
-     * @param roundNumber the number of the round
-     */
-    public Round(Game game, int roundNumber)
-    {
-        this.game = game;
-        this.roundNumber = roundNumber;
-    }
+  public int getNumber() {
+    return this.number;
+  }
 
-    /**
-     * Returns the round number of this Round object
-     *
-     * @return the round number of this Round object
-     */
-    public int getRoundNumber()
-    {
-        return this.roundNumber;
-    }
+  public Map<Player, Integer> getPlayerShrimpCaughtMap() {
+    return this.playerShrimpCaughtMap;
+  }
 
-    /**
-     * Sets the round number of this Round object
-     *
-     * @param roundNumber the new round number
-     */
-    public void setRoundNumber(int roundNumber)
-    {
-        this.roundNumber = roundNumber;
-    }
+  public Map<Player, Integer> getPlayerMoneyMap() {
+    return this.playerMoneyMap;
+  }
 
-    public String getTimeLeft()
-    {
-        return "01:57";
-    }
-
-    public String getStatus()
-    {
-        return "Waiting for the other players...";
-    }
+  public int getShrimpPrice() {
+    return this.shrimpPrice;
+  }
 }

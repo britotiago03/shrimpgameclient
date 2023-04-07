@@ -132,8 +132,7 @@ public abstract class GameScreen {
     // Create the content for each menu item
     if (option.equals("Overview")) {
 
-      Label roundLbl = new Label(
-          "Round " + shrimpGameApp.getGame().getCurrentRound().getRoundNumber());
+      Label roundLbl = new Label("Round " + shrimpGameApp.getGame().getCurrentRoundNum());
       roundLbl.getStyleClass().add("title-label");
       roundLbl.setPadding(new Insets(20));
 
@@ -147,12 +146,12 @@ public abstract class GameScreen {
       roundTimeLbl.getStyleClass().add("info-label");
       roundInfo.add(roundTimeLbl, 0, 0);
 
-      Label timeLeftLbl = new Label(shrimpGameApp.getGame().getCurrentRound().getTimeLeft());
+      Label timeLeftLbl = new Label("01:57");
       timeLeftLbl.getStyleClass().add("info-label");
       roundInfo.add(timeLeftLbl, 1, 0);
 
 
-      Label roundStatusLbl = new Label(shrimpGameApp.getGame().getCurrentRound().getStatus());
+      Label roundStatusLbl = new Label("Waiting for the other players...");
       roundStatusLbl.getStyleClass().add("status-label");
 
 
@@ -252,8 +251,7 @@ public abstract class GameScreen {
 
       Label roundsLeftLbl = new Label(
           "Number of rounds left: " + (shrimpGameApp.getGame().getSettings().getNumberOfRounds()
-                                       - shrimpGameApp.getGame().getCurrentRound()
-                                                      .getRoundNumber()));
+                                       - shrimpGameApp.getGame().getCurrentRoundNum()));
       roundsLeftLbl.getStyleClass().add("rounds-left-label");
       roundsLeftLbl.setPadding(new Insets(20));
 

@@ -1,6 +1,6 @@
 package org.example.logic;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,30 +13,27 @@ import java.util.Map;
  * broadcasting messages, sending game results, and disconnecting clients.
  */
 public class Game {
-  private String name;
-  private GameSettings settings;
-  private int islandNum;
-  private String gameStatus;
+  private final String name;
+  private final GameSettings settings;
+  private final int number;
+  private final Map<Integer, Round> rounds;
   private int currentRoundNum;
-  private Round currentRound;
-  private Map<String, Player> players;
+  private final Map<String, Player> players;
 
   /**
    * Constructs a new Game object with the specified game ID, name, settings, status, and players.
    *
-   * @param gameID     the unique identifier for the game
-   * @param name       the name of the game
-   * @param settings   the settings of the game
-   * @param gameStatus the current status of the game
-   * @param players    the list of players in the game
+   * @param name     the name of the game
+   * @param settings the settings of the game
+   * @param players  the list of players in the game
    */
-  public Game(String name, GameSettings settings, Map<String, Player> players, int islandNum) {
+  public Game(String name, GameSettings settings, Map<String, Player> players, int number) {
     this.name = name;
     this.settings = settings;
     this.players = players;
+    this.rounds = new HashMap<Integer, Round>();
     this.currentRoundNum = 1;
-    this.islandNum = islandNum;
-    this.currentRound = this.getNextRound();
+    this.number = number;
   }
 
   /**
@@ -48,34 +45,16 @@ public class Game {
     return this.name;
   }
 
-  public Round getCurrentRound() {
-    return this.currentRound;
+  public Map<Integer, Round> getRounds() {
+    return this.rounds;
   }
 
-  public Round getNextRound()
-  {
-    Round nextRound = new Round(this, this.currentRoundNum);
-    this.currentRoundNum++;
-    return nextRound;
+  public int getNumber() {
+    return this.number;
   }
 
-  public int getIslandNum()
-  {
-    return this.islandNum;
-  }
-
-  public Map<String, Player> getPlayers()
-  {
+  public Map<String, Player> getPlayers() {
     return this.players;
-  }
-
-  /**
-   * Sets the name of the game.
-   *
-   * @param name the new game name
-   */
-  public void setName(String name) {
-    this.name = name;
   }
 
   /**
@@ -87,12 +66,11 @@ public class Game {
     return this.settings;
   }
 
-  /**
-   * Sets the settings of the game.
-   *
-   * @param settings the new game settings
-   */
-  public void setSettings(GameSettings settings) {
-    this.settings = settings;
+  public int getCurrentRoundNum() {
+    return this.currentRoundNum;
+  }
+
+  public void setCurrentRoundNum(int currentRoundNum) {
+    this.currentRoundNum = currentRoundNum;
   }
 }
