@@ -1,15 +1,14 @@
 package org.example.userinterface;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -23,7 +22,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
+import org.example.logic.Lobby;
 import org.example.logic.Player;
+import org.example.logic.Round;
 
 public abstract class GameScreen {
   public static Scene getMainScene(ShrimpGameApp shrimpGameApp, boolean hasCaughtShrimp) {
@@ -173,7 +174,7 @@ public abstract class GameScreen {
       totalMoneyLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyLbl, 0, 1);
 
-      Label totalMoneyValueLbl = new Label("$" + player.getMoney());
+      Label totalMoneyValueLbl = new Label("$" + player.getPreviousTotalMoney());
       totalMoneyValueLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyValueLbl, 1, 1);
 
@@ -267,25 +268,53 @@ public abstract class GameScreen {
     }
     else if (option.equals("Scoreboard")) {
       Label titleLbl = new Label("Scoreboard");
+      titleLbl.setPadding(new Insets(0, 0, 20, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
 
-      content.getChildren().add(titleLbl);
+      TableView<Round> scoreboardTableview = shrimpGameApp.getScoreboardTableview();
+      if (!shrimpGameApp.isScoreboardTableViewInitialized())
+      {
+        shrimpGameApp.setScoreboardTableView(scoreboardTableview);
+        shrimpGameApp.setScoreboardTableViewInitialized(true);
+      }
+      content.getChildren().addAll(titleLbl, scoreboardTableview);
+      Image backgroundImage = new Image(
+          shrimpGameApp.getClass().getResource("/images/create_game.jpg").toExternalForm());
+      BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
+      BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundPosition.CENTER, backgroundSize);
+      content.setBackground(new Background(background));
 
     }
     else if (option.equals("Rules")) {
-      Label titleLbl = new Label("Rules");
+      Label titleLbl = new Label("COMING SOON");
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
 
       content.getChildren().add(titleLbl);
+      Image backgroundImage = new Image(
+          shrimpGameApp.getClass().getResource("/images/rules.jpg").toExternalForm());
+      BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
+      BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundPosition.CENTER, backgroundSize);
+      content.setBackground(new Background(background));
     }
     else if (option.equals("Chat")) {
-      Label titleLbl = new Label("Chat");
+      Label titleLbl = new Label("COMING SOON");
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
 
       content.getChildren().add(titleLbl);
+      Image backgroundImage = new Image(
+          shrimpGameApp.getClass().getResource("/images/chat.jpg").toExternalForm());
+      BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
+      BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundRepeat.NO_REPEAT,
+                                                       BackgroundPosition.CENTER, backgroundSize);
+      content.setBackground(new Background(background));
     }
     else if (option.equals("Catch Shrimp")) {
       Label titleLbl = new Label("Catch Shrimp");

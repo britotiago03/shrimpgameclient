@@ -35,34 +35,37 @@ public abstract class GameTutorialScreen {
   public static Scene getGameTutorialScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);
-    root.setPadding(new Insets(50, 50, 50, 50));
     Scene gameTutorialScene = new Scene(root, 800, 600);
     gameTutorialScene.getStylesheets().add(
         shrimpGameApp.getClass().getResource("/css/tutorial.css").toExternalForm());
 
-    Label titleLbl = new Label("How to Play");
+    Label titleLbl = new Label("Game Tutorial");
     titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
     titleLbl.getStyleClass().add("title-label");
+    titleLbl.setPadding(new Insets(20, 50, 20, 50));
 
+    VBox lblContainer = new VBox();
+    lblContainer.setPadding(new Insets(0, 50, 0, 50));
     // Add the tutorial content
     String tutorialText =
-        "Welcome to the game tutorial! In this game, you will be presented with a series of "
-        + "challenges that you must complete to progress to the next level.\n\n"
-        + "To complete a challenge, you must use the arrow keys to move your character and "
-        + "reach the goal. Along the way, you will encounter obstacles and enemies that you "
-        + "must avoid or defeat using your special abilities.\n\n"
-        + "You can view your progress and stats by clicking on the 'Stats' button on the main"
-        + " menu. Good luck!";
+        "Welcome to Shrimp Game, an exciting and strategic multiplayer game where you get to run "
+        + "your own shrimp fishing business!\n\n"
+        + "The goal of the game is to make as much money as possible by catching and selling "
+        + "shrimp at the market.\n\n"
+        + "But be careful, the market price for shrimp can fluctuate wildly, and your "
+        + "competitors may try to sabotage your business.\n\n"
+        + "You will need to manage your resources carefully and make smart business decisions to "
+        + "succeed.";
     Label tutorialLbl = new Label(tutorialText);
     tutorialLbl.setFont(Font.font("Helvetica", 20));
     tutorialLbl.setWrapText(true);
-    tutorialLbl.setMaxWidth(800);
-    tutorialLbl.setAlignment(Pos.CENTER);
     tutorialLbl.setTextFill(Color.WHITE); // set the text fill to white
-    tutorialLbl.setPadding(new Insets(0, 0, 20, 0));
     tutorialLbl.setStyle(
         " -fx-effect: dropshadow" + "(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);");
+    lblContainer.getChildren().add(tutorialLbl);
 
+    VBox buttonContainer = new VBox();
+    buttonContainer.setPadding(new Insets(20, 50, 20, 50));
     Button continueBtn = new Button("CONTINUE");
     continueBtn.setPrefWidth(320);
     continueBtn.setPrefHeight(80);
@@ -70,7 +73,9 @@ public abstract class GameTutorialScreen {
                             {
                               shrimpGameApp.setScene(shrimpGameApp.getMainScreen());
                             });
-    root.getChildren().addAll(titleLbl, tutorialLbl, continueBtn);
+    buttonContainer.getChildren().add(continueBtn);
+
+    root.getChildren().addAll(titleLbl, lblContainer, buttonContainer);
 
     Image backgroundImage = new Image(
         shrimpGameApp.getClass().getResource("/images/create_game.jpg").toExternalForm());

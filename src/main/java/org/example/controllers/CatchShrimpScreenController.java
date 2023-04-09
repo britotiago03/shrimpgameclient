@@ -55,8 +55,21 @@ public class CatchShrimpScreenController {
 
               catchShrimpTextFld.setText("");
               this.shrimpGameApp.addIconToDialog(successDialog);
-              successDialog.showAndWait();
-              this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
+              try {
+                Thread.sleep(500);
+              }
+              catch (InterruptedException exception) {
+                throw new RuntimeException("Thread was interrupted.");
+              }
+              if (this.shrimpGameApp.allPlayersCaughtShrimp())
+              {
+                this.shrimpGameApp.setScene(this.shrimpGameApp.getShrimpCaughtSummaryScreen());
+              }
+              else {
+                successDialog.showAndWait();
+                this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
+              }
+
             }
             else {
               throw new RuntimeException("Failed to catch shrimp.");

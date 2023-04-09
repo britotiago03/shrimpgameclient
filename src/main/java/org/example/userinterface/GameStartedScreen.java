@@ -35,7 +35,7 @@ public abstract class GameStartedScreen {
     Game game = shrimpGameApp.getGame();
     Map<String, Player> otherPlayers = new HashMap<>(game.getPlayers());
     otherPlayers.remove(shrimpGameApp.getUser().getName(),
-                   otherPlayers.get(shrimpGameApp.getUser().getName()));
+                        otherPlayers.get(shrimpGameApp.getUser().getName()));
     Iterator<Player> iterator = otherPlayers.values().iterator();
 
     VBox root = new VBox();
@@ -54,17 +54,18 @@ public abstract class GameStartedScreen {
     grid.setAlignment(Pos.CENTER);
     grid.setHgap(20);
 
-    // Create the image of the man
-    ImageView manImage = new ImageView(
+    // Create the image of the mayor
+    ImageView mayorImage = new ImageView(
         new Image(shrimpGameApp.getClass().getResourceAsStream("/images/mayor.png")));
-    manImage.setFitWidth(200);
-    manImage.setPreserveRatio(true);
-    manImage.setSmooth(true);
+    mayorImage.setFitWidth(200);
+    mayorImage.setPreserveRatio(true);
+    mayorImage.setSmooth(true);
 
     // Create the label with the game introduction
     Label introLbl = new Label(
-        "Welcome to the Shrimp Game!\n\nIn this game, you are a fisherman competing against other "
-        + "fishermen on " + game.getName() + " Island " + game.getNumber() + ".\n\n"
+        "Welcome to the Shrimp Game " + shrimpGameApp.getUser().getName() + "!\n\nIn this game, "
+        + "you are a fisherman competing against" + " other " + "fishermen on " + game.getName()
+        + " Island " + game.getNumber() + ".\n\n"
         + "Your goal is to make the most profit possible each round.\n\n"
         + "The other fishermen you are competing against are " + iterator.next().getName() + " and "
         + iterator.next().getName() + ".\n\n" + "The game consists of " + game.getSettings()
@@ -95,7 +96,7 @@ public abstract class GameStartedScreen {
     continueBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getGameScreen()));
 
     // Add the man image and the scroll pane to the GridPane
-    grid.add(manImage, 0, 0);
+    grid.add(mayorImage, 0, 0);
     grid.add(introScrollPane, 1, 0);
 
     root.getChildren().addAll(titleLbl, grid, continueBtn);

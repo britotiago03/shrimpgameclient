@@ -43,6 +43,7 @@ public class JoinGameScreenController {
       successDialog.setHeaderText(null);
       successDialog.setContentText("Joined the lobby successfully!");
       this.shrimpGameApp.addIconToDialog(successDialog);
+      this.shrimpGameApp.setSelectedLobby(selectedLobby);
       try {
         Thread.sleep(500);
       }
@@ -76,6 +77,7 @@ public class JoinGameScreenController {
   public void handleLeaveButton() {
     try {
       this.shrimpGameApp.getServerConnection().sendLeaveLobbyRequest();
+      this.shrimpGameApp.setSelectedLobby(null);
     }
     catch (RuntimeException exception) {
       Alert errorDialog = new Alert(Alert.AlertType.ERROR);

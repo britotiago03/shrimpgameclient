@@ -8,7 +8,9 @@ package org.example.logic;
  */
 public class Player {
   private final String name;
-  private int money;
+  private int previousTotalMoney;
+  private int currentTotalMoney;
+  private int roundProfit;
   private int expenses;
   private int shrimpCaught;
 
@@ -21,9 +23,21 @@ public class Player {
    */
   public Player(String name, int expenses) {
     this.name = name;
-    this.money = 0;
+    this.previousTotalMoney = 0;
+    this.currentTotalMoney = 0;
+    this.roundProfit = 0;
     this.expenses = expenses;
     this.shrimpCaught = 0;
+  }
+
+  public Player(Player player)
+  {
+    this.name = player.getName();
+    this.previousTotalMoney = player.getPreviousTotalMoney();
+    this.currentTotalMoney = player.getCurrentTotalMoney();
+    this.roundProfit = player.getRoundProfit();
+    this.expenses = player.getExpenses();
+    this.shrimpCaught = player.getShrimpCaught();
   }
 
   public String getName() {
@@ -35,17 +49,37 @@ public class Player {
    *
    * @return The amount of money the player has.
    */
-  public int getMoney() {
-    return this.money;
+  public int getPreviousTotalMoney() {
+    return this.previousTotalMoney;
   }
+
 
   /**
    * Sets the amount of money the player has.
    *
-   * @param money The amount of money the player has.
    */
-  public void setMoney(int money) {
-    this.money = money;
+  public void setPreviousTotalMoney(int previousTotalMoney) {
+    this.previousTotalMoney = previousTotalMoney;
+  }
+
+  public int getCurrentTotalMoney()
+  {
+    return this.currentTotalMoney;
+  }
+
+  public void setCurrentTotalMoney(int currentTotalMoney)
+  {
+    this.currentTotalMoney = currentTotalMoney;
+  }
+
+  public int getRoundProfit()
+  {
+    return this.roundProfit;
+  }
+
+  public void setRoundProfit(int roundProfit)
+  {
+    this.roundProfit = roundProfit;
   }
 
   /**

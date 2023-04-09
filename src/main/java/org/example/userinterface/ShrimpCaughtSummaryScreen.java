@@ -26,14 +26,14 @@ import javafx.scene.text.FontWeight;
 import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 
-public class ShrimpCaughtSummaryScreen {
+public abstract class ShrimpCaughtSummaryScreen {
   public static Scene getShrimpCaughtSummaryScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);
     root.setAlignment(Pos.CENTER);
     Scene scene = new Scene(root, 800, 600);
     scene.getStylesheets().add(
-        shrimpGameApp.getClass().getResource("/css/summaryScreen.css").toExternalForm());
+        shrimpGameApp.getClass().getResource("/css/shrimpCaughtSummary.css").toExternalForm());
     // Add title
     Label titleLbl = new Label("Shrimp Caught Summary");
     titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 32));
@@ -49,13 +49,12 @@ public class ShrimpCaughtSummaryScreen {
     gridContainer.setPadding(new Insets(0, 100, 0, 100));
     playersGrid.setAlignment(Pos.CENTER);
 
-    List<Player> players = new ArrayList<Player>();
-    Player player1 = new Player("Willow", 5);
-    Player player2 = new Player("Buoy", 5);
-    Player player3 = new Player("Crabber", 5);
-    player1.setShrimpCaught(30);
-    player2.setShrimpCaught(50);
-    player3.setShrimpCaught(75);
+    List<Player> otherPlayers = new ArrayList<>(shrimpGameApp.getGame().getPlayers().values());
+    Player player1 = shrimpGameApp.getGame().getPlayers().get(shrimpGameApp.getUser().getName());
+    otherPlayers.remove(player1);
+    Player player2 = otherPlayers.get(0);
+    Player player3 = otherPlayers.get(1);
+    List<Player> players = new ArrayList<>();
     players.add(player1);
     players.add(player2);
     players.add(player3);
@@ -121,7 +120,8 @@ public class ShrimpCaughtSummaryScreen {
     buttonContainer.getChildren().add(continueBtn);
     buttonContainer.setAlignment(Pos.CENTER);
     buttonContainer.setPadding(new Insets(0, 0, 20, 0));
-    continueBtn.setOnAction(e -> shrimpGameApp.setScene(shrimpGameApp.getMainScreen()));
+    continueBtn.setOnAction(
+        e -> shrimpGameApp.setScene(shrimpGameApp.getShrimpPriceCalculationScreen()));
 
     root.getChildren().addAll(titleLbl, gridContainer, buttonContainer);
 

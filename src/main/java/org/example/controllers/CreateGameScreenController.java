@@ -69,15 +69,15 @@ public class CreateGameScreenController {
         else if (maxPlayers % 3 != 0) {
           throw new IllegalArgumentException("Max players has to be divisible by 3");
         }
-        else if (numRounds < 4 || numRounds > 10) {
-          throw new IllegalArgumentException("Number of rounds has to be between 4 and 10");
+        else if (numRounds < 2 || numRounds > 10) {
+          throw new IllegalArgumentException("Number of rounds has to be between 2 and 10");
         }
         else if (roundTime < 30 || roundTime > 120) {
           throw new IllegalArgumentException("Round time has to be between 30 and 120 seconds");
         }
-        else if (minShrimp < 10 || minShrimp > 30) {
+        else if (minShrimp < 0 || minShrimp > 30) {
           throw new IllegalArgumentException(
-              "Min shrimp to catch has to be between 10 and 30 pounds");
+              "Min shrimp to catch has to be between 0 and 30 pounds");
         }
         else if (maxShrimp < 50 || maxShrimp > 80) {
           throw new IllegalArgumentException(

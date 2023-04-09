@@ -1,11 +1,15 @@
 package org.example;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -20,10 +24,13 @@ import org.example.controllers.JoinGameScreenController;
 import org.example.controllers.MainMenuScreenController;
 import org.example.logic.Game;
 import org.example.logic.Lobby;
+import org.example.logic.Player;
+import org.example.logic.Round;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.userinterface.CatchShrimpScreen;
 import org.example.userinterface.CreateGameScreen;
+import org.example.userinterface.GameOverScreen;
 import org.example.userinterface.GameScreen;
 import org.example.userinterface.GameStartedScreen;
 import org.example.userinterface.GameTutorialScreen;
@@ -31,7 +38,9 @@ import org.example.userinterface.JoinGameScreen;
 import org.example.userinterface.JoinedGameScreen;
 import org.example.userinterface.MainAdminScreen;
 import org.example.userinterface.MainScreen;
+import org.example.userinterface.RoundProfitMoneyCalculationScreen;
 import org.example.userinterface.ShrimpCaughtSummaryScreen;
+import org.example.userinterface.ShrimpPriceCalculationScreen;
 
 /**
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
@@ -56,7 +65,11 @@ public class ShrimpGameApp extends Application {
   private Scene gameScreen;
   private Scene gameCaughtShrimpScreen;
   private Scene catchShrimpScreen;
-  private Scene summaryScreen;
+  private Scene shrimpCaughtSummaryScreen;
+  private Scene shrimpPriceCalculationScreen;
+  private Scene roundProfitMoneyCalculationScreen;
+  private Scene gameOverScreen;
+  private Lobby selectedLobby;
   private User user;
   private ServerConnection serverConnection;
   private MainMenuScreenController mainMenuScreenController;
@@ -65,10 +78,15 @@ public class ShrimpGameApp extends Application {
   private CatchShrimpScreenController catchShrimpScreenController;
   private TableView<Lobby> joinGameLobbyTableView;
   private TableView<Lobby> joinedGameLobbyTableView;
+  private TableView<Round> scoreboardTableview;
+  private TableView<Round> gameOverScoreboardTableview;
+  private boolean scoreboardTableViewInitialized;
+  private boolean gameOverScoreboardTableviewInitialized;
   private Game game;
   private List<Lobby> lobbies;
   private boolean gameStarted;
-  public static final String VERSION = "1.6.0";
+  private boolean allPlayersCaughtShrimp;
+  public static final String VERSION = "1.6.6";
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -81,6 +99,10 @@ public class ShrimpGameApp extends Application {
     this.primaryStage = stage;
     this.joinGameLobbyTableView = new TableView<Lobby>();
     this.joinedGameLobbyTableView = new TableView<Lobby>();
+    this.scoreboardTableview = new TableView<Round>();
+    this.gameOverScoreboardTableview = new TableView<Round>();
+    this.scoreboardTableViewInitialized = false;
+    this.gameOverScoreboardTableviewInitialized = false;
     this.createUser();
     this.gameStarted = false;
     this.mainMenuScreenController = new MainMenuScreenController(this);
@@ -93,8 +115,7 @@ public class ShrimpGameApp extends Application {
     this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
-    this.summaryScreen = ShrimpCaughtSummaryScreen.getShrimpCaughtSummaryScreen(this);
-    this.setScene(this.getSummaryScreen());
+    this.setScene(this.getGameTutorialScreen());
   }
 
   /**
@@ -144,6 +165,15 @@ public class ShrimpGameApp extends Application {
     return this.joinedGameLobbyTableView;
   }
 
+  public TableView<Round> getScoreboardTableview() {
+    return this.scoreboardTableview;
+  }
+
+  public TableView<Round> getGameOverScoreboardTableview()
+  {
+    return this.gameOverScoreboardTableview;
+  }
+
   /**
    * Returns the MainMenuScreenController object that manages the main menu screen.
    *
@@ -183,6 +213,44 @@ public class ShrimpGameApp extends Application {
     this.gameStarted = gameStarted;
   }
 
+  public boolean allPlayersCaughtShrimp() {
+    return this.allPlayersCaughtShrimp;
+  }
+
+  public void setAllPlayersCaughtShrimp(boolean allPlayersCaughtShrimp) {
+    this.allPlayersCaughtShrimp = allPlayersCaughtShrimp;
+  }
+
+  public boolean isScoreboardTableViewInitialized()
+  {
+    return this.scoreboardTableViewInitialized;
+  }
+
+  public void setScoreboardTableViewInitialized(boolean scoreboardTableViewInitialized)
+  {
+    this.scoreboardTableViewInitialized = scoreboardTableViewInitialized;
+  }
+
+  public boolean isGameOverScoreboardTableviewInitialized()
+  {
+    return this.gameOverScoreboardTableviewInitialized;
+  }
+
+  public void setGameOverScoreboardTableviewInitialized(boolean gameOverScoreboardTableviewInitialized)
+  {
+    this.gameOverScoreboardTableviewInitialized = gameOverScoreboardTableviewInitialized;
+  }
+
+  public Lobby getSelectedLobby()
+  {
+    return this.selectedLobby;
+  }
+
+  public void setSelectedLobby(Lobby selectedLobby)
+  {
+    this.selectedLobby = selectedLobby;
+  }
+
   /**
    * Sets the primary stage to display the given scene.
    *
@@ -211,6 +279,16 @@ public class ShrimpGameApp extends Application {
       this.user = new User(input[0], Boolean.parseBoolean(input[1]));
     }
     catch (RuntimeException exception) {
+      Alert noConnectionDialog = new Alert(Alert.AlertType.INFORMATION);
+      noConnectionDialog.setTitle("Failed to connect to the server");
+      noConnectionDialog.setHeaderText(null);
+      noConnectionDialog.setContentText("You may not have internet connection or you are using an "
+                                        + "outdated version of Shrimp Game.\nIt could also be "
+                                        + "that the" + " server is not running.");
+      this.addIconToDialog(noConnectionDialog);
+      noConnectionDialog.showAndWait();
+      this.setScene(this.getMainScreen());
+      noConnectionDialog.showAndWait();
       this.user = new User("Player", false);
     }
   }
@@ -310,11 +388,22 @@ public class ShrimpGameApp extends Application {
     return this.catchShrimpScreen;
   }
 
-  public Scene getSummaryScreen()
-  {
-    return this.summaryScreen;
+  public Scene getShrimpCaughtSummaryScreen() {
+    return this.shrimpCaughtSummaryScreen;
   }
 
+  public Scene getShrimpPriceCalculationScreen() {
+    return this.shrimpPriceCalculationScreen;
+  }
+
+  public Scene getRoundProfitMoneyCalculationScreen() {
+    return this.roundProfitMoneyCalculationScreen;
+  }
+
+  public Scene getGameOverScreen()
+  {
+    return this.gameOverScreen;
+  }
 
   /**
    * Initializes the server connection to the game server.
@@ -399,12 +488,238 @@ public class ShrimpGameApp extends Application {
     this.joinedGameLobbyTableView.setItems(observableLobbies);
   }
 
+  public void setScoreboardTableView(TableView<Round> scoreboardTableView) {
+    TableColumn<Round, String> roundNumberCol = new TableColumn<>("Rounds");
+    roundNumberCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+    roundNumberCol.setResizable(false);
+    roundNumberCol.setReorderable(false);
+    roundNumberCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> player1ShrimpCol = new TableColumn<>(this.getUser().getName());
+    player1ShrimpCol.setCellValueFactory(cellData ->
+                                         {
+                                           Map<Player, Integer> playerShrimpCaughtMap =
+                                               cellData.getValue().getPlayerShrimpCaughtMap();
+                                           Map<String, Player> players =
+                                               cellData.getValue().getPlayers();
+                                           Integer shrimpCaught = playerShrimpCaughtMap.get(
+                                               players.get(this.getUser().getName()));
+                                           return new SimpleIntegerProperty(
+                                               shrimpCaught == null ? 0 : shrimpCaught).asObject();
+                                         });
+    player1ShrimpCol.setResizable(false);
+    player1ShrimpCol.setReorderable(false);
+    player1ShrimpCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    List<Player> otherPlayers = new ArrayList<>(this.getGame().getPlayers().values());
+    otherPlayers.remove(this.getGame().getPlayers().get(this.getUser().getName()));
+
+    TableColumn<Round, Integer> player2ShrimpCol = new TableColumn<>(otherPlayers.get(0).getName());
+    player2ShrimpCol.setCellValueFactory(cellData ->
+                                         {
+                                           Map<Player, Integer> playerShrimpCaughtMap =
+                                               cellData.getValue().getPlayerShrimpCaughtMap();
+                                           Map<String, Player> players =
+                                               cellData.getValue().getPlayers();
+                                           Integer shrimpCaught = playerShrimpCaughtMap.get(
+                                               players.get(otherPlayers.get(0).getName()));
+                                           return new SimpleIntegerProperty(
+                                               shrimpCaught == null ? 0 : shrimpCaught).asObject();
+                                         });
+    player2ShrimpCol.setResizable(false);
+    player2ShrimpCol.setReorderable(false);
+    player2ShrimpCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> player3ShrimpCol = new TableColumn<>(otherPlayers.get(1).getName());
+    player3ShrimpCol.setCellValueFactory(cellData ->
+                                         {
+                                           Map<Player, Integer> playerShrimpCaughtMap =
+                                               cellData.getValue().getPlayerShrimpCaughtMap();
+                                           Map<String, Player> players =
+                                               cellData.getValue().getPlayers();
+                                           Integer shrimpCaught = playerShrimpCaughtMap.get(
+                                               players.get(otherPlayers.get(1).getName()));
+                                           return new SimpleIntegerProperty(
+                                               shrimpCaught == null ? 0 : shrimpCaught).asObject();
+                                         });
+    player3ShrimpCol.setResizable(false);
+    player3ShrimpCol.setReorderable(false);
+    player3ShrimpCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> totalShrimpCol = new TableColumn<>("Total Shrimp");
+    totalShrimpCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(
+        cellData.getValue().getTotalAmountOfShrimp()).asObject());
+    totalShrimpCol.setResizable(false);
+    totalShrimpCol.setReorderable(false);
+    totalShrimpCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> shrimpPriceCol = new TableColumn<>("Shrimp Price");
+    shrimpPriceCol.setCellValueFactory(new PropertyValueFactory<>("shrimpPrice"));
+    shrimpPriceCol.setResizable(false);
+    shrimpPriceCol.setReorderable(false);
+    shrimpPriceCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> profitPerKgCol = new TableColumn<>("Profit / Shrimp kg");
+    profitPerKgCol.setCellValueFactory(cellData ->
+                                       {
+                                         Integer shrimpPrice = cellData.getValue().getShrimpPrice();
+                                         Integer profitPerKg =
+                                             shrimpPrice - this.getGame().getPlayers().get(
+                                                 this.getUser().getName()).getExpenses();
+                                         return new SimpleIntegerProperty(
+                                             profitPerKg == null ? 0 : profitPerKg).asObject();
+                                       });
+    profitPerKgCol.setResizable(false);
+    profitPerKgCol.setReorderable(false);
+    profitPerKgCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.2));
+
+    TableColumn<Round, Integer> roundProfitCol = new TableColumn<>("Round Profit");
+    roundProfitCol.setCellValueFactory(cellData ->
+                                       {
+                                         Map<String, Player> players =
+                                             cellData.getValue().getPlayers();
+                                         Integer roundProfit = players.get(this.getUser().getName())
+                                                                      .getRoundProfit();
+                                         return new SimpleIntegerProperty(
+                                             roundProfit == null ? 0 : roundProfit).asObject();
+                                       });
+    roundProfitCol.setResizable(false);
+    roundProfitCol.setReorderable(false);
+    roundProfitCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+    TableColumn<Round, Integer> totalMoneyCol = new TableColumn<>("Total Money");
+    totalMoneyCol.setCellValueFactory(cellData ->
+                                      {
+                                        Map<String, Player> players =
+                                            cellData.getValue().getPlayers();
+                                        Integer totalMoney =
+                                            players.get(this.getUser().getName()).getCurrentTotalMoney();
+                                        return new SimpleIntegerProperty(
+                                            totalMoney == null ? 0 : totalMoney).asObject();
+                                      });
+    totalMoneyCol.setResizable(false);
+    totalMoneyCol.setReorderable(false);
+    totalMoneyCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
+
+
+    scoreboardTableView.getColumns().addAll(roundNumberCol, player1ShrimpCol, player2ShrimpCol,
+                                            player3ShrimpCol, totalShrimpCol, shrimpPriceCol,
+                                            profitPerKgCol, roundProfitCol, totalMoneyCol);
+    scoreboardTableView.setPlaceholder(new Label("There are no round results yet"));
+
+    roundNumberCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    player1ShrimpCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item + "kg");
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    player2ShrimpCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item + "kg");
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    player3ShrimpCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item + "kg");
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    totalShrimpCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item + "kg");
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    shrimpPriceCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : "$" + item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    profitPerKgCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : "$" + item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    roundProfitCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : "$" + item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    totalMoneyCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : "$" + item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+  }
+
+  public void updateScoreboardTable(List<Round> rounds) {
+    ObservableList<Round> observableRounds = FXCollections.observableArrayList(rounds);
+    this.scoreboardTableview.setItems(observableRounds);
+    this.gameOverScoreboardTableview.setItems(observableRounds);
+  }
+
+  public void resetScoreboardTables()
+  {
+    this.scoreboardTableview = new TableView<Round>();
+    this.gameOverScoreboardTableview = new TableView<Round>();
+    this.setScoreboardTableViewInitialized(false);
+    this.setGameOverScoreboardTableviewInitialized(false);
+  }
+
   public void initGameScreens() {
     this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
+    this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
     this.gameScreen = GameScreen.getMainScene(this, false);
     this.gameCaughtShrimpScreen = GameScreen.getMainScene(this, true);
-    this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
+    this.gameOverScreen = GameOverScreen.getGameOverScreen(this);
   }
+
+  public void initRoundResultsScreens() {
+    this.shrimpCaughtSummaryScreen = ShrimpCaughtSummaryScreen.getShrimpCaughtSummaryScreen(this);
+    this.shrimpPriceCalculationScreen =
+        ShrimpPriceCalculationScreen.getShrimpPriceCalculationScreen(this);
+    this.roundProfitMoneyCalculationScreen =
+        RoundProfitMoneyCalculationScreen.getRoundProfitMoneyCalculationScreen(this);
+  }
+
+
 
 
 }
