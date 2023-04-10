@@ -235,12 +235,13 @@ public class ServerConnection {
    * @param maxShrimpPounds the maximum amount of shrimp pounds required to win a round
    * @throws RuntimeException if there is a failure to send the create lobby request to the server
    */
-  public void sendCreateLobbyRequest(String lobbyName, int numPlayers, int numRounds, int roundTime,
+  public void sendCreateLobbyRequest(String lobbyName, int numPlayers, int numRounds,
+                                     int roundTime, String communicationRounds,
                                      int minShrimpPounds, int maxShrimpPounds) {
     try {
       this.send(
           "CREATE_LOBBY " + lobbyName + " " + numPlayers + " " + numRounds + " " + roundTime + " "
-          + minShrimpPounds + " " + maxShrimpPounds);
+          + communicationRounds + " " +  minShrimpPounds + " " + maxShrimpPounds);
     }
     catch (RuntimeException exception) {
       throw new RuntimeException("Failed to send create lobby request to the server.");
@@ -308,6 +309,16 @@ public class ServerConnection {
   public void sendCatchShrimpRequest(int shrimpToCatch) {
     try {
       this.send("CATCH_SHRIMP " + shrimpToCatch);
+    }
+    catch (RuntimeException exception) {
+      throw new RuntimeException(exception.getMessage());
+    }
+  }
+
+  public void sendMessageRequest(String message)
+  {
+    try{
+      this.send("CHAT_MESSAGE " + message);
     }
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());

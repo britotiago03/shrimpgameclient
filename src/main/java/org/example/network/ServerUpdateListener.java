@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.application.Platform;
 import org.example.ShrimpGameApp;
 import org.example.logic.Game;
 import org.example.logic.GameSettings;
@@ -43,6 +44,7 @@ public class ServerUpdateListener implements Runnable {
               this.shrimpGameApp.setLobbies(lobbiesInServer);
               this.shrimpGameApp.updateLobbyTable(this.shrimpGameApp.getLobbies());
               break;
+
             case "GAME_STARTED":
               player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
               player2 = new Player(packetData[2], 5);
@@ -53,13 +55,15 @@ public class ServerUpdateListener implements Runnable {
               players.put(player3.getName(), player3);
               int numberOfRounds = Integer.parseInt(packetData[4]);
               int roundTime = Integer.parseInt(packetData[5]);
-              int minShrimp = Integer.parseInt(packetData[6]);
-              int maxShrimp = Integer.parseInt(packetData[7]);
-              int islandNum = Integer.parseInt(packetData[8]);
-              String islandName = packetData[9];
-              GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime, minShrimp,
+              String communicationRounds = packetData[6];
+              int minShrimp = Integer.parseInt(packetData[7]);
+              int maxShrimp = Integer.parseInt(packetData[8]);
+              int islandNum = Integer.parseInt(packetData[9]);
+              String gameName = packetData[10];
+              GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime,
+                                                           communicationRounds, minShrimp,
                                                            maxShrimp);
-              Game game = new Game(islandName, gameSettings, players, islandNum);
+              Game game = new Game(gameName, gameSettings, players, islandNum);
               this.shrimpGameApp.setGame(game);
               this.shrimpGameApp.setGameStarted(true);
               this.shrimpGameApp.getLobbies().remove(this.shrimpGameApp.getSelectedLobby());
@@ -115,7 +119,22 @@ public class ServerUpdateListener implements Runnable {
               this.shrimpGameApp.getGame().setCurrentRoundNum(roundNum + 1);
               this.shrimpGameApp.initRoundResultsScreens();
               this.shrimpGameApp.setScene(this.shrimpGameApp.getShrimpCaughtSummaryScreen());
-              this.shrimpGameApp.updateScoreboardTable(new ArrayList<>(this.shrimpGameApp.getGame().getRounds().values()));
+              this.shrimpGameApp.updateScoreboardTable(
+                  new ArrayList<>(this.shrimpGameApp.getGame().getRounds().values()));
+              break;
+
+            case "MESSAGE_SENT":
+              String username = packetData[2];
+              String message = packetData[3];
+              this.shrimpGameApp.getGame().getMessages().add(
+                  username + "." + message.replace(".", " "));
+              Platform.runLater(() ->
+                                {
+                                  this.shrimpGameApp.updateChatMessageGrid(
+                                      this.shrimpGameApp.getGame().getMessages());
+                                });
+              break;
+
             default:
               break;
           }

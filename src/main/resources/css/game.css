@@ -6,6 +6,40 @@
     -fx-background-color: grey;
 }
 
+.button3 {
+    -fx-font-size: 20px;
+    -fx-background-color: #462d43;
+    -fx-text-fill: #9daf71;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.button3:hover {
+    -fx-background-color: #371F2B;
+}
+
+.message-textarea {
+    -fx-pref-height: 50;
+    -fx-pref-width: 400;
+    -fx-font-size: 16px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #C4C4C4;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+}
+
+.error-label {
+    -fx-font-size: 20px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-text-fill: white;
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
 .title-label {
     -fx-font-size: 35px;
     -fx-font-family: 'Helvetica';
@@ -24,6 +58,19 @@
     -fx-text-fill: white;
     -fx-stroke: black;
     -fx-stroke-width: 2px;
+}
+
+.username-label {
+    -fx-font-size: 18px;
+    -fx-font-family: 'Helvetica';
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+.message-label {
+    -fx-font-size: 15px;
+    -fx-font-family: 'Helvetica';
+    -fx-text-fill: black;
 }
 
 .status-label {
@@ -77,4 +124,13 @@
 
 .menu-box {
     -fx-background-color: lightgrey;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text {
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
 }

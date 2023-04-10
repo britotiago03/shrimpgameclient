@@ -3,12 +3,15 @@ package org.example.userinterface;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -20,9 +23,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
-import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.logic.Round;
 
@@ -273,8 +276,7 @@ public abstract class GameScreen {
       titleLbl.getStyleClass().add("title-label");
 
       TableView<Round> scoreboardTableview = shrimpGameApp.getScoreboardTableview();
-      if (!shrimpGameApp.isScoreboardTableViewInitialized())
-      {
+      if (!shrimpGameApp.isScoreboardTableViewInitialized()) {
         shrimpGameApp.setScoreboardTableView(scoreboardTableview);
         shrimpGameApp.setScoreboardTableViewInitialized(true);
       }
@@ -303,11 +305,115 @@ public abstract class GameScreen {
       content.setBackground(new Background(background));
     }
     else if (option.equals("Chat")) {
-      Label titleLbl = new Label("COMING SOON");
+      Label titleLbl = new Label("CHAT");
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
 
-      content.getChildren().add(titleLbl);
+      String[] communicationRounds =
+          shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+      List<Integer> commRoundNums = new ArrayList<Integer>();
+      for (String communicationRound : communicationRounds) {
+        commRoundNums.add(Integer.parseInt(communicationRound));
+      }
+      if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum())) {
+        VBox chatBox = new VBox();
+        chatBox.setPadding(new Insets(30));
+
+        TextArea messageArea = new TextArea();
+        messageArea.setWrapText(true);
+        messageArea.setPromptText("Type a message");
+        messageArea.setPrefHeight(150);
+        ScrollPane messageScrollPane = new ScrollPane(messageArea);
+        messageScrollPane.setFitToWidth(true);
+
+        Label errorLbl = new Label();
+        errorLbl.getStyleClass().add("error-label");
+        errorLbl.setTextFill(Color.RED);
+        errorLbl.setVisible(false);
+
+        Button sendBtn = new Button("SEND");
+        sendBtn.getStyleClass().add("button3");
+        sendBtn.setPrefWidth(150);
+        sendBtn.setPrefHeight(50);
+        sendBtn.setOnAction(event -> shrimpGameApp.getChatScreenController()
+                                                  .handleSendButton(messageArea, errorLbl));
+
+        HBox inputBox = new HBox(messageScrollPane, sendBtn);
+        inputBox.setSpacing(10);
+        inputBox.setPadding(new Insets(20, 0, 0, 0));
+        inputBox.setAlignment(Pos.CENTER);
+
+        GridPane chatGrid = shrimpGameApp.getChatMessageGrid();
+        chatGrid.setPadding(new Insets(20));
+        chatGrid.setHgap(10);
+        chatGrid.setVgap(10);
+
+
+        ScrollPane chatScrollPane = new ScrollPane(chatGrid);
+        chatScrollPane.setPrefHeight(200);
+
+        List<String> messages = shrimpGameApp.getGame().getMessages();
+        int row = 0;
+        for (String message : messages) {
+          String[] messageParts = message.split("\\.");
+          String usernamePart = messageParts[0];
+          String messagePart = messageParts[1];
+          Label usernameLbl = new Label(usernamePart);
+          usernameLbl.getStyleClass().add("username-label");
+
+          TextArea messageTextArea = new TextArea(messagePart);
+          messageTextArea.getStyleClass().add("message-textarea");
+          messageTextArea.setEditable(false);
+          messageTextArea.setWrapText(true);
+
+          chatGrid.add(usernameLbl, 0, row);
+          chatGrid.add(messageTextArea, 1, row);
+          row++;
+        }
+
+        chatBox.getChildren().addAll(chatScrollPane, inputBox);
+
+        content.getChildren().addAll(titleLbl, chatBox, errorLbl);
+      }
+      else {
+        // Create a GridPane with 2 columns
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(20));
+
+        // Add the mayor image to the left of the text
+        Image mayorImage = new Image(
+            shrimpGameApp.getClass().getResourceAsStream("/images/mayor.png"));
+        ImageView mayorImageView = new ImageView(mayorImage);
+        mayorImageView.setFitHeight(250);
+        mayorImageView.setPreserveRatio(true);
+        mayorImageView.setSmooth(true);
+
+        String info =
+            "Communication is not allowed in round " + shrimpGameApp.getGame().getCurrentRoundNum()
+            + ".\n\nCommunication is only allowed in rounds: " + shrimpGameApp.getGame()
+                                                                              .getSettings()
+                                                                              .getCommunicationRounds();
+        Label infoLbl = new Label(info);
+        infoLbl.setWrapText(true);
+        infoLbl.setFont(Font.font("Helvetica", 20));
+        infoLbl.setPadding(new Insets(10));
+        infoLbl.getStyleClass().add("text");
+
+        // Create the scroll pane and add the label to it
+        ScrollPane infoLblScrollPane = new ScrollPane();
+        infoLblScrollPane.setContent(infoLbl);
+        infoLblScrollPane.setFitToWidth(true);
+        infoLblScrollPane.getStyleClass().add("scroll-pane");
+
+        // Add the man image and the scroll pane to the GridPane
+        grid.add(mayorImageView, 0, 0);
+        grid.add(infoLblScrollPane, 1, 0);
+
+        content.getChildren().addAll(titleLbl, grid);
+      }
+
+
       Image backgroundImage = new Image(
           shrimpGameApp.getClass().getResource("/images/chat.jpg").toExternalForm());
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
@@ -316,14 +422,9 @@ public abstract class GameScreen {
                                                        BackgroundPosition.CENTER, backgroundSize);
       content.setBackground(new Background(background));
     }
-    else if (option.equals("Catch Shrimp")) {
-      Label titleLbl = new Label("Catch Shrimp");
-      titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
-      titleLbl.getStyleClass().add("title-label");
-
-      content.getChildren().add(titleLbl);
-    }
 
     return content;
   }
+
+
 }

@@ -86,19 +86,26 @@ public abstract class CreateGameScreen {
     grid.add(roundTimeLbl, 0, 3);
     grid.add(roundTimeTextField, 1, 3);
 
+    Label commRoundsLbl = new Label("Communication rounds (Format: 1, 4, 5):");
+    TextField commRoundsTextField = new TextField();
+    commRoundsTextField.setPrefWidth(320);
+    commRoundsTextField.setMaxWidth(320);
+    grid.add(commRoundsLbl, 0, 4);
+    grid.add(commRoundsTextField, 1, 4);
+
     Label minShrimpLbl = new Label("Min amount of shrimp in kg to catch:");
     TextField minShrimpTextField = new TextField();
     minShrimpTextField.setPrefWidth(320);
     minShrimpTextField.setMaxWidth(320);
-    grid.add(minShrimpLbl, 0, 4);
-    grid.add(minShrimpTextField, 1, 4);
+    grid.add(minShrimpLbl, 0, 5);
+    grid.add(minShrimpTextField, 1, 5);
 
     Label maxShrimpLbl = new Label("Max amount of shrimp in kg to catch:");
     TextField maxShrimpTextField = new TextField();
     maxShrimpTextField.setPrefWidth(320);
     maxShrimpTextField.setMaxWidth(320);
-    grid.add(maxShrimpLbl, 0, 5);
-    grid.add(maxShrimpTextField, 1, 5);
+    grid.add(maxShrimpLbl, 0, 6);
+    grid.add(maxShrimpTextField, 1, 6);
 
     Label errorLbl = new Label();
     errorLbl.setTextFill(Color.RED);
@@ -111,8 +118,8 @@ public abstract class CreateGameScreen {
                           {
                             shrimpGameApp.getCreateGameScreenController().handleCreateGameButton(
                                 gameLobbyNameTextField, maxPlayersTextField, numRoundsTextField,
-                                roundTimeTextField, minShrimpTextField, maxShrimpTextField,
-                                errorLbl);
+                                roundTimeTextField, commRoundsTextField, minShrimpTextField,
+                                maxShrimpTextField, errorLbl);
                           });
     Button cancelBtn = new Button("CANCEL");
     cancelBtn.setPrefWidth(320);

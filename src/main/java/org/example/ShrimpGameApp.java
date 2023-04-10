@@ -15,10 +15,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.example.controllers.CatchShrimpScreenController;
+import org.example.controllers.ChatScreenController;
 import org.example.controllers.CreateGameScreenController;
 import org.example.controllers.JoinGameScreenController;
 import org.example.controllers.MainMenuScreenController;
@@ -76,17 +79,19 @@ public class ShrimpGameApp extends Application {
   private CreateGameScreenController createGameScreenController;
   private JoinGameScreenController joinGameScreenController;
   private CatchShrimpScreenController catchShrimpScreenController;
+  private ChatScreenController chatScreenController;
   private TableView<Lobby> joinGameLobbyTableView;
   private TableView<Lobby> joinedGameLobbyTableView;
   private TableView<Round> scoreboardTableview;
   private TableView<Round> gameOverScoreboardTableview;
+  private GridPane chatMessageGrid;
   private boolean scoreboardTableViewInitialized;
   private boolean gameOverScoreboardTableviewInitialized;
   private Game game;
   private List<Lobby> lobbies;
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
-  public static final String VERSION = "1.6.6";
+  public static final String VERSION = "1.6.7";
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -103,12 +108,14 @@ public class ShrimpGameApp extends Application {
     this.gameOverScoreboardTableview = new TableView<Round>();
     this.scoreboardTableViewInitialized = false;
     this.gameOverScoreboardTableviewInitialized = false;
+    this.chatMessageGrid = new GridPane();
     this.createUser();
     this.gameStarted = false;
     this.mainMenuScreenController = new MainMenuScreenController(this);
     this.joinGameScreenController = new JoinGameScreenController(this);
     this.createGameScreenController = new CreateGameScreenController(this);
     this.catchShrimpScreenController = new CatchShrimpScreenController(this);
+    this.chatScreenController = new ChatScreenController(this);
     this.mainScreen = MainScreen.getMainScreen(this);
     this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
     this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
@@ -169,8 +176,7 @@ public class ShrimpGameApp extends Application {
     return this.scoreboardTableview;
   }
 
-  public TableView<Round> getGameOverScoreboardTableview()
-  {
+  public TableView<Round> getGameOverScoreboardTableview() {
     return this.gameOverScoreboardTableview;
   }
 
@@ -205,6 +211,10 @@ public class ShrimpGameApp extends Application {
     return this.catchShrimpScreenController;
   }
 
+  public ChatScreenController getChatScreenController() {
+    return this.chatScreenController;
+  }
+
   public boolean isGameStarted() {
     return this.gameStarted;
   }
@@ -221,33 +231,32 @@ public class ShrimpGameApp extends Application {
     this.allPlayersCaughtShrimp = allPlayersCaughtShrimp;
   }
 
-  public boolean isScoreboardTableViewInitialized()
-  {
+  public boolean isScoreboardTableViewInitialized() {
     return this.scoreboardTableViewInitialized;
   }
 
-  public void setScoreboardTableViewInitialized(boolean scoreboardTableViewInitialized)
-  {
+  public void setScoreboardTableViewInitialized(boolean scoreboardTableViewInitialized) {
     this.scoreboardTableViewInitialized = scoreboardTableViewInitialized;
   }
 
-  public boolean isGameOverScoreboardTableviewInitialized()
-  {
+  public boolean isGameOverScoreboardTableviewInitialized() {
     return this.gameOverScoreboardTableviewInitialized;
   }
 
-  public void setGameOverScoreboardTableviewInitialized(boolean gameOverScoreboardTableviewInitialized)
-  {
+  public void setGameOverScoreboardTableviewInitialized(
+      boolean gameOverScoreboardTableviewInitialized) {
     this.gameOverScoreboardTableviewInitialized = gameOverScoreboardTableviewInitialized;
   }
 
-  public Lobby getSelectedLobby()
-  {
+  public GridPane getChatMessageGrid() {
+    return this.chatMessageGrid;
+  }
+
+  public Lobby getSelectedLobby() {
     return this.selectedLobby;
   }
 
-  public void setSelectedLobby(Lobby selectedLobby)
-  {
+  public void setSelectedLobby(Lobby selectedLobby) {
     this.selectedLobby = selectedLobby;
   }
 
@@ -283,8 +292,9 @@ public class ShrimpGameApp extends Application {
       noConnectionDialog.setTitle("Failed to connect to the server");
       noConnectionDialog.setHeaderText(null);
       noConnectionDialog.setContentText("You may not have internet connection or you are using an "
-                                        + "outdated version of Shrimp Game.\nIt could also be "
-                                        + "that the" + " server is not running.");
+                                        + "outdated version of Shrimp Game.\nThe latest version "
+                                        + "is v" + VERSION + "\nIt could " + "also be " + "that the"
+                                        + " server is not running.");
       this.addIconToDialog(noConnectionDialog);
       noConnectionDialog.showAndWait();
       this.setScene(this.getMainScreen());
@@ -400,8 +410,7 @@ public class ShrimpGameApp extends Application {
     return this.roundProfitMoneyCalculationScreen;
   }
 
-  public Scene getGameOverScreen()
-  {
+  public Scene getGameOverScreen() {
     return this.gameOverScreen;
   }
 
@@ -592,8 +601,8 @@ public class ShrimpGameApp extends Application {
                                       {
                                         Map<String, Player> players =
                                             cellData.getValue().getPlayers();
-                                        Integer totalMoney =
-                                            players.get(this.getUser().getName()).getCurrentTotalMoney();
+                                        Integer totalMoney = players.get(this.getUser().getName())
+                                                                    .getCurrentTotalMoney();
                                         return new SimpleIntegerProperty(
                                             totalMoney == null ? 0 : totalMoney).asObject();
                                       });
@@ -695,12 +704,32 @@ public class ShrimpGameApp extends Application {
     this.gameOverScoreboardTableview.setItems(observableRounds);
   }
 
-  public void resetScoreboardTables()
-  {
+  public void resetScoreboardTables() {
     this.scoreboardTableview = new TableView<Round>();
     this.gameOverScoreboardTableview = new TableView<Round>();
     this.setScoreboardTableViewInitialized(false);
     this.setGameOverScoreboardTableviewInitialized(false);
+  }
+
+  public void updateChatMessageGrid(List<String> messages) {
+    this.chatMessageGrid.getChildren().clear();
+    int row = 0;
+    for (String message : messages) {
+      String[] messageParts = message.split("\\.");
+      String usernamePart = messageParts[0];
+      String messagePart = messageParts[1];
+      Label usernameLbl = new Label(usernamePart);
+      usernameLbl.getStyleClass().add("username-label");
+
+      TextArea messageTextArea = new TextArea(messagePart);
+      messageTextArea.getStyleClass().add("message-textarea");
+      messageTextArea.setEditable(false);
+      messageTextArea.setWrapText(true);
+
+      this.chatMessageGrid.add(usernameLbl, 0, row);
+      this.chatMessageGrid.add(messageTextArea, 1, row);
+      row++;
+    }
   }
 
   public void initGameScreens() {
@@ -718,8 +747,6 @@ public class ShrimpGameApp extends Application {
     this.roundProfitMoneyCalculationScreen =
         RoundProfitMoneyCalculationScreen.getRoundProfitMoneyCalculationScreen(this);
   }
-
-
 
 
 }

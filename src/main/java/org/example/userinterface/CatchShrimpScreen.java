@@ -38,7 +38,7 @@ public abstract class CatchShrimpScreen {
     root.setPadding(new Insets(50, 50, 50, 50));
     Scene catchShrimpScene = new Scene(root, 800, 600);
     catchShrimpScene.getStylesheets().add(
-        shrimpGameApp.getClass().getResource("/css/tutorial.css").toExternalForm());
+        shrimpGameApp.getClass().getResource("/css/catchShrimp.css").toExternalForm());
 
     Label titleLbl = new Label("Catch Shrimp");
     titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
