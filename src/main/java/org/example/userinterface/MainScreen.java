@@ -68,7 +68,7 @@ public abstract class MainScreen {
     becomeAdminBtn.setPrefHeight(80);
 
     Button quitBtn = new Button("QUIT");
-    quitBtn.setOnAction(event -> Platform.exit());
+    quitBtn.setOnAction(event -> {Platform.exit(); System.exit(0);});
     quitBtn.setPrefWidth(320);
     quitBtn.setPrefHeight(80);
 
