@@ -7,3 +7,6 @@ out/
 
 # Maven
 target/
+
+# MacOS temp files
+*.DS_Store
