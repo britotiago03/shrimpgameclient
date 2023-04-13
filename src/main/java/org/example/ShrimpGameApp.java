@@ -123,6 +123,11 @@ public class ShrimpGameApp extends Application {
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
     this.setScene(this.getGameTutorialScreen());
+
+    primaryStage.setOnCloseRequest(event -> {
+      Platform.exit();
+      System.exit(0);
+    });
   }
 
   /**
