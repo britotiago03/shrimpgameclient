@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.example.userinterface.GameScreen;
 
 /**
  * The Game class represents a game with a unique identifier, name, game settings, status, and a

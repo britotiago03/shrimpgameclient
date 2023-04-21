@@ -27,11 +27,10 @@ public class Player {
     this.currentTotalMoney = 0;
     this.roundProfit = 0;
     this.expenses = expenses;
-    this.shrimpCaught = 0;
+    this.shrimpCaught = -1;
   }
 
-  public Player(Player player)
-  {
+  public Player(Player player) {
     this.name = player.getName();
     this.previousTotalMoney = player.getPreviousTotalMoney();
     this.currentTotalMoney = player.getCurrentTotalMoney();
@@ -56,29 +55,24 @@ public class Player {
 
   /**
    * Sets the amount of money the player has.
-   *
    */
   public void setPreviousTotalMoney(int previousTotalMoney) {
     this.previousTotalMoney = previousTotalMoney;
   }
 
-  public int getCurrentTotalMoney()
-  {
+  public int getCurrentTotalMoney() {
     return this.currentTotalMoney;
   }
 
-  public void setCurrentTotalMoney(int currentTotalMoney)
-  {
+  public void setCurrentTotalMoney(int currentTotalMoney) {
     this.currentTotalMoney = currentTotalMoney;
   }
 
-  public int getRoundProfit()
-  {
+  public int getRoundProfit() {
     return this.roundProfit;
   }
 
-  public void setRoundProfit(int roundProfit)
-  {
+  public void setRoundProfit(int roundProfit) {
     this.roundProfit = roundProfit;
   }
 
@@ -116,6 +110,14 @@ public class Player {
    */
   public void setShrimpCaught(int shrimpCaught) {
     this.shrimpCaught = shrimpCaught;
+  }
+
+  public boolean hasCaughtShrimp() {
+    boolean hasCaughtShrimp = false;
+    if (this.shrimpCaught != -1) {
+      hasCaughtShrimp = true;
+    }
+    return hasCaughtShrimp;
   }
 
   /**

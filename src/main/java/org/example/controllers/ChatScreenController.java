@@ -21,69 +21,40 @@ public class ChatScreenController {
     if (messageTxtArea.getText().isEmpty()) {
       errorLbl.setText("Please enter a message.");
       errorLbl.setVisible(true);
-    }
-    else {
+    } else {
       try {
         String messageTxt = messageTxtArea.getText();
+        messageTxtArea.clear();
         String[] input = messageTxt.split(" ");
         StringBuilder message = new StringBuilder();
-        for (int index = 0; index < input.length; index++)
-        {
-          message.append(input[index] + ".");
+        for (int index = 0; index < input.length; index++) {
+          message.append(input[index]);
+          if (index < input.length - 1) {
+            message.append(".");
+          }
         }
-        String trimmedMessage = messageTxt.trim();
+        String trimmedMessage = message.toString().trim();
 
-        if (trimmedMessage.length() > 50) {
-          throw new IllegalArgumentException("Message cannot be greater than 50 characters.");
+        if (trimmedMessage.length() > 300) {
+          throw new IllegalArgumentException("Message cannot be greater than 300 characters.");
         }
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Send Message");
-        confirmDialog.setHeaderText("Confirm Message To Send:");
-        confirmDialog.setContentText(String.format("Message: %s", messageTxt));
-        this.shrimpGameApp.addIconToDialog(confirmDialog);
-        Optional<ButtonType> result = confirmDialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        try {
+          this.shrimpGameApp.getServerConnection().sendMessageRequest(trimmedMessage);
           try {
-            this.shrimpGameApp.getServerConnection().sendMessageRequest(message.toString());
-            try {
-              Thread.sleep(500);
-            }
-            catch (InterruptedException exception) {
-              throw new RuntimeException("Thread was interrupted.");
-            }
-            String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
-
-            if (response.equals("MESSAGE_RECEIVED")) {
-              Alert successDialog = new Alert(Alert.AlertType.INFORMATION);
-              successDialog.setTitle("Success");
-              successDialog.setHeaderText(null);
-              successDialog.setContentText("Sent message successfully!");
-
-              messageTxtArea.setText("");
-              this.shrimpGameApp.addIconToDialog(successDialog);
-              try {
-                Thread.sleep(500);
-              }
-              catch (InterruptedException exception) {
-                throw new RuntimeException("Thread was interrupted.");
-              }
-              successDialog.showAndWait();
-            }
-            else {
-              throw new RuntimeException("Failed to send message.");
-            }
+            Thread.sleep(200);
+          } catch (InterruptedException exception) {
+            throw new RuntimeException("Thread was interrupted.");
           }
-          catch (RuntimeException exception) {
-            Alert errorDialog = new Alert(Alert.AlertType.ERROR);
-            errorDialog.setTitle("Error");
-            errorDialog.setHeaderText(null);
-            errorDialog.setContentText(exception.getMessage());
-            this.shrimpGameApp.addIconToDialog(errorDialog);
-            errorDialog.showAndWait();
-          }
+          this.shrimpGameApp.getServerConnection().getNextServerPacket();
+        } catch (RuntimeException exception) {
+          Alert errorDialog = new Alert(Alert.AlertType.ERROR);
+          errorDialog.setTitle("Error");
+          errorDialog.setHeaderText(null);
+          errorDialog.setContentText(exception.getMessage());
+          this.shrimpGameApp.addIconToDialog(errorDialog);
+          errorDialog.showAndWait();
         }
-      }
-      catch (IllegalArgumentException exception) {
+      } catch (IllegalArgumentException exception) {
         errorLbl.setText(exception.getMessage());
         errorLbl.setVisible(true);
       }

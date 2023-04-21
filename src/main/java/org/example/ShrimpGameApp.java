@@ -1,8 +1,11 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -10,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -20,18 +24,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.example.controllers.CatchShrimpScreenController;
 import org.example.controllers.ChatScreenController;
 import org.example.controllers.CreateGameScreenController;
+import org.example.controllers.GameOverScreenController;
 import org.example.controllers.JoinGameScreenController;
 import org.example.controllers.MainMenuScreenController;
 import org.example.logic.Game;
 import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.logic.Round;
+import org.example.logic.Timer;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.userinterface.CatchShrimpScreen;
+import org.example.userinterface.ChatScreenTest;
 import org.example.userinterface.CreateGameScreen;
 import org.example.userinterface.GameOverScreen;
 import org.example.userinterface.GameScreen;
@@ -79,6 +87,7 @@ public class ShrimpGameApp extends Application {
   private CreateGameScreenController createGameScreenController;
   private JoinGameScreenController joinGameScreenController;
   private CatchShrimpScreenController catchShrimpScreenController;
+  private GameOverScreenController gameOverScreenController;
   private ChatScreenController chatScreenController;
   private TableView<Lobby> joinGameLobbyTableView;
   private TableView<Lobby> joinedGameLobbyTableView;
@@ -91,7 +100,7 @@ public class ShrimpGameApp extends Application {
   private List<Lobby> lobbies;
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
-  public static final String VERSION = "1.6.7";
+  public static final String VERSION = "1.6.9";
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -102,6 +111,20 @@ public class ShrimpGameApp extends Application {
   @Override
   public void start(Stage stage) {
     this.primaryStage = stage;
+    this.primaryStage.setOnCloseRequest(event ->
+                                        {
+                                          event.consume(); // prevent default close behavior
+                                          Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                          this.addIconToDialog(alert);
+                                          alert.setTitle("Confirm Exit");
+                                          alert.setHeaderText("Are you sure you want to exit?");
+                                          alert.setContentText("Any unsaved changes will be lost.");
+                                          Optional<ButtonType> result = alert.showAndWait();
+                                          if (result.get() == ButtonType.OK) {
+                                            System.exit(0);
+                                            Platform.exit();
+                                          }
+                                        });
     this.joinGameLobbyTableView = new TableView<Lobby>();
     this.joinedGameLobbyTableView = new TableView<Lobby>();
     this.scoreboardTableview = new TableView<Round>();
@@ -116,6 +139,7 @@ public class ShrimpGameApp extends Application {
     this.createGameScreenController = new CreateGameScreenController(this);
     this.catchShrimpScreenController = new CatchShrimpScreenController(this);
     this.chatScreenController = new ChatScreenController(this);
+    this.gameOverScreenController = new GameOverScreenController(this);
     this.mainScreen = MainScreen.getMainScreen(this);
     this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
     this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
@@ -123,6 +147,7 @@ public class ShrimpGameApp extends Application {
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
     this.setScene(this.getGameTutorialScreen());
+    GameScreen.initOverviewBackgroundImage();
   }
 
   /**
@@ -215,6 +240,10 @@ public class ShrimpGameApp extends Application {
     return this.chatScreenController;
   }
 
+  public GameOverScreenController getGameOverScreenController() {
+    return this.gameOverScreenController;
+  }
+
   public boolean isGameStarted() {
     return this.gameStarted;
   }
@@ -296,8 +325,6 @@ public class ShrimpGameApp extends Application {
                                         + "is v" + VERSION + "\nIt could " + "also be " + "that the"
                                         + " server is not running.");
       this.addIconToDialog(noConnectionDialog);
-      noConnectionDialog.showAndWait();
-      this.setScene(this.getMainScreen());
       noConnectionDialog.showAndWait();
       this.user = new User("Player", false);
     }
@@ -713,6 +740,7 @@ public class ShrimpGameApp extends Application {
 
   public void updateChatMessageGrid(List<String> messages) {
     this.chatMessageGrid.getChildren().clear();
+    Collections.reverse(messages);
     int row = 0;
     for (String message : messages) {
       String[] messageParts = message.split("\\.");
@@ -747,6 +775,5 @@ public class ShrimpGameApp extends Application {
     this.roundProfitMoneyCalculationScreen =
         RoundProfitMoneyCalculationScreen.getRoundProfitMoneyCalculationScreen(this);
   }
-
 
 }

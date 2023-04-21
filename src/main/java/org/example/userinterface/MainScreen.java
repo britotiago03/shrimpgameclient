@@ -50,7 +50,8 @@ public abstract class MainScreen {
     mainScene.getStylesheets().add(
         shrimpGameApp.getClass().getResource("/css/styles.css").toExternalForm());
 
-    Label welcomeLbl = new Label("Welcome to Shrimp Game " + shrimpGameApp.getUser().getName());
+    Label welcomeLbl =
+        new Label("Welcome to the Shrimp Game, " + shrimpGameApp.getUser().getName() + "!");
     welcomeLbl.getStyleClass().add("title-label");
 
     Button joinGameBtn = new Button("JOIN GAME");
@@ -68,7 +69,11 @@ public abstract class MainScreen {
     becomeAdminBtn.setPrefHeight(80);
 
     Button quitBtn = new Button("QUIT");
-    quitBtn.setOnAction(event -> Platform.exit());
+    quitBtn.setOnAction(event ->
+                        {
+                          System.exit(0);
+                          Platform.exit();
+                        });
     quitBtn.setPrefWidth(320);
     quitBtn.setPrefHeight(80);
 

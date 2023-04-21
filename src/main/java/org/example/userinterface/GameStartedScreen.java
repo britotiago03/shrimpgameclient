@@ -1,7 +1,9 @@
 package org.example.userinterface;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -63,7 +65,7 @@ public abstract class GameStartedScreen {
 
     // Create the label with the game introduction
     Label introLbl = new Label(
-        "Welcome to the Shrimp Game " + shrimpGameApp.getUser().getName() + "!\n\nIn this game, "
+        "Welcome to the Shrimp Game, " + shrimpGameApp.getUser().getName() + "!\n\nIn this game, "
         + "you are a fisherman competing against" + " other " + "fishermen on " + game.getName()
         + " Island " + game.getNumber() + ".\n\n"
         + "Your goal is to make the most profit possible each round.\n\n"
@@ -93,7 +95,27 @@ public abstract class GameStartedScreen {
     Button continueBtn = new Button("CONTINUE");
     continueBtn.setPrefWidth(320);
     continueBtn.setPrefHeight(80);
-    continueBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getGameScreen()));
+    continueBtn.setOnAction(event ->
+                            {
+                              String[] communicationRounds =
+                                  shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                              List<Integer> commRoundNums = new ArrayList<Integer>();
+                              for (String communicationRound : communicationRounds) {
+                                commRoundNums.add(Integer.parseInt(communicationRound));
+                              }
+                              if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum()))
+                              {
+                                GameScreen.setOPTION("Chat");
+                                shrimpGameApp.initGameScreens();
+                                shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                              }
+                              else if (shrimpGameApp.getGame().getCurrentRoundNum()
+                                       <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
+                                GameScreen.setOPTION("Overview");
+                                shrimpGameApp.initGameScreens();
+                                shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                              }
+                            });
 
     // Add the man image and the scroll pane to the GridPane
     grid.add(mayorImage, 0, 0);

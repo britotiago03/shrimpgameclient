@@ -75,13 +75,12 @@ public class CreateGameScreenController {
         else if (numRounds < 2 || numRounds > 10) {
           throw new IllegalArgumentException("Number of rounds has to be between 2 and 10");
         }
-        else if (roundTime < 30 || roundTime > 120) {
-          throw new IllegalArgumentException("Round time has to be between 30 and 120 seconds");
-        }
-        else if (communicationRounds.matches("(.*)[^\\d,](.*)"))
-        {
+        else if (roundTime < 30 || roundTime > 120 * 5) {
           throw new IllegalArgumentException(
-              "Communication rounds cannot contain characters.");
+              "Round time has to be between 30 and " + 120 * 5 + " " + "seconds");
+        }
+        else if (communicationRounds.matches("(.*)[^\\d,](.*)")) {
+          throw new IllegalArgumentException("Communication rounds cannot contain characters.");
         }
         else if (minShrimp < 0 || minShrimp > 30) {
           throw new IllegalArgumentException(
@@ -92,17 +91,12 @@ public class CreateGameScreenController {
               "Max shrimp to catch has to be between 50 and 80 pounds");
         }
         List<String> rounds = Arrays.stream(communicationRounds.split(",")).toList();
-        for (String round : rounds)
-        {
-          if (Integer.parseInt(round) < 1)
-          {
-            throw new IllegalArgumentException(
-                "There are no negative rounds in the game");
+        for (String round : rounds) {
+          if (Integer.parseInt(round) < 1) {
+            throw new IllegalArgumentException("There are no negative rounds in the game");
           }
-          else if (Integer.parseInt(round) > numRounds)
-          {
-            throw new IllegalArgumentException(
-                "The last round in the game is round " + numRounds);
+          else if (Integer.parseInt(round) > numRounds) {
+            throw new IllegalArgumentException("The last round in the game is round " + numRounds);
           }
         }
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
@@ -112,15 +106,15 @@ public class CreateGameScreenController {
             "Game Name: %s%nMax Players: %d%nNumber of Rounds: "
             + "%d%nRound Time: %d seconds%nCommunication rounds: %s%nMinimum Shrimp "
             + "Pounds to Catch: %dkg%nMaximum Shrimp Pounds to Catch: %dkg%n",
-            gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds, minShrimp,
-            maxShrimp));
+            gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
+            minShrimp, maxShrimp));
         this.shrimpGameApp.addIconToDialog(confirmDialog);
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
           try {
             this.shrimpGameApp.getServerConnection().sendCreateLobbyRequest(
-                gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds, minShrimp,
-                maxShrimp);
+                gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
+                minShrimp, maxShrimp);
             String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
 
             if (response.equals("CREATE_LOBBY_SUCCESS")) {

@@ -1,6 +1,7 @@
 package org.example.userinterface;
 
 import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +24,12 @@ import org.example.logic.Player;
 
 public abstract class RoundProfitMoneyCalculationScreen {
   private static int currentStep = 0;
+  private static boolean allLabelsVisible = false;
+
+  public static void setAllLabelsVisible(boolean allLabelsVisible)
+  {
+    RoundProfitMoneyCalculationScreen.allLabelsVisible = allLabelsVisible;
+  }
 
   /**
    * Returns a Scene object representing the player money calculation screen of the Shrimp Game
@@ -50,7 +57,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
     int currentTotalMoney = player.getCurrentTotalMoney();
 
     // Add title
-    Label titleLbl = new Label("Round Profit and Money Calculation");
+    Label titleLbl = new Label("Round Profit and Total Profit Calculation");
     titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 32));
     titleLbl.getStyleClass().add("title-label");
     titleLbl.setPadding(new Insets(20, 0, 0, 0));
@@ -127,24 +134,70 @@ public abstract class RoundProfitMoneyCalculationScreen {
     // Set the event handlers for the buttons
     continueBtn.setOnAction(event ->
                             {
-                              currentStep++;
-                              if (currentStep > stepLabels.length) {
+                              if (RoundProfitMoneyCalculationScreen.allLabelsVisible)
+                              {
+                                GameScreen.roundTimerCreated = false;
+                                RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
                                 shrimpGameApp.setAllPlayersCaughtShrimp(false);
-                                if (shrimpGameApp.getGame().getCurrentRoundNum()
-                                    <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
+                                String[] communicationRounds =
+                                    shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                                List<Integer> commRoundNums = new ArrayList<Integer>();
+                                for (String communicationRound : communicationRounds) {
+                                  commRoundNums.add(Integer.parseInt(communicationRound));
+                                }
+                                if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum()))
+                                {
+                                  GameScreen.setOPTION("Chat");
+                                  shrimpGameApp.initGameScreens();
+                                  shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                                }
+                                else if (shrimpGameApp.getGame().getCurrentRoundNum()
+                                         <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
+                                  GameScreen.setOPTION("Overview");
                                   shrimpGameApp.initGameScreens();
                                   shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
                                 }
                                 else {
                                   shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
                                 }
-
                               }
                               else {
-                                stepLabels[currentStep - 1].setVisible(true);
-                                backBtn.setVisible(true);
+                                currentStep++;
+                                if (currentStep > stepLabels.length) {
+                                  shrimpGameApp.setAllPlayersCaughtShrimp(false);
+                                  String[] communicationRounds =
+                                      shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                                  List<Integer> commRoundNums = new ArrayList<Integer>();
+                                  for (String communicationRound : communicationRounds) {
+                                    commRoundNums.add(Integer.parseInt(communicationRound));
+                                  }
+                                  if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum()))
+                                  {
+                                    GameScreen.setOPTION("Chat");
+                                    shrimpGameApp.initGameScreens();
+                                    shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                                  }
+                                  else if (shrimpGameApp.getGame().getCurrentRoundNum()
+                                           <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
+                                    GameScreen.setOPTION("Overview");
+                                    shrimpGameApp.initGameScreens();
+                                    shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                                  }
+                                  else {
+                                    shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                                  }
+
+                                }
+                                else {
+                                  stepLabels[currentStep - 1].setVisible(true);
+                                  backBtn.setVisible(true);
+                                }
                               }
+
                             });
+    currentStep++;
+    stepLabels[currentStep - 1].setVisible(true);
+    backBtn.setVisible(true);
 
     backBtn.setOnAction(event ->
                         {
@@ -157,14 +210,38 @@ public abstract class RoundProfitMoneyCalculationScreen {
 
     skipBtn.setOnAction(event ->
                         {
-                          shrimpGameApp.setAllPlayersCaughtShrimp(false);
-                          if (shrimpGameApp.getGame().getCurrentRoundNum()
-                              <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
-                            shrimpGameApp.initGameScreens();
-                            shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                          if (RoundProfitMoneyCalculationScreen.allLabelsVisible)
+                          {
+                            GameScreen.roundTimerCreated = false;
+                            RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
+                            shrimpGameApp.setAllPlayersCaughtShrimp(false);
+                            String[] communicationRounds =
+                                shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                            List<Integer> commRoundNums = new ArrayList<Integer>();
+                            for (String communicationRound : communicationRounds) {
+                              commRoundNums.add(Integer.parseInt(communicationRound));
+                            }
+                            if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum()))
+                            {
+                              GameScreen.setOPTION("Chat");
+                              shrimpGameApp.initGameScreens();
+                              shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                            }
+                            else if (shrimpGameApp.getGame().getCurrentRoundNum()
+                                     <= shrimpGameApp.getGame().getSettings().getNumberOfRounds()) {
+                              GameScreen.setOPTION("Overview");
+                              shrimpGameApp.initGameScreens();
+                              shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
+                            }
+                            else {
+                              shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                            }
                           }
                           else {
-                            shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                            for (Label stepLabel : stepLabels) {
+                              stepLabel.setVisible(true);
+                            }
+                            RoundProfitMoneyCalculationScreen.setAllLabelsVisible(true);
                           }
                         });
 

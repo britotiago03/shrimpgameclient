@@ -1,5 +1,6 @@
 package org.example.userinterface;
 
+import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,7 +18,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
-import org.example.logic.Lobby;
 import org.example.logic.Round;
 
 public abstract class GameOverScreen {
@@ -41,13 +41,12 @@ public abstract class GameOverScreen {
       shrimpGameApp.setGameOverScoreboardTableviewInitialized(true);
     }
 
-    Button continueBtn = new Button("CONTINUE");
-    continueBtn.setPrefWidth(320);
-    continueBtn.setPrefHeight(80);
-    continueBtn.setOnAction(event ->
+    Button leaveGameBtn = new Button("LEAVE GAME");
+    leaveGameBtn.setPrefWidth(320);
+    leaveGameBtn.setPrefHeight(80);
+    leaveGameBtn.setOnAction(event ->
                           {
-                            shrimpGameApp.setScene(shrimpGameApp.getMainScreen());
-                            shrimpGameApp.setGameStarted(false);
+                            shrimpGameApp.getGameOverScreenController().handleLeaveGameButton();
                           });
 
     Region spacer1 = new Region();
@@ -55,7 +54,7 @@ public abstract class GameOverScreen {
     VBox.setVgrow(spacer1, Priority.ALWAYS);
     VBox.setVgrow(spacer2, Priority.ALWAYS);
 
-    root.getChildren().addAll(spacer1, headingLbl, gameOverScoreboardTableview, continueBtn, spacer2);
+    root.getChildren().addAll(spacer1, headingLbl, gameOverScoreboardTableview, leaveGameBtn, spacer2);
     root.setAlignment(Pos.CENTER);
 
     // Set the background image for the lobby list screen

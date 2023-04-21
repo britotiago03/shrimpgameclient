@@ -5,8 +5,10 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.example.ShrimpGameApp;
+import org.example.userinterface.GameScreen;
 
 public class CatchShrimpScreenController {
   private final ShrimpGameApp shrimpGameApp;
@@ -17,14 +19,14 @@ public class CatchShrimpScreenController {
   }
 
 
-  public void handleOkButton(TextField catchShrimpTextFld, Label errorLbl) {
-    if (catchShrimpTextFld.getText().isEmpty()) {
-      errorLbl.setText("Please fill all fields.");
+  public void handleOkButton(TextArea catchShrimpTextArea, Label errorLbl) {
+    if (catchShrimpTextArea.getText().isEmpty()) {
+      errorLbl.setText("Please fill all fields");
       errorLbl.setVisible(true);
     }
     else {
       try {
-        int shrimpCaught = Integer.parseInt(catchShrimpTextFld.getText());
+        int shrimpCaught = Integer.parseInt(catchShrimpTextArea.getText());
         if (shrimpCaught < this.shrimpGameApp.getGame().getSettings().getMinShrimpPounds()) {
           throw new IllegalArgumentException(
               "Amount of shrimp cannot be less than " + this.shrimpGameApp.getGame().getSettings()
@@ -45,6 +47,8 @@ public class CatchShrimpScreenController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
           try {
             this.shrimpGameApp.getServerConnection().sendCatchShrimpRequest(shrimpCaught);
+            this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
+                              .setShrimpCaught(shrimpCaught);
             String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
 
             if (response.equals("CAUGHT_SUCCESSFULLY")) {
@@ -53,7 +57,11 @@ public class CatchShrimpScreenController {
               successDialog.setHeaderText(null);
               successDialog.setContentText("Caught shrimp successfully!");
 
-              catchShrimpTextFld.setText("");
+              for (Label amountOfShrimpCaughtValueLbl : GameScreen.amountOfShrimpCaughtValueLbls)
+              {
+                amountOfShrimpCaughtValueLbl.setText(shrimpCaught + "kg");
+              }
+              catchShrimpTextArea.setText("");
               this.shrimpGameApp.addIconToDialog(successDialog);
               try {
                 Thread.sleep(500);
@@ -61,13 +69,15 @@ public class CatchShrimpScreenController {
               catch (InterruptedException exception) {
                 throw new RuntimeException("Thread was interrupted.");
               }
-              if (this.shrimpGameApp.allPlayersCaughtShrimp())
-              {
+              if (this.shrimpGameApp.allPlayersCaughtShrimp()) {
                 this.shrimpGameApp.setScene(this.shrimpGameApp.getShrimpCaughtSummaryScreen());
               }
               else {
+                int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
                 successDialog.showAndWait();
-                this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
+                if (this.shrimpGameApp.getGame().getCurrentRoundNum() == roundNum) {
+                  this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
+                }
               }
 
             }
@@ -86,7 +96,7 @@ public class CatchShrimpScreenController {
         }
       }
       catch (NumberFormatException exception) {
-        errorLbl.setText("Make sure you input one number without spaces or decimal points.");
+        errorLbl.setText("Numbers with space/decimals are invalid.");
         errorLbl.setVisible(true);
       }
       catch (IllegalArgumentException exception) {

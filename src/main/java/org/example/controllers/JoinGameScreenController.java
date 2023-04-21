@@ -1,7 +1,5 @@
 package org.example.controllers;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import javafx.scene.control.Alert;
 import org.example.ShrimpGameApp;
 import org.example.logic.Lobby;
@@ -45,7 +43,7 @@ public class JoinGameScreenController {
       this.shrimpGameApp.addIconToDialog(successDialog);
       this.shrimpGameApp.setSelectedLobby(selectedLobby);
       try {
-        Thread.sleep(500);
+        Thread.sleep(300);
       }
       catch (InterruptedException exception) {
         throw new RuntimeException("Thread was interrupted.");
@@ -56,7 +54,10 @@ public class JoinGameScreenController {
       }
       else {
         successDialog.showAndWait();
-        this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
+        if (!this.shrimpGameApp.isGameStarted())
+        {
+          this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
+        }
       }
     }
     catch (RuntimeException exception) {

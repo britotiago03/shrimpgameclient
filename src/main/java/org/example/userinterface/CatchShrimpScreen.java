@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -65,14 +66,16 @@ public abstract class CatchShrimpScreen {
     catchShrimpLbl.setWrapText(true);
     catchShrimpLbl.setPadding(new Insets(20));
     catchShrimpLbl.getStyleClass().add("catch-shrimp-label");
-    TextField catchShrimpTextFld = new TextField();
+    TextArea catchShrimpTextArea = new TextArea();
+    catchShrimpTextArea.setPrefHeight(50);
 
     Label errorLbl = new Label();
-    errorLbl.getStyleClass().add("error-label");
+    errorLbl.setPadding(new Insets(10));
+    errorLbl.getStyleClass().add("catch-shrimp-label");
     errorLbl.setTextFill(Color.RED);
     errorLbl.setVisible(false);
 
-    catchShrimpBox.getChildren().addAll(catchShrimpLbl, catchShrimpTextFld, errorLbl);
+    catchShrimpBox.getChildren().addAll(catchShrimpLbl, catchShrimpTextArea, errorLbl);
 
     HBox buttonsBox = new HBox();
     buttonsBox.setSpacing(20);
@@ -81,7 +84,7 @@ public abstract class CatchShrimpScreen {
     Button okBtn = new Button("OK");
     okBtn.setPrefWidth(320);
     okBtn.setPrefHeight(80);
-    okBtn.setOnAction(event -> shrimpGameApp.getCatchShrimpScreenController().handleOkButton(catchShrimpTextFld, errorLbl));
+    okBtn.setOnAction(event -> shrimpGameApp.getCatchShrimpScreenController().handleOkButton(catchShrimpTextArea, errorLbl));
 
     Button cancelBtn = new Button("CANCEL");
     cancelBtn.setPrefWidth(320);

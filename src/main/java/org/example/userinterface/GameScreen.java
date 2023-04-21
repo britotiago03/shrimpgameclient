@@ -1,9 +1,9 @@
 package org.example.userinterface;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,14 +28,37 @@ import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 import org.example.logic.Round;
+import org.example.logic.Timer;
 
 public abstract class GameScreen {
+  public static String OPTION = "Overview";
+
+  private static VBox OVERVIEW;
+  private static VBox OVERVIEW_CAUGHT_SHRIMP;
+  private static VBox SCOREBOARD;
+  private static VBox RULES;
+  private static VBox CHAT;
+  private static Image OVERVIEW_BACKGROUND;
+  public static boolean roundTimerCreated = false;
+  private static List<Label> timeLabels = new ArrayList<>();
+  public static List<Label> amountOfShrimpCaughtValueLbls = new ArrayList<>();
+
+  public static void setOPTION(String option) {
+    OPTION = option;
+  }
+
+  public static void initOverviewBackgroundImage() {
+    OVERVIEW_BACKGROUND = new Image(
+        ShrimpGameApp.class.getResource("/images/overview_gif.gif").toExternalForm());
+  }
+
+
   public static Scene getMainScene(ShrimpGameApp shrimpGameApp, boolean hasCaughtShrimp) {
     BorderPane root = new BorderPane();
     Scene gameScene = new Scene(root, 800, 600);
     gameScene.getStylesheets().add(
         shrimpGameApp.getClass().getResource("/css/game.css").toExternalForm());
-
+    GameScreen.createPanes(shrimpGameApp);
 
     // Create the menu on the left
     VBox menuBox = new VBox();
@@ -57,9 +80,12 @@ public abstract class GameScreen {
     Button overviewBtn = new Button();
     overviewBtn.setGraphic(overviewBtnBox);
     overviewBtn.getStyleClass().add("button1");
-    overviewBtn.setOnAction(
-        e -> root.setCenter(GameScreen.getContentPane(shrimpGameApp, "Overview", hasCaughtShrimp)));
-
+    if (hasCaughtShrimp) {
+      overviewBtn.setOnAction(e -> root.setCenter(OVERVIEW_CAUGHT_SHRIMP));
+    }
+    else {
+      overviewBtn.setOnAction(e -> root.setCenter(OVERVIEW));
+    }
 
     Image scoreboardBtnImage = new Image(
         shrimpGameApp.getClass().getResourceAsStream("/images/scoreboard_icon.png"));
@@ -74,8 +100,7 @@ public abstract class GameScreen {
     Button scoreboardBtn = new Button();
     scoreboardBtn.setGraphic(scoreboardBtnBox);
     scoreboardBtn.getStyleClass().add("button1");
-    scoreboardBtn.setOnAction(e -> root.setCenter(
-        GameScreen.getContentPane(shrimpGameApp, "Scoreboard", hasCaughtShrimp)));
+    scoreboardBtn.setOnAction(e -> root.setCenter(SCOREBOARD));
 
     Image rulesBtnImage = new Image(
         shrimpGameApp.getClass().getResourceAsStream("/images/rules_icon.png"));
@@ -90,8 +115,7 @@ public abstract class GameScreen {
     Button rulesBtn = new Button();
     rulesBtn.setGraphic(rulesBtnBox);
     rulesBtn.getStyleClass().add("button1");
-    rulesBtn.setOnAction(
-        e -> root.setCenter(GameScreen.getContentPane(shrimpGameApp, "Rules", hasCaughtShrimp)));
+    rulesBtn.setOnAction(e -> root.setCenter(RULES));
 
     Image chatBtnImage = new Image(
         shrimpGameApp.getClass().getResourceAsStream("/images/chat_icon.png"));
@@ -106,14 +130,13 @@ public abstract class GameScreen {
     Button chatBtn = new Button();
     chatBtn.setGraphic(chatBtnBox);
     chatBtn.getStyleClass().add("button1");
-    chatBtn.setOnAction(
-        e -> root.setCenter(GameScreen.getContentPane(shrimpGameApp, "Chat", hasCaughtShrimp)));
+    chatBtn.setOnAction(e -> root.setCenter(CHAT));
 
 
     menuBox.getChildren().addAll(overviewBtn, scoreboardBtn, rulesBtn, chatBtn);
 
     // Create the content on the right
-    VBox contentPane = GameScreen.getContentPane(shrimpGameApp, "Overview", hasCaughtShrimp);
+    VBox contentPane = GameScreen.getContentPane(shrimpGameApp, OPTION, hasCaughtShrimp);
 
     // Add the menu and content to the root pane
     root.setLeft(menuBox);
@@ -121,6 +144,14 @@ public abstract class GameScreen {
 
 
     return gameScene;
+  }
+
+  private static void createPanes(ShrimpGameApp shrimpGameApp) {
+    OVERVIEW = GameScreen.getContentPane(shrimpGameApp, "Overview", false);
+    OVERVIEW_CAUGHT_SHRIMP = GameScreen.getContentPane(shrimpGameApp, "Overview", true);
+    SCOREBOARD = GameScreen.getContentPane(shrimpGameApp, "Scoreboard", false);
+    RULES = GameScreen.getContentPane(shrimpGameApp, "Rules", false);
+    CHAT = GameScreen.getContentPane(shrimpGameApp, "Chat", false);
   }
 
   private static VBox getContentPane(ShrimpGameApp shrimpGameApp, String option,
@@ -150,12 +181,24 @@ public abstract class GameScreen {
       roundTimeLbl.getStyleClass().add("info-label");
       roundInfo.add(roundTimeLbl, 0, 0);
 
-      Label timeLeftLbl = new Label("01:57");
+      Label timeLeftLbl = new Label("Time");
+      GameScreen.timeLabels.add(timeLeftLbl);
+      if (!GameScreen.roundTimerCreated) {
+        Timer roundTimer = new Timer(shrimpGameApp, GameScreen.timeLabels);
+        roundTimer.start();
+        GameScreen.roundTimerCreated = true;
+      }
       timeLeftLbl.getStyleClass().add("info-label");
       roundInfo.add(timeLeftLbl, 1, 0);
 
+      Label roundStatusLbl;
+      if (hasCaughtShrimp) {
+        roundStatusLbl = new Label("Waiting for the other players...");
+      }
+      else {
+        roundStatusLbl = new Label("Waiting for you...");
+      }
 
-      Label roundStatusLbl = new Label("Waiting for the other players...");
       roundStatusLbl.getStyleClass().add("status-label");
 
 
@@ -169,7 +212,8 @@ public abstract class GameScreen {
       shrimpCaughtLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtLbl, 0, 0);
 
-      Label shrimpCaughtValueLbl = new Label(player.getShrimpCaught() + "kg");
+      Label shrimpCaughtValueLbl = new Label("0kg");
+      GameScreen.amountOfShrimpCaughtValueLbls.add(shrimpCaughtValueLbl);
       shrimpCaughtValueLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtValueLbl, 1, 0);
 
@@ -177,7 +221,7 @@ public abstract class GameScreen {
       totalMoneyLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyLbl, 0, 1);
 
-      Label totalMoneyValueLbl = new Label("$" + player.getPreviousTotalMoney());
+      Label totalMoneyValueLbl = new Label("$" + player.getCurrentTotalMoney());
       totalMoneyValueLbl.getStyleClass().add("info-label");
       playerStats.add(totalMoneyValueLbl, 1, 1);
 
@@ -258,12 +302,10 @@ public abstract class GameScreen {
                                        - shrimpGameApp.getGame().getCurrentRoundNum()));
       roundsLeftLbl.getStyleClass().add("rounds-left-label");
       roundsLeftLbl.setPadding(new Insets(20));
-
       content.getChildren().addAll(roundLbl, grid, infoBox, roundStatusLbl, roundsLeftLbl);
-      Image backgroundImage = new Image(
-          shrimpGameApp.getClass().getResource("/images/overview.jpg").toExternalForm());
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
-      BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT,
+      BackgroundImage background = new BackgroundImage(OVERVIEW_BACKGROUND,
+                                                       BackgroundRepeat.NO_REPEAT,
                                                        BackgroundRepeat.NO_REPEAT,
                                                        BackgroundPosition.CENTER, backgroundSize);
       content.setBackground(new Background(background));
@@ -291,11 +333,35 @@ public abstract class GameScreen {
 
     }
     else if (option.equals("Rules")) {
-      Label titleLbl = new Label("COMING SOON");
+      Label titleLbl = new Label("Rules");
+      titleLbl.setPadding(new Insets(0, 0, 20, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
+      // Create the label with the game introduction
+      Label rulesLbl = new Label(
+          "Three players, Atari, BMI, and Commodore, own shrimp boats on an island and must catch"
+          + " at most 75 pounds per day at a cost of $5/pound.\n"
+          + "\n"
+          + "They bring their catch to a market controlled by the mayor, where the price is "
+          + "determined by the total supply and demand.\n"
+          + "\n" + "Profits are calculated as (price - $5) x total pounds caught.\n" + "\n"
+          + "Players cannot communicate with each other and must make decisions simultaneously in"
+          + " rounds 1 to 4, 6, and 7.\n"
+          + "In rounds 5 and 8, players can discuss and negotiate before announcing their catch"
+          + ".\n");
+      rulesLbl.setFont(Font.font("Helvetica", 20));
+      rulesLbl.setWrapText(true);
+      rulesLbl.setPadding(new Insets(20));
+      rulesLbl.getStyleClass().add("text");
 
-      content.getChildren().add(titleLbl);
+      // Create the scroll pane and add the label to it
+      ScrollPane rulesScrollPane = new ScrollPane();
+      rulesScrollPane.setContent(rulesLbl);
+      rulesScrollPane.setFitToWidth(true);
+      rulesScrollPane.setPrefHeight(450);
+      rulesScrollPane.getStyleClass().add("scroll-pane");
+
+      content.getChildren().addAll(titleLbl, rulesScrollPane);
       Image backgroundImage = new Image(
           shrimpGameApp.getClass().getResource("/images/rules.jpg").toExternalForm());
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
@@ -305,7 +371,8 @@ public abstract class GameScreen {
       content.setBackground(new Background(background));
     }
     else if (option.equals("Chat")) {
-      Label titleLbl = new Label("CHAT");
+      Label titleLbl = new Label("Chat");
+      titleLbl.setPadding(new Insets(20, 0, 0, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
 
@@ -322,18 +389,19 @@ public abstract class GameScreen {
         TextArea messageArea = new TextArea();
         messageArea.setWrapText(true);
         messageArea.setPromptText("Type a message");
-        messageArea.setPrefHeight(150);
+        messageArea.setPrefHeight(300);
         ScrollPane messageScrollPane = new ScrollPane(messageArea);
         messageScrollPane.setFitToWidth(true);
 
         Label errorLbl = new Label();
+        errorLbl.setPadding(new Insets(0, 0, 0, 20));
         errorLbl.getStyleClass().add("error-label");
         errorLbl.setTextFill(Color.RED);
         errorLbl.setVisible(false);
 
         Button sendBtn = new Button("SEND");
         sendBtn.getStyleClass().add("button3");
-        sendBtn.setPrefWidth(150);
+        sendBtn.setPrefWidth(100);
         sendBtn.setPrefHeight(50);
         sendBtn.setOnAction(event -> shrimpGameApp.getChatScreenController()
                                                   .handleSendButton(messageArea, errorLbl));
@@ -350,9 +418,10 @@ public abstract class GameScreen {
 
 
         ScrollPane chatScrollPane = new ScrollPane(chatGrid);
-        chatScrollPane.setPrefHeight(200);
+        chatScrollPane.setPrefHeight(450);
 
         List<String> messages = shrimpGameApp.getGame().getMessages();
+        Collections.reverse(messages);
         int row = 0;
         for (String message : messages) {
           String[] messageParts = message.split("\\.");
@@ -424,6 +493,10 @@ public abstract class GameScreen {
     }
 
     return content;
+  }
+
+  public static void startRoundTimer(ShrimpGameApp shrimpGameApp) {
+
   }
 
 

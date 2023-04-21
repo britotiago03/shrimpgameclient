@@ -21,6 +21,12 @@ import org.example.ShrimpGameApp;
 
 public abstract class ShrimpPriceCalculationScreen {
   private static int currentStep = 0;
+  private static boolean allLabelsVisible = false;
+
+  public static void setAllLabelsVisible(boolean allLabelsVisible)
+  {
+    ShrimpPriceCalculationScreen.allLabelsVisible = allLabelsVisible;
+  }
 
   /**
    * Returns a Scene object representing the shrimp price calculation screen of the Shrimp Game
@@ -63,17 +69,20 @@ public abstract class ShrimpPriceCalculationScreen {
     Label[] stepLabels = new Label[8];
     stepLabels[0] = new Label(
         "To calculate the price of shrimp this round, we follow these steps:");
+    stepLabels[0].setVisible(true);
     stepLabels[1] = new Label("Step 1: We start with a base price of $45.");
     stepLabels[2] = new Label(
         "Step 2: We calculate the total amount of shrimp caught by all players this round.");
     stepLabels[3] = new Label(
-        "The total amount of shrimp caught by all players this round is " + totalAmountOfShrimp + "kg.");
+        "The total amount of shrimp caught by all players this round is " + totalAmountOfShrimp
+        + "kg.");
     stepLabels[4] = new Label(
-        "Step 3: We multiply " + totalAmountOfShrimp + " by 0.2 to get " + (int) (0.2 * totalAmountOfShrimp) + ".");
-    stepLabels[5] = new Label(
-        "Step 4: We subtract " + (int) (0.2 * totalAmountOfShrimp) + " from $45 to get $" + (45 - (0.2
-                                                                                           * totalAmountOfShrimp))
+        "Step 3: We multiply " + totalAmountOfShrimp + " by 0.2 to get " + (int) (0.2
+                                                                                  * totalAmountOfShrimp)
         + ".");
+    stepLabels[5] = new Label(
+        "Step 4: We subtract " + (int) (0.2 * totalAmountOfShrimp) + " from $45 to get $" + (45 - (
+            0.2 * totalAmountOfShrimp)) + ".");
     stepLabels[6] = new Label("Step 5: We round down $" + (45 - (0.2 * totalAmountOfShrimp))
                               + " to the nearest dollar to ensure a whole number price for"
                               + " the shrimp.");
@@ -117,16 +126,26 @@ public abstract class ShrimpPriceCalculationScreen {
     // Set the event handlers for the buttons
     continueBtn.setOnAction(event ->
                             {
-                              currentStep++;
-                              if (currentStep > stepLabels.length) {
+                              if (ShrimpPriceCalculationScreen.allLabelsVisible) {
+                                ShrimpPriceCalculationScreen.setAllLabelsVisible(false);
                                 shrimpGameApp.setScene(
                                     shrimpGameApp.getRoundProfitMoneyCalculationScreen());
                               }
                               else {
-                                stepLabels[currentStep - 1].setVisible(true);
-                                backBtn.setVisible(true);
+                                currentStep++;
+                                if (currentStep > stepLabels.length) {
+                                  shrimpGameApp.setScene(
+                                      shrimpGameApp.getRoundProfitMoneyCalculationScreen());
+                                }
+                                else {
+                                  stepLabels[currentStep - 1].setVisible(true);
+                                  backBtn.setVisible(true);
+                                }
                               }
                             });
+    currentStep++;
+    stepLabels[currentStep - 1].setVisible(true);
+    backBtn.setVisible(true);
 
     backBtn.setOnAction(event ->
                         {
@@ -139,8 +158,17 @@ public abstract class ShrimpPriceCalculationScreen {
 
     skipBtn.setOnAction(event ->
                         {
-                          shrimpGameApp.setScene(
-                              shrimpGameApp.getRoundProfitMoneyCalculationScreen());
+                          if (ShrimpPriceCalculationScreen.allLabelsVisible) {
+                            ShrimpPriceCalculationScreen.setAllLabelsVisible(false);
+                            shrimpGameApp.setScene(
+                                shrimpGameApp.getRoundProfitMoneyCalculationScreen());
+                          }
+                          else {
+                            for (Label stepLabel : stepLabels) {
+                              stepLabel.setVisible(true);
+                            }
+                             ShrimpPriceCalculationScreen.setAllLabelsVisible(true);
+                          }
                         });
 
     // Add the buttons to an HBox
