@@ -47,8 +47,9 @@ public class CreateGameScreenController {
    */
   public void handleCreateGameButton(TextField gameLobbyNameField, TextField maxPlayersField,
                                      TextField numRoundsField, TextField roundTimeField,
-                                     TextField commRoundsTextField, TextField minShrimpField,
-                                     TextField maxShrimpField, Label errorLbl) {
+                                     TextField commRoundsField, TextField commRoundTimeField,
+                                     TextField minShrimpField, TextField maxShrimpField,
+                                     Label errorLbl) {
     if (gameLobbyNameField.getText().isEmpty() || maxPlayersField.getText().isEmpty()
         || numRoundsField.getText().isEmpty() || roundTimeField.getText().isEmpty()
         || minShrimpField.getText().isEmpty() || maxShrimpField.getText().isEmpty()) {
@@ -60,9 +61,10 @@ public class CreateGameScreenController {
         int maxPlayers = Integer.parseInt(maxPlayersField.getText());
         int numRounds = Integer.parseInt(numRoundsField.getText());
         int roundTime = Integer.parseInt(roundTimeField.getText());
+        int commRoundTime = Integer.parseInt(commRoundTimeField.getText());
         int minShrimp = Integer.parseInt(minShrimpField.getText());
         int maxShrimp = Integer.parseInt(maxShrimpField.getText());
-        String communicationRounds = commRoundsTextField.getText().replace(" ", "");
+        String communicationRounds = commRoundsField.getText().replace(" ", "");
         if (Arrays.stream(gameLobbyNameField.getText().split(" ")).toList().size() > 1) {
           throw new IllegalArgumentException("Game lobby name cannot be multiple words");
         }
@@ -81,6 +83,10 @@ public class CreateGameScreenController {
         }
         else if (communicationRounds.matches("(.*)[^\\d,](.*)")) {
           throw new IllegalArgumentException("Communication rounds cannot contain characters.");
+        }
+        else if (commRoundTime < 30 || commRoundTime > 120 * 5) {
+          throw new IllegalArgumentException(
+              "Communication time has to be between 30 and " + 120 * 5 + " " + "seconds");
         }
         else if (minShrimp < 0 || minShrimp > 30) {
           throw new IllegalArgumentException(
@@ -104,17 +110,18 @@ public class CreateGameScreenController {
         confirmDialog.setHeaderText("Confirm Settings:");
         confirmDialog.setContentText(String.format(
             "Game Name: %s%nMax Players: %d%nNumber of Rounds: "
-            + "%d%nRound Time: %d seconds%nCommunication rounds: %s%nMinimum Shrimp "
-            + "Pounds to Catch: %dkg%nMaximum Shrimp Pounds to Catch: %dkg%n",
-            gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
-            minShrimp, maxShrimp));
+            + "%d%nRound Time: %d seconds%nCommunication rounds: %s%nCommunication Time: "
+            + "%d seconds%nMinimum Shrimp "
+            + "kg to Catch: %dkg%nMaximum Shrimp kg to Catch: %dkg%n", gameLobbyNameField.getText(),
+            maxPlayers, numRounds, roundTime, communicationRounds, commRoundTime, minShrimp,
+            maxShrimp));
         this.shrimpGameApp.addIconToDialog(confirmDialog);
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
           try {
             this.shrimpGameApp.getServerConnection().sendCreateLobbyRequest(
                 gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
-                minShrimp, maxShrimp);
+                commRoundTime, minShrimp, maxShrimp);
             String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
 
             if (response.equals("CREATE_LOBBY_SUCCESS")) {
@@ -128,8 +135,11 @@ public class CreateGameScreenController {
               maxPlayersField.setText("");
               numRoundsField.setText("");
               roundTimeField.setText("");
+              commRoundsField.setText("");
+              commRoundTimeField.setText("");
               minShrimpField.setText("");
               maxShrimpField.setText("");
+              errorLbl.setVisible(false);
               this.shrimpGameApp.addIconToDialog(successDialog);
               successDialog.showAndWait();
               this.shrimpGameApp.setScene(this.shrimpGameApp.getMainScreen());

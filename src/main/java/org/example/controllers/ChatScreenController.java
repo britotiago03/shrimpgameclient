@@ -19,7 +19,7 @@ public class ChatScreenController {
 
   public void handleSendButton(TextArea messageTxtArea, Label errorLbl) {
     if (messageTxtArea.getText().isEmpty()) {
-      errorLbl.setText("Please enter a message.");
+      errorLbl.setText("Please enter a message");
       errorLbl.setVisible(true);
     } else {
       try {
@@ -46,6 +46,7 @@ public class ChatScreenController {
             throw new RuntimeException("Thread was interrupted.");
           }
           this.shrimpGameApp.getServerConnection().getNextServerPacket();
+          errorLbl.setVisible(false);
         } catch (RuntimeException exception) {
           Alert errorDialog = new Alert(Alert.AlertType.ERROR);
           errorDialog.setTitle("Error");

@@ -28,20 +28,16 @@ import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 import org.example.logic.Round;
-import org.example.logic.Timer;
 
 public abstract class GameScreen {
   public static String OPTION = "Overview";
-
   private static VBox OVERVIEW;
   private static VBox OVERVIEW_CAUGHT_SHRIMP;
   private static VBox SCOREBOARD;
   private static VBox RULES;
   private static VBox CHAT;
   private static Image OVERVIEW_BACKGROUND;
-  public static boolean roundTimerCreated = false;
-  private static List<Label> timeLabels = new ArrayList<>();
-  public static List<Label> amountOfShrimpCaughtValueLbls = new ArrayList<>();
+  public static List<Label> amountOfShrimpCaughtValueLabels = new ArrayList<>();
 
   public static void setOPTION(String option) {
     OPTION = option;
@@ -49,7 +45,7 @@ public abstract class GameScreen {
 
   public static void initOverviewBackgroundImage() {
     OVERVIEW_BACKGROUND = new Image(
-        ShrimpGameApp.class.getResource("/images/overview_gif.gif").toExternalForm());
+        ShrimpGameApp.class.getResource("/images/overview.jpg").toExternalForm());
   }
 
 
@@ -167,29 +163,26 @@ public abstract class GameScreen {
     // Create the content for each menu item
     if (option.equals("Overview")) {
 
-      Label roundLbl = new Label("Round " + shrimpGameApp.getGame().getCurrentRoundNum());
-      roundLbl.getStyleClass().add("title-label");
-      roundLbl.setPadding(new Insets(20));
-
-
       GridPane roundInfo = new GridPane();
       roundInfo.setHgap(10);
-      roundInfo.setStyle("-fx-background-color: white;");
       roundInfo.setAlignment(Pos.CENTER);
-      roundInfo.setPadding(new Insets(10));
-      Label roundTimeLbl = new Label("Time left:");
-      roundTimeLbl.getStyleClass().add("info-label");
+      roundInfo.setPadding(new Insets(20, 0, 0, 0));
+      Label roundTimeLbl = new Label("Round Time:");
+      roundTimeLbl.getStyleClass().add("time-label");
       roundInfo.add(roundTimeLbl, 0, 0);
 
-      Label timeLeftLbl = new Label("Time");
-      GameScreen.timeLabels.add(timeLeftLbl);
-      if (!GameScreen.roundTimerCreated) {
-        Timer roundTimer = new Timer(shrimpGameApp, GameScreen.timeLabels);
-        roundTimer.start();
-        GameScreen.roundTimerCreated = true;
-      }
-      timeLeftLbl.getStyleClass().add("info-label");
+      Label timeLeftLbl = new Label("Loading");
+      shrimpGameApp.getRoundTimerLabels().add(timeLeftLbl);
+      timeLeftLbl.getStyleClass().add("time-label");
       roundInfo.add(timeLeftLbl, 1, 0);
+
+      Label roundLbl = new Label("Round " + shrimpGameApp.getGame().getCurrentRoundNum());
+      roundLbl.getStyleClass().add("title-label");
+      roundLbl.setPadding(new Insets(20, 0, 20, 0));
+
+      VBox titleContainer = new VBox();
+      titleContainer.setAlignment(Pos.CENTER);
+      titleContainer.getChildren().addAll(roundInfo, roundLbl);
 
       Label roundStatusLbl;
       if (hasCaughtShrimp) {
@@ -213,7 +206,7 @@ public abstract class GameScreen {
       playerStats.add(shrimpCaughtLbl, 0, 0);
 
       Label shrimpCaughtValueLbl = new Label("0kg");
-      GameScreen.amountOfShrimpCaughtValueLbls.add(shrimpCaughtValueLbl);
+      GameScreen.amountOfShrimpCaughtValueLabels.add(shrimpCaughtValueLbl);
       shrimpCaughtValueLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtValueLbl, 1, 0);
 
@@ -245,10 +238,10 @@ public abstract class GameScreen {
       infoBox.setPadding(new Insets(20, 0, 20, 0));
       infoBox.setAlignment(Pos.CENTER);
       if (!hasCaughtShrimp) {
-        infoBox.getChildren().addAll(roundInfo, playerStats, catchShrimpBtn);
+        infoBox.getChildren().addAll(playerStats, catchShrimpBtn);
       }
       else {
-        infoBox.getChildren().addAll(roundInfo, playerStats);
+        infoBox.getChildren().addAll(playerStats);
       }
 
 
@@ -302,7 +295,7 @@ public abstract class GameScreen {
                                        - shrimpGameApp.getGame().getCurrentRoundNum()));
       roundsLeftLbl.getStyleClass().add("rounds-left-label");
       roundsLeftLbl.setPadding(new Insets(20));
-      content.getChildren().addAll(roundLbl, grid, infoBox, roundStatusLbl, roundsLeftLbl);
+      content.getChildren().addAll(titleContainer, grid, infoBox, roundStatusLbl, roundsLeftLbl);
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
       BackgroundImage background = new BackgroundImage(OVERVIEW_BACKGROUND,
                                                        BackgroundRepeat.NO_REPEAT,
@@ -312,17 +305,34 @@ public abstract class GameScreen {
 
     }
     else if (option.equals("Scoreboard")) {
+      GridPane roundInfo = new GridPane();
+      roundInfo.setHgap(10);
+      roundInfo.setAlignment(Pos.CENTER);
+      roundInfo.setPadding(new Insets(20, 0, 0, 0));
+      Label roundTimeLbl = new Label("Round Time:");
+      roundTimeLbl.getStyleClass().add("time-label");
+      roundInfo.add(roundTimeLbl, 0, 0);
+
+      Label timeLeftLbl = new Label("Loading");
+      shrimpGameApp.getRoundTimerLabels().add(timeLeftLbl);
+      timeLeftLbl.getStyleClass().add("time-label");
+      roundInfo.add(timeLeftLbl, 1, 0);
+
       Label titleLbl = new Label("Scoreboard");
-      titleLbl.setPadding(new Insets(0, 0, 20, 0));
+      titleLbl.setPadding(new Insets(20, 0, 20, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
+
+      VBox titleContainer = new VBox();
+      titleContainer.setAlignment(Pos.CENTER);
+      titleContainer.getChildren().addAll(roundInfo, titleLbl);
 
       TableView<Round> scoreboardTableview = shrimpGameApp.getScoreboardTableview();
       if (!shrimpGameApp.isScoreboardTableViewInitialized()) {
         shrimpGameApp.setScoreboardTableView(scoreboardTableview);
         shrimpGameApp.setScoreboardTableViewInitialized(true);
       }
-      content.getChildren().addAll(titleLbl, scoreboardTableview);
+      content.getChildren().addAll(titleContainer, scoreboardTableview);
       Image backgroundImage = new Image(
           shrimpGameApp.getClass().getResource("/images/create_game.jpg").toExternalForm());
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
@@ -333,10 +343,29 @@ public abstract class GameScreen {
 
     }
     else if (option.equals("Rules")) {
+      GridPane roundInfo = new GridPane();
+      roundInfo.setHgap(10);
+      roundInfo.setAlignment(Pos.CENTER);
+      roundInfo.setPadding(new Insets(20, 0, 0, 0));
+      Label roundTimeLbl = new Label("Round Time:");
+      roundTimeLbl.getStyleClass().add("time-label");
+      roundInfo.add(roundTimeLbl, 0, 0);
+
+      Label timeLeftLbl = new Label("Loading");
+      shrimpGameApp.getRoundTimerLabels().add(timeLeftLbl);
+      timeLeftLbl.getStyleClass().add("time-label");
+      roundInfo.add(timeLeftLbl, 1, 0);
+
       Label titleLbl = new Label("Rules");
-      titleLbl.setPadding(new Insets(0, 0, 20, 0));
+      titleLbl.setPadding(new Insets(20, 0, 20, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
+
+      VBox titleContainer = new VBox();
+      titleContainer.setAlignment(Pos.CENTER);
+      titleContainer.getChildren().addAll(roundInfo, titleLbl);
+
+
       // Create the label with the game introduction
       Label rulesLbl = new Label(
           "Three players, Atari, BMI, and Commodore, own shrimp boats on an island and must catch"
@@ -361,7 +390,7 @@ public abstract class GameScreen {
       rulesScrollPane.setPrefHeight(450);
       rulesScrollPane.getStyleClass().add("scroll-pane");
 
-      content.getChildren().addAll(titleLbl, rulesScrollPane);
+      content.getChildren().addAll(titleContainer, rulesScrollPane);
       Image backgroundImage = new Image(
           shrimpGameApp.getClass().getResource("/images/rules.jpg").toExternalForm());
       BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
@@ -371,10 +400,27 @@ public abstract class GameScreen {
       content.setBackground(new Background(background));
     }
     else if (option.equals("Chat")) {
+      GridPane roundInfo = new GridPane();
+      roundInfo.setHgap(10);
+      roundInfo.setAlignment(Pos.CENTER);
+      roundInfo.setPadding(new Insets(20, 0, 0, 0));
+      Label roundTimeLbl = new Label("Round Time:");
+      roundTimeLbl.getStyleClass().add("time-label");
+      roundInfo.add(roundTimeLbl, 0, 0);
+
+      Label timeLeftLbl = new Label("Loading");
+      shrimpGameApp.getRoundTimerLabels().add(timeLeftLbl);
+      timeLeftLbl.getStyleClass().add("time-label");
+      roundInfo.add(timeLeftLbl, 1, 0);
+
       Label titleLbl = new Label("Chat");
       titleLbl.setPadding(new Insets(20, 0, 0, 0));
       titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
       titleLbl.getStyleClass().add("title-label");
+
+      VBox titleContainer = new VBox();
+      titleContainer.setAlignment(Pos.CENTER);
+      titleContainer.getChildren().addAll(roundInfo, titleLbl);
 
       String[] communicationRounds =
           shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
@@ -385,6 +431,7 @@ public abstract class GameScreen {
       if (commRoundNums.contains(shrimpGameApp.getGame().getCurrentRoundNum())) {
         VBox chatBox = new VBox();
         chatBox.setPadding(new Insets(30));
+        chatBox.setAlignment(Pos.CENTER);
 
         TextArea messageArea = new TextArea();
         messageArea.setWrapText(true);
@@ -440,9 +487,9 @@ public abstract class GameScreen {
           row++;
         }
 
-        chatBox.getChildren().addAll(chatScrollPane, inputBox);
+        chatBox.getChildren().addAll(chatScrollPane, inputBox, errorLbl);
 
-        content.getChildren().addAll(titleLbl, chatBox, errorLbl);
+        content.getChildren().addAll(titleContainer, chatBox);
       }
       else {
         // Create a GridPane with 2 columns
@@ -479,7 +526,7 @@ public abstract class GameScreen {
         grid.add(mayorImageView, 0, 0);
         grid.add(infoLblScrollPane, 1, 0);
 
-        content.getChildren().addAll(titleLbl, grid);
+        content.getChildren().addAll(titleContainer, grid);
       }
 
 

@@ -66,6 +66,9 @@ import org.example.userinterface.ShrimpPriceCalculationScreen;
 
 public class ShrimpGameApp extends Application {
   private Stage primaryStage;
+  public static final String VERSION = "1.7.0";
+  private static final String HOSTNAME = "35.228.211.136";
+  private static final int PORT = 8080;
   private Scene mainScreen;
   private Scene mainAdminScreen;
   private Scene createGameScreen;
@@ -100,7 +103,7 @@ public class ShrimpGameApp extends Application {
   private List<Lobby> lobbies;
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
-  public static final String VERSION = "1.6.9";
+  private List<Label> roundTimerLabels;
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -132,6 +135,7 @@ public class ShrimpGameApp extends Application {
     this.scoreboardTableViewInitialized = false;
     this.gameOverScoreboardTableviewInitialized = false;
     this.chatMessageGrid = new GridPane();
+    this.roundTimerLabels = new ArrayList<Label>();
     this.createUser();
     this.gameStarted = false;
     this.mainMenuScreenController = new MainMenuScreenController(this);
@@ -279,6 +283,10 @@ public class ShrimpGameApp extends Application {
 
   public GridPane getChatMessageGrid() {
     return this.chatMessageGrid;
+  }
+
+  public List<Label> getRoundTimerLabels() {
+    return this.roundTimerLabels;
   }
 
   public Lobby getSelectedLobby() {
@@ -451,7 +459,7 @@ public class ShrimpGameApp extends Application {
    */
   private String[] initServerConnection() {
     String[] input;
-    this.serverConnection = new ServerConnection("16.170.166.39", 8080);
+    this.serverConnection = new ServerConnection(HOSTNAME, PORT);
 
     try {
       this.serverConnection.connect();

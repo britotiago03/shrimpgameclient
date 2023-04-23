@@ -17,6 +17,7 @@ import org.example.userinterface.GameScreen;
  */
 public class Game {
   private final String name;
+  private Timer roundTimer;
   private final GameSettings settings;
   private final int number;
   private final Map<Integer, Round> rounds;
@@ -82,5 +83,15 @@ public class Game {
 
   public void setCurrentRoundNum(int currentRoundNum) {
     this.currentRoundNum = currentRoundNum;
+  }
+
+  public Timer getRoundTimer()
+  {
+    return this.roundTimer;
+  }
+
+  public void setRoundTimer(Timer roundTimer)
+  {
+    this.roundTimer = roundTimer;
   }
 }

@@ -12,6 +12,7 @@ public class GameSettings {
   private int numberOfRounds;
   private int roundTime;
   private String communicationRounds;
+  private int communicationRoundTime;
   private int minShrimpPounds;
   private int maxShrimpPounds;
 
@@ -25,11 +26,13 @@ public class GameSettings {
    * @param maxShrimpPounds the maximum amount of shrimp pounds that can be caught in a round.
    */
   public GameSettings(int numberOfPlayers, int numberOfRounds, int roundTime,
-                      String communicationRounds, int minShrimpPounds, int maxShrimpPounds) {
+                      String communicationRounds, int communicationRoundTime, int minShrimpPounds,
+                      int maxShrimpPounds) {
     this.numberOfPlayers = numberOfPlayers;
     this.numberOfRounds = numberOfRounds;
     this.roundTime = roundTime;
     this.communicationRounds = communicationRounds;
+    this.communicationRoundTime = communicationRoundTime;
     this.minShrimpPounds = minShrimpPounds;
     this.maxShrimpPounds = maxShrimpPounds;
   }
@@ -96,6 +99,16 @@ public class GameSettings {
   public void setCommunicationRounds(String communicationRounds)
   {
     this.communicationRounds = communicationRounds;
+  }
+
+  public int getCommunicationRoundTime()
+  {
+    return this.communicationRoundTime;
+  }
+
+  public void setCommunicationRoundTime(int communicationRoundTime)
+  {
+    this.communicationRoundTime = communicationRoundTime;
   }
 
   /**

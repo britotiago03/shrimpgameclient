@@ -41,9 +41,27 @@ public abstract class CatchShrimpScreen {
     catchShrimpScene.getStylesheets().add(
         shrimpGameApp.getClass().getResource("/css/catchShrimp.css").toExternalForm());
 
+    GridPane roundInfo = new GridPane();
+    roundInfo.setHgap(10);
+    roundInfo.setAlignment(Pos.CENTER);
+    roundInfo.setPadding(new Insets(20, 0, 20, 0));
+    Label roundTimeLbl = new Label("Round Time:");
+    roundTimeLbl.getStyleClass().add("time-label");
+    roundInfo.add(roundTimeLbl, 0, 0);
+
+    Label timeLeftLbl = new Label("Loading");
+    shrimpGameApp.getRoundTimerLabels().add(timeLeftLbl);
+    timeLeftLbl.getStyleClass().add("time-label");
+    roundInfo.add(timeLeftLbl, 1, 0);
+
     Label titleLbl = new Label("Catch Shrimp");
     titleLbl.setFont(Font.loadFont("file:/fonts/Helvetica.ttf", 24));
+    titleLbl.setPadding(new Insets(0, 0, 20, 0));
     titleLbl.getStyleClass().add("title-label");
+
+    VBox titleContainer = new VBox();
+    titleContainer.setAlignment(Pos.CENTER);
+    titleContainer.getChildren().addAll(roundInfo, titleLbl);
 
     // Create a GridPane with 2 columns
     GridPane grid = new GridPane();
@@ -67,6 +85,7 @@ public abstract class CatchShrimpScreen {
     catchShrimpLbl.setPadding(new Insets(20));
     catchShrimpLbl.getStyleClass().add("catch-shrimp-label");
     TextArea catchShrimpTextArea = new TextArea();
+    catchShrimpTextArea.setStyle("-fx-font-size: 35px; -fx-font-weight: bold");
     catchShrimpTextArea.setPrefHeight(50);
 
     Label errorLbl = new Label();
@@ -97,7 +116,7 @@ public abstract class CatchShrimpScreen {
     grid.add(mayorImage, 0, 0);
     grid.add(catchShrimpBox, 1, 0);
 
-    root.getChildren().addAll(titleLbl, grid, buttonsBox);
+    root.getChildren().addAll(titleContainer, grid, buttonsBox);
 
     // Set the background image
     Image backgroundImage = new Image(

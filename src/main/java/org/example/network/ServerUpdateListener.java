@@ -13,6 +13,7 @@ import org.example.logic.GameSettings;
 import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.logic.Round;
+import org.example.logic.Timer;
 import org.example.userinterface.GameScreen;
 
 public class ServerUpdateListener implements Runnable {
@@ -62,18 +63,23 @@ public class ServerUpdateListener implements Runnable {
               int numberOfRounds = Integer.parseInt(packetData[4]);
               int roundTime = Integer.parseInt(packetData[5]);
               String communicationRounds = packetData[6];
-              int minShrimp = Integer.parseInt(packetData[7]);
-              int maxShrimp = Integer.parseInt(packetData[8]);
-              int islandNum = Integer.parseInt(packetData[9]);
-              String gameName = packetData[10];
+              int communicationRoundTime = Integer.parseInt(packetData[7]);
+              int minShrimp = Integer.parseInt(packetData[8]);
+              int maxShrimp = Integer.parseInt(packetData[9]);
+              int islandNum = Integer.parseInt(packetData[10]);
+              String gameName = packetData[11];
               GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime,
-                                                           communicationRounds, minShrimp,
+                                                           communicationRounds,
+                                                           communicationRoundTime, minShrimp,
                                                            maxShrimp);
               Game game = new Game(gameName, gameSettings, players, islandNum);
               this.shrimpGameApp.setGameStarted(true);
               this.shrimpGameApp.setGame(game);
               this.shrimpGameApp.getLobbies().remove(this.shrimpGameApp.getSelectedLobby());
               this.shrimpGameApp.setSelectedLobby(null);
+
+              this.createRoundTimer();
+
               Platform.runLater(() ->
                                 {
                                   this.shrimpGameApp.updateLobbyTable(
@@ -82,6 +88,7 @@ public class ServerUpdateListener implements Runnable {
                                   this.shrimpGameApp.initGameScreens();
                                   this.shrimpGameApp.setScene(
                                       this.shrimpGameApp.getGameStartedScreen());
+                                  this.shrimpGameApp.getGame().getRoundTimer().start();
                                 });
               break;
 
@@ -135,6 +142,13 @@ public class ServerUpdateListener implements Runnable {
                                 {
                                   this.shrimpGameApp.setScene(
                                       this.shrimpGameApp.getShrimpCaughtSummaryScreen());
+                                  this.shrimpGameApp.getGame().getRoundTimer().stop();
+                                  if (this.shrimpGameApp.getGame().getCurrentRoundNum()
+                                      <= this.shrimpGameApp.getGame().getSettings().getNumberOfRounds())
+                                  {
+                                    this.createRoundTimer();
+                                    this.shrimpGameApp.getGame().getRoundTimer().start();
+                                  }
                                   this.shrimpGameApp.updateScoreboardTable(new ArrayList<>(
                                       this.shrimpGameApp.getGame().getRounds().values()));
                                 });
@@ -164,6 +178,27 @@ public class ServerUpdateListener implements Runnable {
       catch (IOException exception) {
         throw new RuntimeException("Failed to receive message from the server.");
       }
+    }
+  }
+
+  public void createRoundTimer()
+  {
+    this.shrimpGameApp.getGame().setRoundTimer(
+        new Timer(this.shrimpGameApp, this.shrimpGameApp.getRoundTimerLabels()));
+    String[] gameCommunicationRounds =
+        this.shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+    List<Integer> commRoundNums = new ArrayList<Integer>();
+    for (String communicationRound : gameCommunicationRounds) {
+      commRoundNums.add(Integer.parseInt(communicationRound));
+    }
+    if (commRoundNums.contains(this.shrimpGameApp.getGame().getCurrentRoundNum())) {
+      this.shrimpGameApp.getGame().getRoundTimer().setSecondsLeft(
+          this.shrimpGameApp.getGame().getRoundTimer().getSecondsLeft() + 60
+          + this.shrimpGameApp.getGame().getSettings().getCommunicationRoundTime());
+    }
+    else {
+      this.shrimpGameApp.getGame().getRoundTimer().setSecondsLeft(
+          this.shrimpGameApp.getGame().getRoundTimer().getSecondsLeft() + 60);
     }
   }
 }

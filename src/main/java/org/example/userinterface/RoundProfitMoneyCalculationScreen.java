@@ -136,7 +136,6 @@ public abstract class RoundProfitMoneyCalculationScreen {
                             {
                               if (RoundProfitMoneyCalculationScreen.allLabelsVisible)
                               {
-                                GameScreen.roundTimerCreated = false;
                                 RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
                                 shrimpGameApp.setAllPlayersCaughtShrimp(false);
                                 String[] communicationRounds =
@@ -212,7 +211,6 @@ public abstract class RoundProfitMoneyCalculationScreen {
                         {
                           if (RoundProfitMoneyCalculationScreen.allLabelsVisible)
                           {
-                            GameScreen.roundTimerCreated = false;
                             RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
                             shrimpGameApp.setAllPlayersCaughtShrimp(false);
                             String[] communicationRounds =

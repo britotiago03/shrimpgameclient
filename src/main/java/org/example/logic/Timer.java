@@ -10,9 +10,9 @@ import org.example.ShrimpGameApp;
 
 public class Timer {
   private int secondsLeft;
-  private ShrimpGameApp shrimpGameApp;
+  private final ShrimpGameApp shrimpGameApp;
   private Timeline timeline;
-  private int roundNum;
+  private final int roundNum;
 
   public Timer(ShrimpGameApp shrimpGameApp, List<Label> timeLabels) {
     this.shrimpGameApp = shrimpGameApp;
@@ -27,8 +27,7 @@ public class Timer {
       int minutes = this.secondsLeft / 60;
       int seconds = this.secondsLeft % 60;
       String timeLeftStr = String.format("%02d:%02d", minutes, seconds);
-      for (Label timeLeftLbl : timeLabels)
-      {
+      for (Label timeLeftLbl : timeLabels) {
         timeLeftLbl.setText(timeLeftStr);
       }
 
@@ -70,5 +69,17 @@ public class Timer {
 
   public int getSecondsLeft() {
     return secondsLeft;
+  }
+
+  public void setSecondsLeft(int secondsLeft) {
+    this.secondsLeft = secondsLeft;
+  }
+
+  public boolean isFinished() {
+    boolean isFinished = false;
+    if (this.secondsLeft == 0) {
+      isFinished = true;
+    }
+    return isFinished;
   }
 }

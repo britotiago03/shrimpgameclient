@@ -1,12 +1,10 @@
 package org.example.controllers;
 
-import java.util.Arrays;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import org.example.ShrimpGameApp;
 import org.example.userinterface.GameScreen;
 
@@ -57,11 +55,12 @@ public class CatchShrimpScreenController {
               successDialog.setHeaderText(null);
               successDialog.setContentText("Caught shrimp successfully!");
 
-              for (Label amountOfShrimpCaughtValueLbl : GameScreen.amountOfShrimpCaughtValueLbls)
+              for (Label amountOfShrimpCaughtValueLbl : GameScreen.amountOfShrimpCaughtValueLabels)
               {
                 amountOfShrimpCaughtValueLbl.setText(shrimpCaught + "kg");
               }
               catchShrimpTextArea.setText("");
+              errorLbl.setVisible(false);
               this.shrimpGameApp.addIconToDialog(successDialog);
               try {
                 Thread.sleep(500);
