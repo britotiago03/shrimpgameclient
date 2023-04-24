@@ -22,6 +22,9 @@ import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 
+/**
+ * This class represents the round profit money calculation screen of the Shrimp Game application.
+ */
 public abstract class RoundProfitMoneyCalculationScreen {
   private static int currentStep = 0;
   private static boolean allLabelsVisible = false;
@@ -32,11 +35,11 @@ public abstract class RoundProfitMoneyCalculationScreen {
   }
 
   /**
-   * Returns a Scene object representing the player money calculation screen of the Shrimp Game
-   * application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the round profit money calculation screen 
+   * of the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to get the game information.
-   * @return a Scene object representing the player money calculation screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the round profit money calculation screen.
    */
   public static Scene getRoundProfitMoneyCalculationScreen(ShrimpGameApp shrimpGameApp) {
     RoundProfitMoneyCalculationScreen.currentStep = 0;

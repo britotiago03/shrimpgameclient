@@ -1,11 +1,6 @@
 package org.example.userinterface;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,26 +16,25 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.example.ShrimpGameApp;
-import org.example.logic.Lobby;
 
 /**
- * The MainScreen abstract class represents the main screen of the Shrimp Game application. It
- * contains
- * a static method, getMainScreen(), which returns a Scene object representing the main screen.
- * This class is responsible for displaying the welcome message, providing buttons to join a game,
- * become an admin, and quit the game, and setting the background image of the main screen.
+ * The {@code MainScreen} abstract class represents the main screen of the Shrimp Game application. It
+ * contains a static method, {@link #getMainScreen()}, which returns a {@link javafx.scene.Scene Scene} 
+ * object representing the main screen. This class is responsible for displaying the welcome message, 
+ * providing buttons to join a game, become an admin, and quit the game, and setting the background image 
+ * of the main screen.
  *
  * @author Tiago Brito
  * @version 1.3.0
  * @since 2023-04-02
  */
 public abstract class MainScreen {
-
   /**
-   * Returns a Scene object representing the main screen of the Shrimp Game application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the main screen of 
+   * the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to set the scene and get other resources.
-   * @return a Scene object representing the main screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other resources.
+   * @return a {@code Scene} object representing the main screen.
    */
   public static Scene getMainScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();

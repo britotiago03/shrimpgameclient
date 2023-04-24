@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +23,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.example.controllers.CatchShrimpScreenController;
 import org.example.controllers.ChatScreenController;
 import org.example.controllers.CreateGameScreenController;
@@ -35,11 +33,9 @@ import org.example.logic.Game;
 import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.logic.Round;
-import org.example.logic.Timer;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.userinterface.CatchShrimpScreen;
-import org.example.userinterface.ChatScreenTest;
 import org.example.userinterface.CreateGameScreen;
 import org.example.userinterface.GameOverScreen;
 import org.example.userinterface.GameScreen;
@@ -55,15 +51,14 @@ import org.example.userinterface.ShrimpPriceCalculationScreen;
 
 /**
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
- * the JavaFX {@code Application} class and provides the main method for launching the
- * application. The class also manages the different scenes and controllers used in the
+ * the JavaFX {@link javafx.application.Application Application} class and provides the main method 
+ * for launching the application. The class also manages the different scenes and controllers used in the
  * application, as well as the server connection and executor service.
  *
  * @author Tiago Brito
  * @version 1.3.0
  * @since 2023-04-02
  */
-
 public class ShrimpGameApp extends Application {
   private Stage primaryStage;
   public static final String VERSION = "1.7.0";
@@ -109,7 +104,7 @@ public class ShrimpGameApp extends Application {
    * The {@code start} method is called when the application is launched. It initializes the main
    * scenes, controllers, and server connection, and sets the initial scene.
    *
-   * @param stage the primary stage for the application
+   * @param stage the primary stage for the application.
    */
   @Override
   public void start(Stage stage) {
@@ -157,7 +152,7 @@ public class ShrimpGameApp extends Application {
   /**
    * The primary method that launches the application.
    *
-   * @param args the command line arguments
+   * @param args the command line arguments.
    */
   public static void main(String[] args) {
     launch(args);
@@ -166,7 +161,7 @@ public class ShrimpGameApp extends Application {
   /**
    * Adds the Shrimp Game icon to the given dialog.
    *
-   * @param dialog the dialog to add the icon to
+   * @param dialog the dialog to add the icon to.
    */
   public void addIconToDialog(Dialog dialog) {
     Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
@@ -177,16 +172,16 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the ServerConnection object that is used to communicate with the server.
    *
-   * @return the ServerConnection object
+   * @return the ServerConnection object.
    */
   public ServerConnection getServerConnection() {
-    return serverConnection;
+    return this.serverConnection;
   }
 
   /**
    * Returns the TableView of the JoinGameScene that displays the lobbies available to join.
    *
-   * @return the TableView
+   * @return the TableView that displays the lobbies available to join.
    */
   public TableView<Lobby> getJoinGameLobbyTableView() {
     return this.joinGameLobbyTableView;
@@ -195,51 +190,71 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the TableView of the JoinedGameScene that displays the lobbies available to join.
    *
-   * @return the TableView
+   * @return the TableView that displays the lobbies available to join.
    */
   public TableView<Lobby> getJoinedGameLobbyTableView() {
     return this.joinedGameLobbyTableView;
   }
 
+  /**
+   * Returns the TableView of the scoreboard.
+   *
+   * @return the TableView of the scoreboard.
+   */
   public TableView<Round> getScoreboardTableview() {
     return this.scoreboardTableview;
   }
 
+  /**
+   * Returns the TableView of the game over scoreboard.
+   *
+   * @return the TableView of the game over scoreboard.
+   */
   public TableView<Round> getGameOverScoreboardTableview() {
     return this.gameOverScoreboardTableview;
   }
 
   /**
-   * Returns the MainMenuScreenController object that manages the main menu screen.
+   * Returns the {@code MainMenuScreenController} object that manages the main menu screen.
    *
-   * @return the MainMenuScreenController object
+   * @return the {@code MainMenuScreenController} object.
    */
   public MainMenuScreenController getMainMenuScreenController() {
     return this.mainMenuScreenController;
   }
 
   /**
-   * Returns the CreateGameScreenController object that manages the create game screen.
+   * Returns the {@code CreateGameScreenController} object that manages the create game screen.
    *
-   * @return the CreateGameScreenController object
+   * @return the {@code CreateGameScreenController} object.
    */
   public CreateGameScreenController getCreateGameScreenController() {
     return this.createGameScreenController;
   }
 
   /**
-   * Returns the JoinGameScreenController object that manages the join game screen.
+   * Returns the {@code JoinGameScreenController} object that manages the join game screen.
    *
-   * @return the JoinGameScreenController object
+   * @return the {@code JoinGameScreenController} object.
    */
   public JoinGameScreenController getJoinGameScreenController() {
     return this.joinGameScreenController;
   }
 
+  /**
+   * Returns the {@code CatchShrimpScreenController} object that manages the catch shrimp screen.
+   *
+   * @return the {@code CatchShrimpScreenController} object.
+   */
   public CatchShrimpScreenController getCatchShrimpScreenController() {
     return this.catchShrimpScreenController;
   }
 
+  /**
+   * Returns the {@code ChatScreenController} object that manages the chat screen.
+   *
+   * @return the {@code ChatScreenController} object.
+   */
   public ChatScreenController getChatScreenController() {
     return this.chatScreenController;
   }
@@ -248,39 +263,91 @@ public class ShrimpGameApp extends Application {
     return this.gameOverScreenController;
   }
 
+  /**
+   * Returns a {@code boolean} value based on whether the game has started or not.
+   * 
+   * @return {@code true} if the game has started, or {@code false} if it has not.
+   */
   public boolean isGameStarted() {
     return this.gameStarted;
   }
 
+  /**
+   * Sets a {@code boolean} value based on whether the game has started or not.
+   * 
+   * @param gameStarted a {@code boolean} value that is either {@code true} if the 
+   * game has started, or {@code false} if it has not.
+   */
   public void setGameStarted(boolean gameStarted) {
     this.gameStarted = gameStarted;
   }
 
+  /**
+   * Returns a {@code boolean} value based on whether all players have caught shrimp or not.
+   * 
+   * @return {@code true} if all players have caught shrimp, or {@code false} if they have not.
+   */
   public boolean allPlayersCaughtShrimp() {
     return this.allPlayersCaughtShrimp;
   }
 
+  /**
+   * Sets a {@code boolean} value based on whether all players have caught shrimp or not.
+   *
+   * @param allPlayersCaughtShrimp a {@code boolean} value that is either {@code true} if all 
+   * players have caught shrimp, or {@code false} if they have not.
+   */
   public void setAllPlayersCaughtShrimp(boolean allPlayersCaughtShrimp) {
     this.allPlayersCaughtShrimp = allPlayersCaughtShrimp;
   }
 
+  /**
+   * Returns a {@code boolean} value based on whether the scoreboard table view is initialized or not.
+   * 
+   * @return {@code true} if the scoreboard table view is initialized, or {@code false} if it is not.
+   */
   public boolean isScoreboardTableViewInitialized() {
     return this.scoreboardTableViewInitialized;
   }
 
+  /**
+   * Sets a {@code boolean} value based on whether the scoreboard table view is initialized or not.
+   * 
+   * @param scoreboardTableViewInitialized a {@code boolean} value that is either {@code true} if 
+   * the scoreboard table view is initialized, or {@code false} if it is not.
+   */
   public void setScoreboardTableViewInitialized(boolean scoreboardTableViewInitialized) {
     this.scoreboardTableViewInitialized = scoreboardTableViewInitialized;
   }
 
+  /**
+   * Returns a {@code boolean} value based on whether the game over scoreboard table 
+   * view is initialized or not.
+   * 
+   * @return {@code true} if the game over scoreboard table view is initialized, 
+   * or {@code false} if it is not.
+   */
   public boolean isGameOverScoreboardTableviewInitialized() {
     return this.gameOverScoreboardTableviewInitialized;
   }
 
+  /**
+   * Sets a {@code boolean} value based on whether the game over scoreboard table 
+   * view is initialized or not.
+   * 
+   * @param gameOverScoreboardTableviewInitialized a {@code boolean} value that is either 
+   * {@code true} if the game over scoreboard table view is initialized, or {@code false} if it is not.
+   */
   public void setGameOverScoreboardTableviewInitialized(
       boolean gameOverScoreboardTableviewInitialized) {
     this.gameOverScoreboardTableviewInitialized = gameOverScoreboardTableviewInitialized;
   }
 
+  /**
+   * Gets the chat message {@code GridPane}.
+   * 
+   * @return the chat message {@code GridPane}.
+   */
   public GridPane getChatMessageGrid() {
     return this.chatMessageGrid;
   }
@@ -289,18 +356,28 @@ public class ShrimpGameApp extends Application {
     return this.roundTimerLabels;
   }
 
+  /**
+   * Gets the selected {@code Lobby}.
+   * 
+   * @return the selected {@code Lobby}.
+   */
   public Lobby getSelectedLobby() {
     return this.selectedLobby;
   }
 
+  /**
+   * Sets the selected {@code Lobby}.
+   * 
+   * @param selectedLobby the selected {@code Lobby}.
+   */
   public void setSelectedLobby(Lobby selectedLobby) {
     this.selectedLobby = selectedLobby;
   }
 
   /**
-   * Sets the primary stage to display the given scene.
+   * Sets the primary stage to display a specified scene.
    *
-   * @param scene the scene to display
+   * @param scene the scene to display.
    */
   public void setScene(Scene scene) {
     Platform.runLater(() ->
@@ -316,9 +393,11 @@ public class ShrimpGameApp extends Application {
                         this.primaryStage.setMinWidth(700);
                         this.primaryStage.show();
                       });
-
   }
 
+  /**
+   * Creates a user.
+   */
   public void createUser() {
     try {
       String[] input = this.initServerConnection();
@@ -338,23 +417,47 @@ public class ShrimpGameApp extends Application {
     }
   }
 
+  /**
+   * Gets the user.
+   * 
+   * @return the user.
+   */
   public User getUser() {
     return this.user;
   }
 
+  /**
+   * Gets the game.
+   * 
+   * @return the game.
+   */
   public Game getGame() {
-
     return this.game;
   }
 
+  /**
+   * Sets the game.
+   * 
+   * @param game the game to set.
+   */
   public void setGame(Game game) {
     this.game = game;
   }
 
+  /**
+   * Gets the {@link List} of lobbies.
+   * 
+   * @return a {@code List} of lobbies.
+   */
   public List<Lobby> getLobbies() {
     return this.lobbies;
   }
 
+  /**
+   * Sets the {@link List} of lobbies.
+   * 
+   * @param lobbies the {@code List} of lobbies to set.
+   */
   public void setLobbies(List<Lobby> lobbies) {
     this.lobbies = lobbies;
   }
@@ -363,7 +466,7 @@ public class ShrimpGameApp extends Application {
    * Returns the main scene, which is either the admin main scene or the regular main scene,
    * depending on whether the user is an admin or not.
    *
-   * @return the main scene
+   * @return the main scene.
    */
   public Scene getMainScreen() {
     Scene mainScene = null;
@@ -379,7 +482,7 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the join game scene.
    *
-   * @return the join game scene
+   * @return the join game scene.
    */
   public Scene getJoinGameScreen() {
     return this.joinGameScreen;
@@ -388,7 +491,7 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the create game scene.
    *
-   * @return the create game scene
+   * @return the create game scene.
    */
   public Scene getCreateGameScreen() {
     return this.createGameScreen;
@@ -397,7 +500,7 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the joined game scene.
    *
-   * @return the joined game scene
+   * @return the joined game scene.
    */
   public Scene getJoinedGameScreen() {
     return this.joinedGameScreen;
@@ -406,7 +509,7 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the game tutorial scene.
    *
-   * @return the game tutorial scene
+   * @return the game tutorial scene.
    */
   public Scene getGameTutorialScreen() {
     return this.gameTutorialScreen;
@@ -415,47 +518,82 @@ public class ShrimpGameApp extends Application {
   /**
    * Returns the game started scene.
    *
-   * @return the game tutorial scene.
+   * @return the game started scene.
    */
   public Scene getGameStartedScreen() {
     return this.gameStartedScreen;
   }
 
+  /**
+   * Returns the game scene.
+   *
+   * @return the game scene.
+   */
   public Scene getGameScreen() {
     return this.gameScreen;
   }
 
+  /**
+   * Returns the game caught shrimp scene.
+   *
+   * @return the game caught shrimp scene.
+   */
   public Scene getGameCaughtShrimpScreen() {
     return this.gameCaughtShrimpScreen;
   }
 
+  /**
+   * Returns the catch shrimp scene.
+   *
+   * @return the catch shrimp scene.
+   */
   public Scene getCatchShrimpScreen() {
     return this.catchShrimpScreen;
   }
 
+  /**
+   * Returns the shrimp caught summary scene.
+   *
+   * @return the shrimp caught summary scene.
+   */
   public Scene getShrimpCaughtSummaryScreen() {
     return this.shrimpCaughtSummaryScreen;
   }
 
+  /**
+   * Returns the shrimp price calculation scene.
+   *
+   * @return the shrimp price calculation scene.
+   */
   public Scene getShrimpPriceCalculationScreen() {
     return this.shrimpPriceCalculationScreen;
   }
 
+  /**
+   * Returns the round profit money calculation scene.
+   *
+   * @return the round profit money calculation scene.
+   */
   public Scene getRoundProfitMoneyCalculationScreen() {
     return this.roundProfitMoneyCalculationScreen;
   }
 
+  /**
+   * Returns the game over scene.
+   *
+   * @return the game over scene.
+   */
   public Scene getGameOverScreen() {
     return this.gameOverScreen;
   }
 
   /**
    * Initializes the server connection to the game server.
-   * Returns an array containing the username and whether the user is an admin or not.
-   * If the initialization fails, a runtime exception is thrown.
+   * Returns a primitive String array containing the username and whether the user is an admin or not.
+   * If the initialization fails, a {@link RuntimeException} is thrown.
    *
-   * @return an array containing the username and whether the user is an admin or not
-   * @throws RuntimeException if the server connection fails to initialize
+   * @return a primitive array containing the username and whether the user is an admin or not.
+   * @throws RuntimeException if the server connection fails to initialize.
    */
   private String[] initServerConnection() {
     String[] input;
@@ -478,7 +616,7 @@ public class ShrimpGameApp extends Application {
    * Sets the table view for the lobby. The table view contains two columns: one for the lobby name,
    * and one for the number of players currently in the lobby.
    *
-   * @param lobbyTableView the table view for the lobby
+   * @param lobbyTableView the table view for the lobby.
    */
   public void setLobbyTableView(TableView<Lobby> lobbyTableView) {
     TableColumn<Lobby, String> lobbyNameCol = new TableColumn<>("Lobby");
@@ -523,15 +661,24 @@ public class ShrimpGameApp extends Application {
     List<Lobby> lobbies = this.getServerConnection().getExistingLobbies();
     ObservableList<Lobby> observableLobbies = FXCollections.observableArrayList(lobbies);
     lobbyTableView.setItems(observableLobbies);
-
   }
 
+  /**
+   * Updates the lobby table.
+   * 
+   * @param lobbies the lobbies to update the table with.
+   */
   public void updateLobbyTable(List<Lobby> lobbies) {
     ObservableList<Lobby> observableLobbies = FXCollections.observableArrayList(lobbies);
     this.joinGameLobbyTableView.setItems(observableLobbies);
     this.joinedGameLobbyTableView.setItems(observableLobbies);
   }
 
+  /**
+   * Sets the scoreboard table view.
+   * 
+   * @param scoreboardTableView the scoreboard to set to the table.
+   */
   public void setScoreboardTableView(TableView<Round> scoreboardTableView) {
     TableColumn<Round, String> roundNumberCol = new TableColumn<>("Rounds");
     roundNumberCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -733,12 +880,20 @@ public class ShrimpGameApp extends Application {
     });
   }
 
+  /**
+   * Updates the scoreboard table.
+   * 
+   * @param rounds the rounds to update the table with.
+   */
   public void updateScoreboardTable(List<Round> rounds) {
     ObservableList<Round> observableRounds = FXCollections.observableArrayList(rounds);
     this.scoreboardTableview.setItems(observableRounds);
     this.gameOverScoreboardTableview.setItems(observableRounds);
   }
 
+  /**
+   * Resets the scoreboard and game over scoreboard tables.
+   */
   public void resetScoreboardTables() {
     this.scoreboardTableview = new TableView<Round>();
     this.gameOverScoreboardTableview = new TableView<Round>();
@@ -746,6 +901,11 @@ public class ShrimpGameApp extends Application {
     this.setGameOverScoreboardTableviewInitialized(false);
   }
 
+  /**
+   * Updates the chat message grid.
+   * 
+   * @param messages a {@link List} of messages to update the chat message grid with.
+   */
   public void updateChatMessageGrid(List<String> messages) {
     this.chatMessageGrid.getChildren().clear();
     Collections.reverse(messages);
@@ -768,6 +928,9 @@ public class ShrimpGameApp extends Application {
     }
   }
 
+  /**
+   * Initializes the game screens.
+   */
   public void initGameScreens() {
     this.gameStartedScreen = GameStartedScreen.getGameStartedScene(this);
     this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
@@ -776,6 +939,9 @@ public class ShrimpGameApp extends Application {
     this.gameOverScreen = GameOverScreen.getGameOverScreen(this);
   }
 
+  /**
+   * Initializes round results screens.
+   */
   public void initRoundResultsScreens() {
     this.shrimpCaughtSummaryScreen = ShrimpCaughtSummaryScreen.getShrimpCaughtSummaryScreen(this);
     this.shrimpPriceCalculationScreen =
@@ -783,5 +949,4 @@ public class ShrimpGameApp extends Application {
     this.roundProfitMoneyCalculationScreen =
         RoundProfitMoneyCalculationScreen.getRoundProfitMoneyCalculationScreen(this);
   }
-
 }

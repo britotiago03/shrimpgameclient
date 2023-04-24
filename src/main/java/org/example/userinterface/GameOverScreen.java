@@ -1,6 +1,5 @@
 package org.example.userinterface;
 
-import java.util.ArrayList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,7 +19,17 @@ import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.logic.Round;
 
+/**
+ * This class represents the game over screen of the Shrimp Game application.
+ */
 public abstract class GameOverScreen {
+  /**
+   * Returns a {@link javafx.scene.Scene Scene} object representing the game over screen 
+   * of the Shrimp Game application.
+   *
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the game over screen.
+   */
   public static Scene getGameOverScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);

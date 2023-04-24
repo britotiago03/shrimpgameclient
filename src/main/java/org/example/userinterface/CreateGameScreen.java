@@ -13,7 +13,6 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -33,12 +32,11 @@ import org.example.ShrimpGameApp;
 public abstract class CreateGameScreen {
 
   /**
-   * Returns a new Scene representing the Create Game screen, with various input fields allowing
-   * the user
-   * to customize the game lobby settings.
+   * Returns a new {@link javafx.scene.Scene Scene} representing the Create Game screen, 
+   * with various input fields allowing the user to customize the game lobby settings.
    *
-   * @param shrimpGameApp The instance of the ShrimpGameApp class representing the application.
-   * @return A new Scene representing the Create Game screen.
+   * @param shrimpGameApp The instance of the {@link ShrimpGameApp} class representing the application.
+   * @return A new {@code Scene} representing the Create Game screen.
    */
   public static Scene getCreateGameScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();

@@ -3,9 +3,9 @@ package org.example.logic;
 /**
  * The GameSettings class represents the settings of a game.
  * <p>
- * It contains information such as the number of players, number of rounds,
- * <p>
- * round time, minimum shrimp pounds to catch, and maximum shrimp pounds to catch.
+ * It contains information such as the number of players, number of rounds, round time, 
+ * communication rounds, communication round time minimum shrimp kilograms to catch, and 
+ * maximum shrimp kilograms to catch.
  */
 public class GameSettings {
   private int numberOfPlayers;
@@ -13,8 +13,8 @@ public class GameSettings {
   private int roundTime;
   private String communicationRounds;
   private int communicationRoundTime;
-  private int minShrimpPounds;
-  private int maxShrimpPounds;
+  private int minShrimpKilograms;
+  private int maxShrimpKilograms;
 
   /**
    * Constructor for the GameSettings class.
@@ -22,19 +22,20 @@ public class GameSettings {
    * @param numberOfPlayers the number of players in the game.
    * @param numberOfRounds  the number of rounds in the game.
    * @param roundTime       the time (in seconds) for each round.
-   * @param minShrimpPounds the minimum amount of shrimp pounds that can be caught in a round.
-   * @param maxShrimpPounds the maximum amount of shrimp pounds that can be caught in a round.
+   * @param minShrimpKilograms the minimum amount of shrimp kilograms that can be caught in a round.
+   * @param maxShrimpKilograms the maximum amount of shrimp kilograms that can be caught in a round.
+   * @throws IllegalArgumentException if any of the provided parameters are invalid.
    */
   public GameSettings(int numberOfPlayers, int numberOfRounds, int roundTime,
-                      String communicationRounds, int communicationRoundTime, int minShrimpPounds,
-                      int maxShrimpPounds) {
-    this.numberOfPlayers = numberOfPlayers;
-    this.numberOfRounds = numberOfRounds;
-    this.roundTime = roundTime;
-    this.communicationRounds = communicationRounds;
+                      String communicationRounds, int communicationRoundTime, int minShrimpKilograms,
+                      int maxShrimpKilograms) {
+    this.setNumberOfPlayers(numberOfPlayers);
+    this.setNumberOfRounds(numberOfRounds);
+    this.setRoundTime(roundTime);
+    this.setCommunicationRounds(communicationRounds);
     this.communicationRoundTime = communicationRoundTime;
-    this.minShrimpPounds = minShrimpPounds;
-    this.maxShrimpPounds = maxShrimpPounds;
+    this.setMinShrimpKilograms(minShrimpKilograms);
+    this.setMaxShrimpKilograms(maxShrimpKilograms);
   }
 
   /**
@@ -49,9 +50,13 @@ public class GameSettings {
   /**
    * Setter for the number of players in the game.
    *
-   * @param numberOfPlayers the number of players in the game.
+   * @param numberOfPlayers the number of players in the game. Must be a value of {@code 0} or greater.
+   * @throws IllegalArgumentException if the number of players provided is less than {@code 0}.
    */
-  public void setNumberOfPlayers(int numberOfPlayers) {
+  private void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
+    if (numberOfPlayers < 0) {
+      throw new IllegalArgumentException("number of players cannot be less than 0");
+    }
     this.numberOfPlayers = numberOfPlayers;
   }
 
@@ -67,9 +72,13 @@ public class GameSettings {
   /**
    * Setter for the number of rounds in the game.
    *
-   * @param numberOfRounds the number of rounds in the game.
+   * @param numberOfRounds the number of rounds in the game. Must be a value of {@code 1} or greater.
+   * @throws IllegalArgumentException if the number of rounds provided is less than {@code 1}. 
    */
-  public void setNumberOfRounds(int numberOfRounds) {
+  private void setNumberOfRounds(int numberOfRounds) throws IllegalArgumentException {
+    if (numberOfRounds < 1) {
+      throw new IllegalArgumentException("number of rounds cannot be less than 1");
+    }
     this.numberOfRounds = numberOfRounds;
   }
 
@@ -86,18 +95,36 @@ public class GameSettings {
    * Setter for the time (in seconds) for each round.
    *
    * @param roundTime the time (in seconds) for each round.
+   * @throws IllegalArgumentException if the round time provided is less than {@code 0}.
    */
-  public void setRoundTime(int roundTime) {
+  private void setRoundTime(int roundTime) throws IllegalArgumentException {
+    if (roundTime < 0) {
+      throw new IllegalArgumentException("round time cannot be less than 0");
+    }
     this.roundTime = roundTime;
   }
 
+  /**
+   * Gets the communication rounds.
+   * 
+   * @return the communication rounds.
+   */
   public String getCommunicationRounds()
   {
     return this.communicationRounds;
   }
 
-  public void setCommunicationRounds(String communicationRounds)
+  /**
+   * Sets the communication rounds.
+   * 
+   * @param communicationRounds the communication rounds.
+   * @throws IllegalArgumentException if the communication rounds provided is set to {@code null}.
+   */
+  private void setCommunicationRounds(String communicationRounds) throws IllegalArgumentException
   {
+    if (communicationRounds   == null) {
+      throw new IllegalArgumentException("communication rounds cannot be set to null");
+    }
     this.communicationRounds = communicationRounds;
   }
 
@@ -112,38 +139,46 @@ public class GameSettings {
   }
 
   /**
-   * Getter for the minimum amount of shrimp pounds that can be caught in a round.
+   * Getter for the minimum amount of shrimp kilograms that can be caught in a round.
    *
-   * @return the minimum amount of shrimp pounds that can be caught in a round.
+   * @return the minimum amount of shrimp kilograms that can be caught in a round.
    */
-  public int getMinShrimpPounds() {
-    return this.minShrimpPounds;
+  public int getMinShrimpKilograms() {
+    return this.minShrimpKilograms;
   }
 
   /**
-   * Setter for the minimum amount of shrimp pounds that can be caught in a round.
+   * Setter for the minimum amount of shrimp kilograms that can be caught in a round.
    *
-   * @param minShrimpPounds the minimum amount of shrimp pounds that can be caught in a round.
+   * @param minShrimpKilograms the minimum amount of shrimp kilograms that can be caught in a round.
+   * @throws IllegalArgumentException if the minimum shrimp kilograms provided is less than {@code 0}.
    */
-  public void setMinShrimpPounds(int minShrimpPounds) {
-    this.minShrimpPounds = minShrimpPounds;
+  private void setMinShrimpKilograms(int minShrimpKilograms) throws IllegalArgumentException {
+    if (minShrimpKilograms < 0) {
+      throw new IllegalArgumentException("minimum shrimp kilograms cannot be less than 0");
+    }
+    this.minShrimpKilograms = minShrimpKilograms;
   }
 
   /**
-   * Getter for the maximum amount of shrimp pounds that can be caught in a round.
+   * Getter for the maximum amount of shrimp kilograms that can be caught in a round.
    *
-   * @return the maximum amount of shrimp pounds that can be caught in a round.
+   * @return the maximum amount of shrimp kilograms that can be caught in a round.
    */
-  public int getMaxShrimpPounds() {
-    return this.maxShrimpPounds;
+  public int getMaxShrimpKilograms() {
+    return this.maxShrimpKilograms;
   }
 
   /**
-   * Sets the maximum number of shrimp pounds that can be caught in a round.
+   * Sets the maximum number of shrimp kilograms that can be caught in a round.
    *
-   * @param maxShrimpPounds the maximum number of shrimp pounds that can be caught in a round.
+   * @param maxShrimpKilograms the maximum number of shrimp kilograms that can be caught in a round.
+   * @throws IllegalArgumentException if the maximum shrimp kilograms provided is less than {@code 0}.
    */
-  public void setMaxShrimpPounds(int maxShrimpPounds) {
-    this.maxShrimpPounds = maxShrimpPounds;
+  private void setMaxShrimpKilograms(int maxShrimpKilograms) throws IllegalArgumentException {
+    if (maxShrimpKilograms < 0) {
+      throw new IllegalArgumentException("maximum shrimp kilograms cannot be less than 0");
+    }
+    this.maxShrimpKilograms = maxShrimpKilograms;
   }
 }

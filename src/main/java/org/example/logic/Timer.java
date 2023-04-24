@@ -38,7 +38,7 @@ public class Timer {
           try {
             if (!this.shrimpGameApp.getGame().getPlayers().get(
                 this.shrimpGameApp.getUser().getName()).hasCaughtShrimp()) {
-              int minShrimpKg = this.shrimpGameApp.getGame().getSettings().getMinShrimpPounds();
+              int minShrimpKg = this.shrimpGameApp.getGame().getSettings().getMinShrimpKilograms();
               this.shrimpGameApp.getServerConnection().sendCatchShrimpRequest(minShrimpKg);
               this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
                                 .setShrimpCaught(minShrimpKg);

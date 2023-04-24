@@ -27,9 +27,8 @@ public class JoinGameScreenController {
   }
 
   /**
-   * Handles the join button click event. Sends a join lobby request to the server and updates the
-   * <p>
-   * UI accordingly.
+   * Handles the "Join" button being pressed. 
+   * Sends a join lobby request to the server and updates the UI accordingly.
    *
    * @param selectedLobby the selected lobby object
    */

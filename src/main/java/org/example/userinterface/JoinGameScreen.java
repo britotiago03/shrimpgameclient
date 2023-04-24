@@ -1,11 +1,5 @@
 package org.example.userinterface;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -26,26 +20,22 @@ import org.example.ShrimpGameApp;
 import org.example.logic.Lobby;
 
 /**
- * The JoinGameScreen abstract class represents the screen for users to join a game lobby in the
- * Shrimp Game
- * application. It contains a static method, getJoinGameScreen(), which returns a Scene object
- * representing
- * the join game screen. This class is responsible for displaying the lobby list, providing a
- * button to join a
- * selected lobby, and setting the background image of the join game screen.
+ * The {@code JoinGameScreen} abstract class represents the screen for users to join a game lobby in the
+ * Shrimp Game application. It contains a static method, {@link #getJoinGameScreen()}, which returns a Scene object
+ * representing the join game screen. This class is responsible for displaying the lobby list, providing a
+ * button to join a selected lobby, and setting the background image of the join game screen.
  *
  * @author Tiago Brito
  * @version 1.3.0
  * @since 2023-04-02
  */
 public abstract class JoinGameScreen {
-
   /**
-   * Returns a Scene object representing the screen for users to join a game lobby in the Shrimp
-   * Game application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the screen for users to join a game lobby 
+   * in the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to set the scene and get other resources.
-   * @return a Scene object representing the join game screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other resources.
+   * @return a {@code Scene} object representing the join game screen.
    */
   public static Scene getJoinGameScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();

@@ -2,12 +2,10 @@ package org.example.logic;
 
 /**
  * The Player class represents a player in the game. It contains information about the player
- * such as name,
- * <p>
- * money, expenses, island and shrimp pounds caught.
+ * such as name, money, expenses and shrimp kilograms caught.
  */
 public class Player {
-  private final String name;
+  private String name;
   private int previousTotalMoney;
   private int currentTotalMoney;
   private int roundProfit;
@@ -15,14 +13,14 @@ public class Player {
   private int shrimpCaught;
 
   /**
-   * Constructor for creating a Player object with the given name, money, expenses, island and
-   * shrimp pounds caught.
+   * Constructor for creating a Player object with a specified name and expenses.
    *
-   * @param name     The name of the player.
-   * @param expenses The total expenses of the player.
+   * @param name     the name of the player.
+   * @param expenses the total expenses of the player.
+   * @throws IllegalArgumentException if any of the parameters provided are invalid.
    */
-  public Player(String name, int expenses) {
-    this.name = name;
+  public Player(String name, int expenses) throws IllegalArgumentException {
+    this.setName(name);
     this.previousTotalMoney = 0;
     this.currentTotalMoney = 0;
     this.roundProfit = 0;
@@ -30,8 +28,15 @@ public class Player {
     this.shrimpCaught = -1;
   }
 
-  public Player(Player player) {
-    this.name = player.getName();
+  /**
+   * Constructor for copying a {@code Player} object.
+   * 
+   * @param player the {@code Player} to copy from.
+   * @throws IllegalArgumentException if any of the parameters provided are invalid.
+   */
+  public Player(Player player) throws IllegalArgumentException
+  {
+    setName(player.getName());
     this.previousTotalMoney = player.getPreviousTotalMoney();
     this.currentTotalMoney = player.getCurrentTotalMoney();
     this.roundProfit = player.getRoundProfit();
@@ -39,6 +44,24 @@ public class Player {
     this.shrimpCaught = player.getShrimpCaught();
   }
 
+  /**
+   * Sets the name of the player.
+   * 
+   * @param name the name to assign to the player.
+   * @throws IllegalArgumentException if the name provided is {@code null}.
+   */
+  private void setName(String name) throws IllegalArgumentException {
+    if (name == null) {
+      throw new IllegalArgumentException("name cannot be set to null");
+    }
+    this.name = name;
+  }
+
+  /**
+   * Gets the name of the player.
+   * 
+   * @return the name of the player.
+   */
   public String getName() {
     return this.name;
   }
@@ -46,7 +69,7 @@ public class Player {
   /**
    * Returns the amount of money the player has.
    *
-   * @return The amount of money the player has.
+   * @return the amount of money the player has.
    */
   public int getPreviousTotalMoney() {
     return this.previousTotalMoney;
@@ -60,18 +83,38 @@ public class Player {
     this.previousTotalMoney = previousTotalMoney;
   }
 
+  /**
+   * Gets the current total amount of money the player has.
+   * 
+   * @return the current amount of money.
+   */
   public int getCurrentTotalMoney() {
     return this.currentTotalMoney;
   }
 
+  /**
+   * Sets the current total amount of money the player has.
+   * 
+   * @param currentTotalMoney the current total amount of money.
+   */
   public void setCurrentTotalMoney(int currentTotalMoney) {
     this.currentTotalMoney = currentTotalMoney;
   }
 
+  /**
+   * Gets the round profit of the player.
+   * 
+   * @return the round profit of the player.
+   */
   public int getRoundProfit() {
     return this.roundProfit;
   }
 
+  /**
+   * Sets the round profit of the player.
+   * 
+   * @param roundProfit the round profit of the player.
+   */
   public void setRoundProfit(int roundProfit) {
     this.roundProfit = roundProfit;
   }
@@ -79,7 +122,7 @@ public class Player {
   /**
    * Returns the total expenses of the player.
    *
-   * @return The total expenses of the player.
+   * @return the total expenses of the player.
    */
   public int getExpenses() {
     return this.expenses;
@@ -88,25 +131,25 @@ public class Player {
   /**
    * Sets the total expenses of the player.
    *
-   * @param expenses The total expenses of the player.
+   * @param expenses the total expenses of the player.
    */
   public void setExpenses(int expenses) {
     this.expenses = expenses;
   }
 
   /**
-   * Returns the total amount of shrimp pounds caught by the player.
+   * Gets the total amount of shrimp caught by the player.
    *
-   * @return The total amount of shrimp pounds caught by the player.
+   * @return the total amount of shrimp caught by the player.
    */
   public int getShrimpCaught() {
     return this.shrimpCaught;
   }
 
   /**
-   * Sets the total amount of shrimp pounds caught by the player.
+   * Sets the total amount of shrimp caught by the player.
    *
-   * @param shrimpCaught The total amount of shrimp pounds caught by the player.
+   * @param shrimpCaught The total amount of shrimp caught by the player.
    */
   public void setShrimpCaught(int shrimpCaught) {
     this.shrimpCaught = shrimpCaught;
@@ -123,15 +166,15 @@ public class Player {
   /**
    * Calculates the profit of the player based on the price of shrimp and the expenses incurred.
    *
-   * @param shrimpPrice the price of shrimp per pound
-   * @return the calculated profit of the player
+   * @param shrimpPrice the price of shrimp per kilogram.
+   * @return the calculated profit of the player.
    */
   public int calculateProfit(int shrimpPrice) {
     return (this.shrimpCaught * shrimpPrice) - this.expenses;
   }
 
   /**
-   * Resets the shrimp pounds caught and expenses of the player to 0.
+   * Resets the shrimp kilograms caught and expenses of the player to 0.
    */
   public void resetStats() {
     this.shrimpCaught = 0;

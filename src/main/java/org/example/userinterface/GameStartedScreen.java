@@ -25,13 +25,16 @@ import org.example.ShrimpGameApp;
 import org.example.logic.Game;
 import org.example.logic.Player;
 
+/**
+ * This class represents the game started screen of the Shrimp Game application.
+ */
 public abstract class GameStartedScreen {
-
   /**
-   * Returns a Scene object representing the game started screen of the Shrimp Game application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the game started screen 
+   * of the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to get the game information.
-   * @return a Scene object representing the game started screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the game started screen.
    */
   public static Scene getGameStartedScene(ShrimpGameApp shrimpGameApp) {
     Game game = shrimpGameApp.getGame();
@@ -76,8 +79,8 @@ public abstract class GameStartedScreen {
         + ".\n\nDuring each round, you must decide how much shrimp you want to catch this round "
         + "within the time limit.\n\n If you fail to decide how much shrimp you want to catch "
         + "before the time limit, you will automatically catch the minimum amount of shrimp.\n\n "
-        + "You can catch a minimum of " + game.getSettings().getMinShrimpPounds() + "kg of shrimp"
-        + " and a maximum of " + game.getSettings().getMaxShrimpPounds() + "kg of shrimp each "
+        + "You can catch a minimum of " + game.getSettings().getMinShrimpKilograms() + "kg of shrimp"
+        + " and a maximum of " + game.getSettings().getMaxShrimpKilograms() + "kg of shrimp each "
         + "round.");
     introLbl.setFont(Font.font("Helvetica", 20));
     introLbl.setWrapText(true);
@@ -135,5 +138,4 @@ public abstract class GameStartedScreen {
 
     return gameStartedScene;
   }
-
 }

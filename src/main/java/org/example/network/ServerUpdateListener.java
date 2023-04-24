@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
-import javafx.scene.control.Dialog;
 import org.example.ShrimpGameApp;
 import org.example.logic.Game;
 import org.example.logic.GameSettings;
@@ -14,13 +13,23 @@ import org.example.logic.Lobby;
 import org.example.logic.Player;
 import org.example.logic.Round;
 import org.example.logic.Timer;
-import org.example.userinterface.GameScreen;
 
+/**
+ * Represents a listener that listens to server updates.
+ */
 public class ServerUpdateListener implements Runnable {
-
   private final ShrimpGameApp shrimpGameApp;
 
-  public ServerUpdateListener(ShrimpGameApp shrimpGameApp) {
+  /**
+   * Creates a new instance of {@code ServerUpdateListener}.
+   * 
+   * @param shrimpGameApp the main application.
+   * @throws IllegalArgumentException if the parameter given is set to {@code null}.
+   */
+  public ServerUpdateListener(ShrimpGameApp shrimpGameApp) throws IllegalArgumentException {
+    if (shrimpGameApp == null) {
+      throw new IllegalArgumentException("shrimpGameApp cannot be set to null");
+    }
     this.shrimpGameApp = shrimpGameApp;
   }
 
