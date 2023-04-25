@@ -154,10 +154,20 @@ public class Game {
     this.currentRoundNum = currentRoundNum;
   }
 
+  /**
+   * Gets the {@code Timer} for the round.
+   * 
+   * @return a {@code Timer} object for the round.
+   */
   public Timer getRoundTimer() {
     return this.roundTimer;
   }
 
+  /**
+   * Sets the {@code Timer} for the round.
+   * 
+   * @param roundTimer a {@code Timer} object for the round.
+   */
   public void setRoundTimer(Timer roundTimer) {
     this.roundTimer = roundTimer;
   }
