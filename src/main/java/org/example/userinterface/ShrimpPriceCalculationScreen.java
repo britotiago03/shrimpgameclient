@@ -26,6 +26,11 @@ public abstract class ShrimpPriceCalculationScreen {
   private static int currentStep = 0;
   private static boolean allLabelsVisible = false;
 
+  /**
+   * Sets the visibility state of all the labels.
+   * 
+   * @param allLabelsVisible a {@code boolean} value describing the visibility of all the labels.
+   */
   public static void setAllLabelsVisible(boolean allLabelsVisible)
   {
     ShrimpPriceCalculationScreen.allLabelsVisible = allLabelsVisible;
