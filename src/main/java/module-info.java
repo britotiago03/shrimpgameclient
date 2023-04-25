@@ -10,11 +10,12 @@ module org.example {
 
     opens org.example to javafx.graphics, javafx.base;
     exports org.example;
-    exports org.example.userinterface;
-    opens org.example.userinterface to javafx.base, javafx.graphics;
-    exports org.example.controllers;
-    opens org.example.controllers to javafx.base, javafx.graphics, javafx.fxml;
+    exports org.example.ui.controllers;
+    opens org.example.ui.controllers to javafx.base, javafx.graphics, javafx.fxml;
     exports org.example.network;
     opens org.example.network to javafx.base, javafx.graphics;
-    opens org.example.logic to javafx.base;
+    exports org.example.model;
+    opens org.example.model to javafx.base, javafx.graphics;
+    exports org.example.ui.view;
+    opens org.example.ui.view to javafx.base, javafx.graphics;
 }

@@ -23,31 +23,33 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.example.controllers.CatchShrimpScreenController;
-import org.example.controllers.ChatScreenController;
-import org.example.controllers.CreateGameScreenController;
-import org.example.controllers.GameOverScreenController;
-import org.example.controllers.JoinGameScreenController;
-import org.example.controllers.MainMenuScreenController;
-import org.example.logic.Game;
-import org.example.logic.Lobby;
-import org.example.logic.Player;
-import org.example.logic.Round;
+import org.example.model.MessageComparator;
+import org.example.ui.controllers.CatchShrimpScreenController;
+import org.example.ui.controllers.ChatScreenController;
+import org.example.ui.controllers.CreateGameScreenController;
+import org.example.ui.controllers.GameOverScreenController;
+import org.example.ui.controllers.JoinGameScreenController;
+import org.example.ui.controllers.MainMenuScreenController;
+import org.example.model.Game;
+import org.example.model.Lobby;
+import org.example.model.Player;
+import org.example.model.Round;
+import org.example.model.User;
 import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
-import org.example.userinterface.CatchShrimpScreen;
-import org.example.userinterface.CreateGameScreen;
-import org.example.userinterface.GameOverScreen;
-import org.example.userinterface.GameScreen;
-import org.example.userinterface.GameStartedScreen;
-import org.example.userinterface.GameTutorialScreen;
-import org.example.userinterface.JoinGameScreen;
-import org.example.userinterface.JoinedGameScreen;
-import org.example.userinterface.MainAdminScreen;
-import org.example.userinterface.MainScreen;
-import org.example.userinterface.RoundProfitMoneyCalculationScreen;
-import org.example.userinterface.ShrimpCaughtSummaryScreen;
-import org.example.userinterface.ShrimpPriceCalculationScreen;
+import org.example.ui.view.CatchShrimpScreen;
+import org.example.ui.view.CreateGameScreen;
+import org.example.ui.view.GameOverScreen;
+import org.example.ui.view.GameScreen;
+import org.example.ui.view.GameStartedScreen;
+import org.example.ui.view.GameTutorialScreen;
+import org.example.ui.view.JoinGameScreen;
+import org.example.ui.view.JoinedGameScreen;
+import org.example.ui.view.MainAdminScreen;
+import org.example.ui.view.MainScreen;
+import org.example.ui.view.RoundProfitMoneyCalculationScreen;
+import org.example.ui.view.ShrimpCaughtSummaryScreen;
+import org.example.ui.view.ShrimpPriceCalculationScreen;
 
 /**
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
@@ -62,7 +64,7 @@ import org.example.userinterface.ShrimpPriceCalculationScreen;
 public class ShrimpGameApp extends Application {
   private Stage primaryStage;
   public static final String VERSION = "1.7.0";
-  private static final String HOSTNAME = "spill.datakomm.work";
+  private static final String HOSTNAME = "34.88.118.44";
   private static final int PORT = 8080;
   private Scene mainScreen;
   private Scene mainAdminScreen;
@@ -668,7 +670,8 @@ public class ShrimpGameApp extends Application {
       }
     });
 
-    List<Lobby> lobbies = this.getServerConnection().getExistingLobbies();
+    List<Lobby> lobbies;
+    lobbies = this.getServerConnection().getExistingLobbies();
     ObservableList<Lobby> observableLobbies = FXCollections.observableArrayList(lobbies);
     lobbyTableView.setItems(observableLobbies);
   }
@@ -918,12 +921,14 @@ public class ShrimpGameApp extends Application {
    */
   public void updateChatMessageGrid(List<String> messages) {
     this.chatMessageGrid.getChildren().clear();
-    Collections.reverse(messages);
+    Collections.sort(messages, new MessageComparator());
     int row = 0;
     for (String message : messages) {
       String[] messageParts = message.split("\\.");
       String usernamePart = messageParts[0];
       String messagePart = messageParts[1];
+      String datePart = messageParts[2];
+
       Label usernameLbl = new Label(usernamePart);
       usernameLbl.getStyleClass().add("username-label");
 
@@ -932,8 +937,12 @@ public class ShrimpGameApp extends Application {
       messageTextArea.setEditable(false);
       messageTextArea.setWrapText(true);
 
+      Label dateLbl = new Label(datePart);
+      dateLbl.getStyleClass().add("date-label");
+
       this.chatMessageGrid.add(usernameLbl, 0, row);
       this.chatMessageGrid.add(messageTextArea, 1, row);
+      this.chatMessageGrid.add(dateLbl, 2, row);
       row++;
     }
   }

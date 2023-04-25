@@ -7,22 +7,23 @@ import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import org.example.ShrimpGameApp;
-import org.example.logic.Game;
-import org.example.logic.GameSettings;
-import org.example.logic.Lobby;
-import org.example.logic.Player;
-import org.example.logic.Round;
-import org.example.logic.Timer;
+import org.example.model.Game;
+import org.example.model.GameSettings;
+import org.example.model.Lobby;
+import org.example.model.Player;
+import org.example.model.Round;
+import org.example.model.Timer;
 
 /**
  * Represents a listener that listens to server updates.
  */
 public class ServerUpdateListener implements Runnable {
   private final ShrimpGameApp shrimpGameApp;
+  public static boolean processingPacket = false;
 
   /**
    * Creates a new instance of {@code ServerUpdateListener}.
-   * 
+   *
    * @param shrimpGameApp the main application.
    * @throws IllegalArgumentException if the parameter given is set to {@code null}.
    */
@@ -36,32 +37,34 @@ public class ServerUpdateListener implements Runnable {
   @Override
   public void run() {
     while (true) {
-      try {
-        String serverPacket =
-            this.shrimpGameApp.getServerConnection().getBufferedReader().readLine();
-        String[] packetData = serverPacket.split(" ");
-        Map<String, Player> players = null;
-        Player player1 = null;
-        Player player2 = null;
-        Player player3 = null;
-        if (packetData[0].equals("UPDATE")) {
-          switch (packetData[1]) {
-            case "LOBBY":
-              List<Lobby> lobbiesInServer = new ArrayList<Lobby>();
-              for (int index = 2; index < packetData.length; index++) {
-                String[] lobby = packetData[index].split("\\.");
-                lobbiesInServer.add(
-                    new Lobby(lobby[0], Integer.parseInt(lobby[1]), Integer.parseInt(lobby[2])));
-              }
-              Platform.runLater(() ->
-                                {
-                                  this.shrimpGameApp.setLobbies(lobbiesInServer);
-                                  this.shrimpGameApp.updateLobbyTable(
-                                      this.shrimpGameApp.getLobbies());
-                                });
-              break;
+      String serverPacket =
+          this.shrimpGameApp.getServerConnection().receive();
+      ServerUpdateListener.processingPacket = true;
+      String[] packetData = serverPacket.split(" ");
+      Map<String, Player> players = null;
+      Player player1 = null;
+      Player player2 = null;
+      Player player3 = null;
+      if (packetData[0].equals("UPDATE")) {
+        switch (packetData[1]) {
+          case "LOBBY":
+            List<Lobby> lobbiesInServer = new ArrayList<Lobby>();
+            for (int index = 2; index < packetData.length; index++) {
+              String[] lobby = packetData[index].split("\\.");
+              lobbiesInServer.add(
+                  new Lobby(lobby[0], Integer.parseInt(lobby[1]), Integer.parseInt(lobby[2])));
+            }
+            Platform.runLater(() ->
+                              {
+                                this.shrimpGameApp.setLobbies(lobbiesInServer);
+                                this.shrimpGameApp.updateLobbyTable(
+                                    this.shrimpGameApp.getLobbies());
+                              });
+            break;
 
-            case "GAME_STARTED":
+          case "GAME_STARTED":
+            synchronized (this.shrimpGameApp)
+            {
               player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
               player2 = new Player(packetData[2], 5);
               player3 = new Player(packetData[3], 5);
@@ -99,9 +102,12 @@ public class ServerUpdateListener implements Runnable {
                                       this.shrimpGameApp.getGameStartedScreen());
                                   this.shrimpGameApp.getGame().getRoundTimer().start();
                                 });
-              break;
+            }
+            break;
 
-            case "ROUND_FINISHED":
+          case "ROUND_FINISHED":
+            synchronized (this.shrimpGameApp)
+            {
               Map<Player, Integer> playerShrimpCaughtMap = new HashMap<Player, Integer>();
               Map<Player, Integer> playerMoneyMap = new HashMap<Player, Integer>();
               int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
@@ -161,31 +167,30 @@ public class ServerUpdateListener implements Runnable {
                                   this.shrimpGameApp.updateScoreboardTable(new ArrayList<>(
                                       this.shrimpGameApp.getGame().getRounds().values()));
                                 });
+            }
 
-              break;
+            break;
 
-            case "MESSAGE_SENT":
-              String username = packetData[2];
-              String message = packetData[3];
-              this.shrimpGameApp.getGame().getMessages().add(
-                  username + "." + message.replace(".", " "));
-              Platform.runLater(() ->
-                                {
-                                  this.shrimpGameApp.updateChatMessageGrid(
-                                      this.shrimpGameApp.getGame().getMessages());
-                                });
-              break;
+          case "MESSAGE_SENT":
+            String username = packetData[2];
+            String message = packetData[3];
+            String date = packetData[4];
+            this.shrimpGameApp.getGame().getMessages().add(
+                username + "." + message.replace(".", " ") + "." + date);
+            Platform.runLater(() ->
+                              {
+                                this.shrimpGameApp.updateChatMessageGrid(
+                                    this.shrimpGameApp.getGame().getMessages());
+                              });
+            break;
 
-            default:
-              break;
-          }
-        }
-        else {
-          this.shrimpGameApp.getServerConnection().getServerPackets().add(serverPacket);
+          default:
+            break;
         }
       }
-      catch (IOException exception) {
-        throw new RuntimeException("Failed to receive message from the server.");
+      else {
+        this.shrimpGameApp.getServerConnection().getServerPackets().add(serverPacket);
+        ServerUpdateListener.processingPacket = false;
       }
     }
   }
