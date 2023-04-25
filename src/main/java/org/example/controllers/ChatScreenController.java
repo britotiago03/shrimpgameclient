@@ -1,22 +1,32 @@
 package org.example.controllers;
 
-import java.util.Optional;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import org.example.ShrimpGameApp;
 
+/**
+ * Represents the controller for {@code ChatScreen}.
+ */
 public class ChatScreenController {
   private final ShrimpGameApp shrimpGameApp;
 
 
+  /**
+   * Creates a new instance of {@code ChatScreenController}.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
+   */
   public ChatScreenController(ShrimpGameApp shrimpGameApp) {
     this.shrimpGameApp = shrimpGameApp;
   }
 
-
+  /**
+   * Handles pressing the "Send" button.
+   * 
+   * @param messageTxtArea the text area for the message to be sent.
+   * @param errorLbl the label displaying an error if the amount is invalid.
+   */
   public void handleSendButton(TextArea messageTxtArea, Label errorLbl) {
     if (messageTxtArea.getText().isEmpty()) {
       errorLbl.setText("Please enter a message");

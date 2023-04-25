@@ -8,15 +8,29 @@ import javafx.scene.control.TextArea;
 import org.example.ShrimpGameApp;
 import org.example.userinterface.GameScreen;
 
+/**
+ * Represents the controller for {@code CatchShrimpScreen}.
+ * 
+ * @see org.example.userinterface.CatchShrimpScreen
+ */
 public class CatchShrimpScreenController {
   private final ShrimpGameApp shrimpGameApp;
 
-
+  /**
+   * Creates a new instance of {@code CatchShrimpScreenController}.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
+   */
   public CatchShrimpScreenController(ShrimpGameApp shrimpGameApp) {
     this.shrimpGameApp = shrimpGameApp;
   }
 
-
+  /**
+   * Handles pressing the "Ok" button.
+   * 
+   * @param catchShrimpTextFld the text area with the amount of shrimp to catch.
+   * @param errorLbl the label displaying an error if the amount is invalid.
+   */
   public void handleOkButton(TextArea catchShrimpTextArea, Label errorLbl) {
     if (catchShrimpTextArea.getText().isEmpty()) {
       errorLbl.setText("Please fill all fields");
@@ -25,16 +39,16 @@ public class CatchShrimpScreenController {
     else {
       try {
         int shrimpCaught = Integer.parseInt(catchShrimpTextArea.getText());
-        if (shrimpCaught < this.shrimpGameApp.getGame().getSettings().getMinShrimpPounds()) {
+        if (shrimpCaught < this.shrimpGameApp.getGame().getSettings().getMinShrimpKilograms()) {
           throw new IllegalArgumentException(
               "Amount of shrimp cannot be less than " + this.shrimpGameApp.getGame().getSettings()
-                                                                          .getMinShrimpPounds());
+                                                                          .getMinShrimpKilograms());
         }
-        else if (shrimpCaught > this.shrimpGameApp.getGame().getSettings().getMaxShrimpPounds()) {
+        else if (shrimpCaught > this.shrimpGameApp.getGame().getSettings().getMaxShrimpKilograms()) {
           throw new IllegalArgumentException(
               "Amount of shrimp cannot be greater than " + this.shrimpGameApp.getGame()
                                                                              .getSettings()
-                                                                             .getMaxShrimpPounds());
+                                                                             .getMaxShrimpKilograms());
         }
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Catch Shrimp");

@@ -1,7 +1,6 @@
 package org.example.userinterface;
 
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +13,6 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import org.example.ShrimpGameApp;
 
 /**
@@ -27,10 +25,10 @@ import org.example.ShrimpGameApp;
  */
 public abstract class GameTutorialScreen {
   /**
-   * Returns a {@code Scene} object representing the game tutorial screen.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the game tutorial screen.
    *
-   * @param shrimpGameApp the instance of the {@code ShrimpGameApp} class
-   * @return a {@code Scene} object representing the game tutorial screen
+   * @param shrimpGameApp the instance of the {@link ShrimpGameApp} class.
+   * @return a {@code Scene} object representing the game tutorial screen.
    */
   public static Scene getGameTutorialScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();

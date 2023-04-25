@@ -19,21 +19,29 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 
+/**
+ * This class represents the shrimp price calculation screen of the Shrimp Game application.
+ */
 public abstract class ShrimpPriceCalculationScreen {
   private static int currentStep = 0;
   private static boolean allLabelsVisible = false;
 
+  /**
+   * Sets the visibility state of all the labels.
+   * 
+   * @param allLabelsVisible a {@code boolean} value describing the visibility of all the labels.
+   */
   public static void setAllLabelsVisible(boolean allLabelsVisible)
   {
     ShrimpPriceCalculationScreen.allLabelsVisible = allLabelsVisible;
   }
 
   /**
-   * Returns a Scene object representing the shrimp price calculation screen of the Shrimp Game
-   * application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the shrimp price calculation 
+   * screen of the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to get the game information.
-   * @return a Scene object representing the shrimp price calculation screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the shrimp price calculation screen.
    */
   public static Scene getShrimpPriceCalculationScreen(ShrimpGameApp shrimpGameApp) {
     ShrimpPriceCalculationScreen.currentStep = 0;

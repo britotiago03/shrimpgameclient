@@ -4,67 +4,122 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.example.userinterface.GameScreen;
 
 /**
- * The Game class represents a game with a unique identifier, name, game settings, status, and a
- * list of players.
- * <p>
- * The class provides methods for managing the game, including starting and ending the game,
- * updating player stats,
- * <p>
- * broadcasting messages, sending game results, and disconnecting clients.
+ * The Game class represents a game with a unique identifier, name, game
+ * settings, timer, amount of rounds, current round, messages, and a list of
+ * players.
  */
 public class Game {
-  private final String name;
+  private String name;
   private Timer roundTimer;
-  private final GameSettings settings;
+  private GameSettings settings;
   private final int number;
   private final Map<Integer, Round> rounds;
   private int currentRoundNum;
-  private final Map<String, Player> players;
+  private Map<String, Player> players;
   private final List<String> messages;
 
   /**
-   * Constructs a new Game object with the specified game ID, name, settings, status, and players.
+   * Creates a new instance of the Game class with specified name, settings, players and identifier.
    *
-   * @param name     the name of the game
-   * @param settings the settings of the game
-   * @param players  the list of players in the game
+   * @param name     the name of the game.
+   * @param settings the settings of the game.
+   * @param players  the list of players in the game.
+   * @param number   the unique identifier of the game.
+   * @throws IllegalArgumentException if any of the provided parameters are invalid.
    */
-  public Game(String name, GameSettings settings, Map<String, Player> players, int number) {
-    this.name = name;
-    this.settings = settings;
-    this.players = players;
+  public Game(String name, GameSettings settings, Map<String, Player> players, int number) throws IllegalArgumentException {
+    this.setName(name);
+    this.setSettings(settings);
+    this.setPlayers(players);
     this.messages = new ArrayList<String>();
     this.rounds = new HashMap<Integer, Round>();
-    this.currentRoundNum = 1;
+    this.setCurrentRoundNum(1);
     this.number = number;
   }
 
   /**
-   * Returns the name of the game.
+   * Sets the name of the game.
+   * 
+   * @param name the name to assign to the game.
+   * @throws IllegalArgumentException if the name provided is {@code null}.
+   */
+  private void setName(String name) throws IllegalArgumentException {
+    if (name == null) {
+      throw new IllegalArgumentException("name cannot be set to null");
+    }
+    this.name = name;
+  }
+
+  /**
+   * Sets the settings of the game.
+   * 
+   * @param settings the settings of the game.
+   * @throws IllegalArgumentException if the settings provided is {@code null}.
+   */
+  private void setSettings(GameSettings settings) throws IllegalArgumentException {
+    if (settings == null) {
+      throw new IllegalArgumentException("settings cannot be set to null");
+    }
+    this.settings = settings;
+  }
+
+  /**
+   * Sets the players of the game.
+   * 
+   * @param players the players of the game.
+   * @throws IllegalArgumentException if the players provided is {@code null}.
+   */
+  private void setPlayers(Map<String, Player> players) throws IllegalArgumentException {
+    if (players == null) {
+      throw new IllegalArgumentException("players cannot be set to null");
+    }
+    this.players = players;
+  }
+
+  /**
+   * Gets the name of the game.
    *
-   * @return the game name
+   * @return the game name.
    */
   public String getName() {
     return this.name;
   }
 
+  /**
+   * Gets the rounds of the game.
+   * 
+   * @return the rounds of the game.
+   */
   public Map<Integer, Round> getRounds() {
     return this.rounds;
   }
 
+  /**
+   * Gets the game's identifier.
+   * 
+   * @return the number of the game.
+   */
   public int getNumber() {
     return this.number;
   }
 
+  /**
+   * Gets the players of the game.
+   * 
+   * @return the players of the game.
+   */
   public Map<String, Player> getPlayers() {
     return this.players;
   }
 
-  public List<String> getMessages()
-  {
+  /**
+   * Gets the messages from the game.
+   * 
+   * @return the messages between players during the game.
+   */
+  public List<String> getMessages() {
     return this.messages;
   }
 
@@ -77,21 +132,43 @@ public class Game {
     return this.settings;
   }
 
+  /**
+   * Gets the current round number of the game.
+   * 
+   * @return the current round number.
+   */
   public int getCurrentRoundNum() {
     return this.currentRoundNum;
   }
 
-  public void setCurrentRoundNum(int currentRoundNum) {
+  /**
+   * Sets the current round number of the game.
+   * 
+   * @param currentRoundNum the current round number of the game. Must be a number of {@code 0} or over.
+   * @throws IllegalArgumentException if the specified round number is less than {@code 0}.
+   */
+  public void setCurrentRoundNum(int currentRoundNum) throws IllegalArgumentException {
+    if (currentRoundNum < 0) {
+      throw new IllegalArgumentException("The current round number is invalid");
+    }
     this.currentRoundNum = currentRoundNum;
   }
 
-  public Timer getRoundTimer()
-  {
+  /**
+   * Gets the {@code Timer} for the round.
+   * 
+   * @return a {@code Timer} object for the round.
+   */
+  public Timer getRoundTimer() {
     return this.roundTimer;
   }
 
-  public void setRoundTimer(Timer roundTimer)
-  {
+  /**
+   * Sets the {@code Timer} for the round.
+   * 
+   * @param roundTimer a {@code Timer} object for the round.
+   */
+  public void setRoundTimer(Timer roundTimer) {
     this.roundTimer = roundTimer;
   }
 }

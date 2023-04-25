@@ -8,7 +8,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.example.ShrimpGameApp;
-import org.w3c.dom.Text;
 
 /**
  * The CreateGameScreenController class controls the behavior of the Create Game screen, where
@@ -90,11 +89,11 @@ public class CreateGameScreenController {
         }
         else if (minShrimp < 0 || minShrimp > 30) {
           throw new IllegalArgumentException(
-              "Min shrimp to catch has to be between 0 and 30 pounds");
+              "Min shrimp to catch has to be between 0 and 30 kilograms");
         }
         else if (maxShrimp < 50 || maxShrimp > 80) {
           throw new IllegalArgumentException(
-              "Max shrimp to catch has to be between 50 and 80 pounds");
+              "Max shrimp to catch has to be between 50 and 80 kilograms");
         }
         List<String> rounds = Arrays.stream(communicationRounds.split(",")).toList();
         for (String round : rounds) {
@@ -169,6 +168,4 @@ public class CreateGameScreenController {
       }
     }
   }
-
-
 }

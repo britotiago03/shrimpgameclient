@@ -29,6 +29,9 @@ import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 import org.example.logic.Round;
 
+/**
+ * This class represents the game screen of the Shrimp Game application.
+ */
 public abstract class GameScreen {
   public static String OPTION = "Overview";
   private static VBox OVERVIEW;
@@ -39,16 +42,31 @@ public abstract class GameScreen {
   private static Image OVERVIEW_BACKGROUND;
   public static List<Label> amountOfShrimpCaughtValueLabels = new ArrayList<>();
 
+  /**
+   * Sets the OPTION field.
+   * 
+   * @param option the option to assign to the {@code GameScreen}
+   */
   public static void setOPTION(String option) {
     OPTION = option;
   }
 
+  /**
+   * Initializes the background image for the overview.
+   */
   public static void initOverviewBackgroundImage() {
     OVERVIEW_BACKGROUND = new Image(
         ShrimpGameApp.class.getResource("/images/overview_gif.gif").toExternalForm());
   }
 
-
+  /**
+   * Returns a {@link javafx.scene.Scene Scene} object representing the game screen 
+   * of the Shrimp Game application.
+   *
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @param hasCaughtShrimp a {@code boolean} value determining whether or not the player has caught shrimp.
+   * @return a {@code Scene} object representing the game screen.
+   */
   public static Scene getMainScene(ShrimpGameApp shrimpGameApp, boolean hasCaughtShrimp) {
     BorderPane root = new BorderPane();
     Scene gameScene = new Scene(root, 800, 600);
@@ -142,6 +160,11 @@ public abstract class GameScreen {
     return gameScene;
   }
 
+  /**
+   * Creates the panes for the game screen.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
+   */
   private static void createPanes(ShrimpGameApp shrimpGameApp) {
     OVERVIEW = GameScreen.getContentPane(shrimpGameApp, "Overview", false);
     OVERVIEW_CAUGHT_SHRIMP = GameScreen.getContentPane(shrimpGameApp, "Overview", true);
@@ -150,6 +173,14 @@ public abstract class GameScreen {
     CHAT = GameScreen.getContentPane(shrimpGameApp, "Chat", false);
   }
 
+  /**
+   * Gets a specified content pane.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
+   * @param option the name of the content pane.
+   * @param hasCaughtShrimp a {@code boolean} value determining whether or not the player has caught shrimp.
+   * @return
+   */
   private static VBox getContentPane(ShrimpGameApp shrimpGameApp, String option,
                                      boolean hasCaughtShrimp) {
     VBox content = new VBox();
@@ -369,11 +400,11 @@ public abstract class GameScreen {
       // Create the label with the game introduction
       Label rulesLbl = new Label(
           "Three players, Atari, BMI, and Commodore, own shrimp boats on an island and must catch"
-          + " at most 75 pounds per day at a cost of $5/pound.\n"
+          + " at most 75 kilograms per day at a cost of $5/kilogram.\n"
           + "\n"
           + "They bring their catch to a market controlled by the mayor, where the price is "
           + "determined by the total supply and demand.\n"
-          + "\n" + "Profits are calculated as (price - $5) x total pounds caught.\n" + "\n"
+          + "\n" + "Profits are calculated as (price - $5) x total kilograms caught.\n" + "\n"
           + "Players cannot communicate with each other and must make decisions simultaneously in"
           + " rounds 1 to 4, 6, and 7.\n"
           + "In rounds 5 and 8, players can discuss and negotiate before announcing their catch"
@@ -541,10 +572,4 @@ public abstract class GameScreen {
 
     return content;
   }
-
-  public static void startRoundTimer(ShrimpGameApp shrimpGameApp) {
-
-  }
-
-
 }

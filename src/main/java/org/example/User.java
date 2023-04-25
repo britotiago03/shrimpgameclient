@@ -47,8 +47,12 @@ public class User {
    * Sets the name of the user.
    *
    * @param name the name of the user
+   * @throws IllegalArgumentException if the name provided is {@code null}
    */
-  public void setName(String name) {
+  public void setName(String name) throws IllegalArgumentException {
+    if (name == null) {
+      throw new IllegalArgumentException("name cannot be set to null");
+    }
     this.name = name;
   }
 
