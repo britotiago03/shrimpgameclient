@@ -1,6 +1,7 @@
 package org.example.userinterface;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
@@ -9,7 +10,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -71,8 +74,16 @@ public abstract class MainScreen {
     Button quitBtn = new Button("QUIT");
     quitBtn.setOnAction(event ->
                         {
-                          System.exit(0);
-                          Platform.exit();
+                          Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                          shrimpGameApp.addIconToDialog(alert);
+                          alert.setTitle("Confirm Exit");
+                          alert.setHeaderText("Are you sure you want to exit?");
+                          alert.setContentText("Any unsaved changes will be lost.");
+                          Optional<ButtonType> result = alert.showAndWait();
+                          if (result.get() == ButtonType.OK) {
+                            System.exit(0);
+                            Platform.exit();
+                          }
                         });
     quitBtn.setPrefWidth(320);
     quitBtn.setPrefHeight(80);

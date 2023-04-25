@@ -193,12 +193,8 @@ public class ServerUpdateListener implements Runnable {
     }
     if (commRoundNums.contains(this.shrimpGameApp.getGame().getCurrentRoundNum())) {
       this.shrimpGameApp.getGame().getRoundTimer().setSecondsLeft(
-          this.shrimpGameApp.getGame().getRoundTimer().getSecondsLeft() + 60
+          this.shrimpGameApp.getGame().getRoundTimer().getSecondsLeft()
           + this.shrimpGameApp.getGame().getSettings().getCommunicationRoundTime());
-    }
-    else {
-      this.shrimpGameApp.getGame().getRoundTimer().setSecondsLeft(
-          this.shrimpGameApp.getGame().getRoundTimer().getSecondsLeft() + 60);
     }
   }
 }
