@@ -37,17 +37,18 @@ public class GameSettingsTest {
         int numberOfRounds = 8;
         int roundTime = 120;
         String communicationRounds = "4,6";
-        int communicationRoundsTime = 600;
+        int communicationRoundTime = 600;
         int minShrimpKilograms = 0;
         int maxShrimpKilograms = 75;
 
         GameSettings gameSettings = new GameSettings(numberOfPlayers, numberOfRounds, roundTime, communicationRounds,
-                communicationRoundsTime, minShrimpKilograms, maxShrimpKilograms);
+                communicationRoundTime, minShrimpKilograms, maxShrimpKilograms);
 
         assertEquals(numberOfPlayers, gameSettings.getNumberOfPlayers());
         assertEquals(numberOfRounds, gameSettings.getNumberOfRounds());
         assertEquals(roundTime, gameSettings.getRoundTime());
         assertEquals(communicationRounds, gameSettings.getCommunicationRounds());
+        assertEquals(communicationRoundTime, gameSettings.getCommunicationRoundTime());
         assertEquals(minShrimpKilograms, gameSettings.getMinShrimpKilograms());
         assertEquals(maxShrimpKilograms, gameSettings.getMaxShrimpKilograms());
     }
@@ -80,21 +81,23 @@ public class GameSettingsTest {
         int numberOfRounds = 8;
         int roundTime = 120;
         String communicationRounds = "4,6";
-        int communicationRoundsTime = 600;
+        int communicationRoundTime = 600;
         int minShrimpKilograms = 0;
         int maxShrimpKilograms = 75;
 
         assertThrows(IllegalArgumentException.class, () -> new GameSettings(-1, numberOfRounds, roundTime,
-                communicationRounds, communicationRoundsTime, minShrimpKilograms, maxShrimpKilograms));
+                communicationRounds, communicationRoundTime, minShrimpKilograms, maxShrimpKilograms));
         assertThrows(IllegalArgumentException.class, () -> new GameSettings(numberOfPlayers, -1, roundTime,
-                communicationRounds, communicationRoundsTime, minShrimpKilograms, maxShrimpKilograms));
+                communicationRounds, communicationRoundTime, minShrimpKilograms, maxShrimpKilograms));
         assertThrows(IllegalArgumentException.class, () -> new GameSettings(numberOfPlayers, numberOfRounds, -1,
-                communicationRounds, communicationRoundsTime, minShrimpKilograms, maxShrimpKilograms));
+                communicationRounds, communicationRoundTime, minShrimpKilograms, maxShrimpKilograms));
         assertThrows(IllegalArgumentException.class, () -> new GameSettings(numberOfPlayers, numberOfRounds, roundTime,
-                communicationRounds, communicationRoundsTime, -1, maxShrimpKilograms));
+                communicationRounds, -1, minShrimpKilograms, maxShrimpKilograms));
         assertThrows(IllegalArgumentException.class, () -> new GameSettings(numberOfPlayers, numberOfRounds, roundTime,
-                communicationRounds, communicationRoundsTime, minShrimpKilograms, -1));
+                communicationRounds, communicationRoundTime, -1, maxShrimpKilograms));
+        assertThrows(IllegalArgumentException.class, () -> new GameSettings(numberOfPlayers, numberOfRounds, roundTime,
+                communicationRounds, communicationRoundTime, minShrimpKilograms, -1));
         assertThrows(IllegalArgumentException.class,
-                () -> new GameSettings(-1, -1, -1, communicationRounds, communicationRoundsTime, -1, -1));
+                () -> new GameSettings(-1, -1, -1, communicationRounds, -1, -1, -1));
     }
 }
