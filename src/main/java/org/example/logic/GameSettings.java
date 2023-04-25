@@ -33,7 +33,7 @@ public class GameSettings {
     this.setNumberOfRounds(numberOfRounds);
     this.setRoundTime(roundTime);
     this.setCommunicationRounds(communicationRounds);
-    this.communicationRoundTime = communicationRoundTime;
+    this.setCommunicationRoundTime(communicationRoundTime);
     this.setMinShrimpKilograms(minShrimpKilograms);
     this.setMaxShrimpKilograms(maxShrimpKilograms);
   }
@@ -133,8 +133,11 @@ public class GameSettings {
     return this.communicationRoundTime;
   }
 
-  public void setCommunicationRoundTime(int communicationRoundTime)
+  public void setCommunicationRoundTime(int communicationRoundTime) throws IllegalArgumentException
   {
+    if (communicationRoundTime < 0) {
+      throw new IllegalArgumentException("communication round time cannot be less than 0");
+    }
     this.communicationRoundTime = communicationRoundTime;
   }
 
