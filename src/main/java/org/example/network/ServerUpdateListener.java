@@ -190,6 +190,9 @@ public class ServerUpdateListener implements Runnable {
     }
   }
 
+  /**
+   * Creates the round timer.
+   */
   public void createRoundTimer()
   {
     this.shrimpGameApp.getGame().setRoundTimer(
