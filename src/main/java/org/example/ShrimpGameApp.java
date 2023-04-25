@@ -259,6 +259,11 @@ public class ShrimpGameApp extends Application {
     return this.chatScreenController;
   }
 
+  /**
+   * Returns the {@code GameOverScreenController} object that manages the game over screen.
+   *
+   * @return the {@code GameOverScreenController} object.
+   */
   public GameOverScreenController getGameOverScreenController() {
     return this.gameOverScreenController;
   }
@@ -352,6 +357,11 @@ public class ShrimpGameApp extends Application {
     return this.chatMessageGrid;
   }
 
+  /**
+   * Gets the labels that displays timer.
+   * 
+   * @return a {@code List} of labels for displaying time.
+   */
   public List<Label> getRoundTimerLabels() {
     return this.roundTimerLabels;
   }
