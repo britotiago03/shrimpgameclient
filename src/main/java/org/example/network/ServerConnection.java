@@ -220,7 +220,6 @@ public class ServerConnection {
     String[] username = new String[2];
     try {
       this.send("REQUEST_USERNAME " + ShrimpGameApp.VERSION);
-      ServerUpdateListener.processingPacket = true;
       String[] input = this.getNextServerPacket().split(" ");
       if (input[0].equals("USERNAME")) {
         username[0] = input[1];
@@ -245,7 +244,6 @@ public class ServerConnection {
   public void sendBecomeAdminRequest(String password) {
     try {
       this.send("BECOME_ADMIN " + password);
-      ServerUpdateListener.processingPacket = true;
     }
     catch (RuntimeException exception) {
       throw new RuntimeException("Failed to send become admin request to the server.");
@@ -272,7 +270,6 @@ public class ServerConnection {
       this.send(
           "CREATE_LOBBY " + lobbyName + " " + numPlayers + " " + numRounds + " " + roundTime + " "
           + communicationRounds + " " + commRoundTime + " " + minShrimpKilograms + " " + maxShrimpKilograms);
-      ServerUpdateListener.processingPacket = true;
     }
     catch (RuntimeException exception) {
       throw new RuntimeException("Failed to send create lobby request to the server.");
@@ -288,7 +285,6 @@ public class ServerConnection {
     List<Lobby> lobbies = new ArrayList<Lobby>();
     try {
       this.send("REQUEST_LOBBY_LIST");
-      ServerUpdateListener.processingPacket = true;
       String[] input = this.getNextServerPacket().split(" ");
       if (input[0].equals("LOBBY_LIST")) {
         for (int index = 1; index < input.length; index++) {
@@ -317,7 +313,6 @@ public class ServerConnection {
   public void sendJoinLobbyRequest(String lobbyName) {
     try {
       this.send("JOIN_LOBBY " + lobbyName);
-      ServerUpdateListener.processingPacket = true;
       String response = this.getNextServerPacket();
       if (response.equals("LOBBY_FULL")) {
         throw new RuntimeException("Failed to join the lobby because the lobby is full.");
@@ -340,7 +335,6 @@ public class ServerConnection {
   public void sendLeaveLobbyRequest() throws RuntimeException {
     try {
       this.send("LEAVE_LOBBY");
-      ServerUpdateListener.processingPacket = true;
       String response = this.getNextServerPacket();
       if (!response.equals("LEFT_SUCCESS")) {
         throw new RuntimeException("Failed to leave the lobby.");
@@ -360,7 +354,6 @@ public class ServerConnection {
   public void sendCatchShrimpRequest(int shrimpToCatch) throws RuntimeException {
     try {
       this.send("CATCH_SHRIMP " + shrimpToCatch);
-      ServerUpdateListener.processingPacket = true;
     }
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());
@@ -376,7 +369,6 @@ public class ServerConnection {
   public void sendMessageRequest(String message) throws RuntimeException {
     try {
       this.send("CHAT_MESSAGE " + message);
-      ServerUpdateListener.processingPacket = true;
     }
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());

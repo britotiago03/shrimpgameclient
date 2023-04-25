@@ -19,7 +19,6 @@ import org.example.model.Timer;
  */
 public class ServerUpdateListener implements Runnable {
   private final ShrimpGameApp shrimpGameApp;
-  public static boolean processingPacket = false;
 
   /**
    * Creates a new instance of {@code ServerUpdateListener}.
@@ -39,7 +38,6 @@ public class ServerUpdateListener implements Runnable {
     while (true) {
       String serverPacket =
           this.shrimpGameApp.getServerConnection().receive();
-      ServerUpdateListener.processingPacket = true;
       String[] packetData = serverPacket.split(" ");
       Map<String, Player> players = null;
       Player player1 = null;
@@ -190,7 +188,6 @@ public class ServerUpdateListener implements Runnable {
       }
       else {
         this.shrimpGameApp.getServerConnection().getServerPackets().add(serverPacket);
-        ServerUpdateListener.processingPacket = false;
       }
     }
   }
