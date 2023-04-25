@@ -26,7 +26,17 @@ import javafx.scene.text.FontWeight;
 import org.example.ShrimpGameApp;
 import org.example.logic.Player;
 
+/**
+ * This class represents the shrimp caught summary screen of the Shrimp Game application.
+ */
 public abstract class ShrimpCaughtSummaryScreen {
+  /**
+   * Returns a {@link javafx.scene.Scene Scene} object representing the shrimp caught summary screen 
+   * of the Shrimp Game application.
+   *
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the shrimp caught summary screen.
+   */
   public static Scene getShrimpCaughtSummaryScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);

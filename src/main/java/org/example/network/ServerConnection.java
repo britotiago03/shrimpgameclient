@@ -68,7 +68,7 @@ public class ServerConnection {
   private BufferedReader bufferedReader;
 
   /**
-   * Constructs a new ServerConnection object with the specified IP address and port number.
+   * Constructs a new {@code ServerConnection} object with the specified IP address and port number.
    *
    * @param hostname the IP address of the server to connect to
    * @param port     the port number to connect to on the server
@@ -80,22 +80,47 @@ public class ServerConnection {
     this.serverPacketCounter = 0;
   }
 
+  /**
+   * Gets the {@link BufferedReader} of the server connection.
+   * 
+   * @return the {@code BufferedReader} of the server connection.
+   */
   public BufferedReader getBufferedReader() {
     return this.bufferedReader;
   }
 
+  /**
+   * Gets the {@link BufferedWriter} of the server connection.
+   * 
+   * @return the {@code BufferedWriter} of the server connection.
+   */
   public BufferedWriter getBufferedWriter() {
     return this.bufferedWriter;
   }
 
+  /**
+   * Gets a {@link List} of server packets.
+   * 
+   * @return a {@code List} of server packets.
+   */
   public List<String> getServerPackets() {
     return this.serverPackets;
   }
 
+  /**
+   * Gets the server packet counter.
+   * 
+   * @return the server packet counter.
+   */
   public int getServerPacketCounter() {
     return this.serverPacketCounter;
   }
 
+  /**
+   * Sets the server packet counter.
+   * 
+   * @param serverPacketCounter the {@code int} value to assign to the server packet counter.
+   */
   public void setServerPacketCounter(int serverPacketCounter) {
     this.serverPacketCounter = serverPacketCounter;
   }
@@ -123,8 +148,8 @@ public class ServerConnection {
   /**
    * Sends a message to the server through the established connection.
    *
-   * @param message the message to be sent
-   * @throws RuntimeException if there is a failure to send the message to the server
+   * @param message the message to be sent to the server.
+   * @throws RuntimeException if there is a failure to send the message to the server.
    */
   public void send(String message) {
     try {
@@ -139,8 +164,8 @@ public class ServerConnection {
   /**
    * Receives a message from the server through the established connection.
    *
-   * @return the message received from the server
-   * @throws RuntimeException if there is a failure to receive the message from the server
+   * @return the message received from the server.
+   * @throws RuntimeException if there is a failure to receive the message from the server.
    */
   public String receive() {
     try {
@@ -154,8 +179,8 @@ public class ServerConnection {
   /**
    * Receives a message from the server through the established connection.
    *
-   * @return the message received from the server
-   * @throws RuntimeException if there is a failure to receive the message from the server
+   * @return the message received from the server.
+   * @throws RuntimeException if there is a failure to receive the message from the server.
    */
   public String getNextServerPacket() {
     try {
@@ -173,7 +198,7 @@ public class ServerConnection {
   /**
    * Checks if the socket is connected to the server.
    *
-   * @return true if the socket is connected to the server, false otherwise
+   * @return {@code true} if the socket is connected to the server, {@code false} otherwise.
    */
   public boolean isConnected() {
     boolean isConnected = false;
@@ -186,9 +211,9 @@ public class ServerConnection {
   /**
    * Sends a request to the server for the username associated with the current client.
    *
-   * @return the username associated with the current client
+   * @return the username associated with the current client.
    * @throws RuntimeException if there is a failure to send the username request to the server
-   *                          or if an unrecognized reply is received from the server
+   *                          or if an unrecognized reply is received from the server.
    */
   public String[] sendUsernameRequest() {
     String[] username = new String[2];
@@ -212,8 +237,8 @@ public class ServerConnection {
   /**
    * Sends a request to the server to become an administrator using the provided password.
    *
-   * @param password the password required to become an administrator
-   * @throws RuntimeException if there is a failure to send the become admin request to the server
+   * @param password the password required to become an administrator.
+   * @throws RuntimeException if there is a failure to send the become admin request to the server.
    */
   public void sendBecomeAdminRequest(String password) {
     try {
@@ -227,27 +252,34 @@ public class ServerConnection {
   /**
    * Sends a request to the server to create a new lobby with the provided parameters.
    *
-   * @param lobbyName       the name of the lobby to be created
-   * @param numPlayers      the maximum number of players allowed in the lobby
-   * @param numRounds       the number of rounds to be played in the lobby
-   * @param roundTime       the time limit in seconds for each round
-   * @param minShrimpPounds the minimum amount of shrimp pounds required to win a round
-   * @param maxShrimpPounds the maximum amount of shrimp pounds required to win a round
-   * @throws RuntimeException if there is a failure to send the create lobby request to the server
+   * @param lobbyName       the name of the lobby to be created.
+   * @param numPlayers      the maximum number of players allowed in the lobby.
+   * @param numRounds       the number of rounds to be played in the lobby.
+   * @param roundTime       the time limit in seconds for each round.
+   * @param communicationRounds the communication rounds of the game.
+   * @param commRoundTime the time (in seconds) during the communication rounds.
+   * @param minShrimpKilograms the minimum amount of shrimp kilograms required to win a round.
+   * @param maxShrimpKilograms the maximum amount of shrimp kilograms required to win a round.
+   * @throws RuntimeException if there is a failure to send the create lobby request to the server.
    */
   public void sendCreateLobbyRequest(String lobbyName, int numPlayers, int numRounds, int roundTime,
                                      String communicationRounds, int commRoundTime,
-                                     int minShrimpPounds, int maxShrimpPounds) {
+                                     int minShrimpKilograms, int maxShrimpKilograms) {
     try {
       this.send(
           "CREATE_LOBBY " + lobbyName + " " + numPlayers + " " + numRounds + " " + roundTime + " "
-          + communicationRounds + " " + commRoundTime + " " + minShrimpPounds + " " + maxShrimpPounds);
+          + communicationRounds + " " + commRoundTime + " " + minShrimpKilograms + " " + maxShrimpKilograms);
     }
     catch (RuntimeException exception) {
       throw new RuntimeException("Failed to send create lobby request to the server.");
     }
   }
 
+  /**
+   * Gets the existing lobbies by sending a REQUEST_LOBBY_LIST request to the server.
+   * 
+   * @return the existing lobbies.
+   */
   public List<Lobby> getExistingLobbies() {
     List<Lobby> lobbies = new ArrayList<Lobby>();
     try {
@@ -260,6 +292,7 @@ public class ServerConnection {
         }
       }
     }
+    // TODO: unhandled exceptions
     catch (NumberFormatException exception) {
       //throw new RuntimeException("Invalid input from server ");
     }
@@ -273,8 +306,8 @@ public class ServerConnection {
    * Sends a JOIN_LOBBY request to the server with the given lobby name, waits for a response,
    * and throws an exception if the lobby is full or does not exist.
    *
-   * @param lobbyName the name of the lobby to join
-   * @throws RuntimeException if the lobby is full or does not exist
+   * @param lobbyName the name of the lobby to join.
+   * @throws RuntimeException if the lobby is full or does not exist.
    */
   public void sendJoinLobbyRequest(String lobbyName) {
     try {
@@ -291,13 +324,14 @@ public class ServerConnection {
     catch (RuntimeException exception) {
       throw new RuntimeException(exception.getMessage());
     }
-
   }
 
   /**
-   * Sends a leave lobby message to the server.
+   * Sends a LEAVE_LOBBY request to the server.
+   * 
+   * @throws RuntimeException if there is a failure to send the message to the server.
    */
-  public void sendLeaveLobbyRequest() {
+  public void sendLeaveLobbyRequest() throws RuntimeException {
     try {
       this.send("LEAVE_LOBBY");
     }
@@ -306,7 +340,13 @@ public class ServerConnection {
     }
   }
 
-  public void sendCatchShrimpRequest(int shrimpToCatch) {
+  /**
+   * Sends a catch shrimp message to the server with a specified amount of shrimp to catch.
+   * 
+   * @param shrimpToCatch the amount of shrimp to catch.
+   * @throws RuntimeException if there is a failure to send the message to the server.
+   */
+  public void sendCatchShrimpRequest(int shrimpToCatch) throws RuntimeException {
     try {
       this.send("CATCH_SHRIMP " + shrimpToCatch);
     }
@@ -315,7 +355,13 @@ public class ServerConnection {
     }
   }
 
-  public void sendMessageRequest(String message) {
+  /**
+   * Sends a specified written message to the server.
+   * 
+   * @param message the message to send.
+   * @throws RuntimeException if there is a failure to send the message to the server.
+   */
+  public void sendMessageRequest(String message) throws RuntimeException {
     try {
       this.send("CHAT_MESSAGE " + message);
     }
@@ -323,6 +369,4 @@ public class ServerConnection {
       throw new RuntimeException(exception.getMessage());
     }
   }
-
-
 }

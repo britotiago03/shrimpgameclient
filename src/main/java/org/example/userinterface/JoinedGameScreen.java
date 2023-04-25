@@ -21,12 +21,9 @@ import org.example.logic.Lobby;
 
 /**
  * This abstract class represents the joined game screen of the Shrimp Game App. It contains a
- * static method
- * to create a scene for the joined game screen. The scene displays a list of lobbies the user
- * has joined and
- * a label indicating that the user is waiting for enough players to join the lobby. The user can
- * leave the lobby
- * by clicking on the "LEAVE LOBBY" button.
+ * static method to create a scene for the joined game screen. The scene displays a list of lobbies the user
+ * has joined and a label indicating that the user is waiting for enough players to join the lobby. The user can
+ * leave the lobby by clicking on the "LEAVE LOBBY" button.
  *
  * @author Tiago Brito
  * @version 1.3.0
@@ -34,10 +31,10 @@ import org.example.logic.Lobby;
  */
 public abstract class JoinedGameScreen {
   /**
-   * Returns a Scene object for the joined game screen of the Shrimp Game App.
+   * Returns a {@link javafx.scene.Scene Scene} object for the joined game screen of the Shrimp Game App.
    *
-   * @param shrimpGameApp the main class of the application
-   * @return a Scene object for the joined game screen
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the joined game screen.
    */
   public static Scene getJoinedGameScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();

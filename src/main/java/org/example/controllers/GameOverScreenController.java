@@ -9,11 +9,9 @@ import org.example.ShrimpGameApp;
 public class GameOverScreenController {
   private final ShrimpGameApp shrimpGameApp;
 
-
   public GameOverScreenController(ShrimpGameApp shrimpGameApp) {
     this.shrimpGameApp = shrimpGameApp;
   }
-
 
   public void handleLeaveGameButton() {
     Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);

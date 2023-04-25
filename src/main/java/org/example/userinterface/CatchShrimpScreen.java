@@ -1,14 +1,11 @@
 package org.example.userinterface;
 
-import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -22,16 +19,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
-import org.example.logic.Game;
-import org.example.logic.Player;
 
+/**
+ * This class represents the catch shrimp screen of the Shrimp Game application.
+ */
 public abstract class CatchShrimpScreen {
-
   /**
-   * Returns a Scene object representing the game started screen of the Shrimp Game application.
+   * Returns a {@link javafx.scene.Scene Scene} object representing the catch shrimp screen 
+   * of the Shrimp Game application.
    *
-   * @param shrimpGameApp the ShrimpGameApp object used to get the game information.
-   * @return a Scene object representing the game started screen.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the catch shrimp screen.
    */
   public static Scene getCatchShrimpScene(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
@@ -130,5 +128,4 @@ public abstract class CatchShrimpScreen {
 
     return catchShrimpScene;
   }
-
 }
