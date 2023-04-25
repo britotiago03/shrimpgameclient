@@ -128,11 +128,22 @@ public class GameSettings {
     this.communicationRounds = communicationRounds;
   }
 
+  /**
+   * Gets the communication round time.
+   * 
+   * @return the time (in seconds) for communication rounds.
+   */
   public int getCommunicationRoundTime()
   {
     return this.communicationRoundTime;
   }
 
+  /**
+   * Sets the communication round time.
+   * 
+   * @param communicationRoundTime the time (in seconds) for communication rounds.
+   * @throws IllegalArgumentException if the time provided is less than {@code 0}.
+   */
   public void setCommunicationRoundTime(int communicationRoundTime) throws IllegalArgumentException
   {
     if (communicationRoundTime < 0) {
