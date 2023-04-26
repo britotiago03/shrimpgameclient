@@ -36,8 +36,7 @@ public class ServerUpdateListener implements Runnable {
   @Override
   public void run() {
     while (true) {
-      String serverPacket =
-          this.shrimpGameApp.getServerConnection().receive();
+      String serverPacket = this.shrimpGameApp.getServerConnection().receive();
       String[] packetData = serverPacket.split(" ");
       Map<String, Player> players = null;
       Player player1 = null;
@@ -61,111 +60,102 @@ public class ServerUpdateListener implements Runnable {
             break;
 
           case "GAME_STARTED":
-            synchronized (this.shrimpGameApp)
-            {
-              player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
-              player2 = new Player(packetData[2], 5);
-              player3 = new Player(packetData[3], 5);
-              players = new HashMap<String, Player>();
-              players.put(player1.getName(), player1);
-              players.put(player2.getName(), player2);
-              players.put(player3.getName(), player3);
-              int numberOfRounds = Integer.parseInt(packetData[4]);
-              int roundTime = Integer.parseInt(packetData[5]);
-              String communicationRounds = packetData[6];
-              int communicationRoundTime = Integer.parseInt(packetData[7]);
-              int minShrimp = Integer.parseInt(packetData[8]);
-              int maxShrimp = Integer.parseInt(packetData[9]);
-              int islandNum = Integer.parseInt(packetData[10]);
-              String gameName = packetData[11];
-              GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime,
-                                                           communicationRounds,
-                                                           communicationRoundTime, minShrimp,
-                                                           maxShrimp);
-              Game game = new Game(gameName, gameSettings, players, islandNum);
-              this.shrimpGameApp.setGameStarted(true);
-              this.shrimpGameApp.setGame(game);
-              this.shrimpGameApp.getLobbies().remove(this.shrimpGameApp.getSelectedLobby());
-              this.shrimpGameApp.setSelectedLobby(null);
+            player1 = new Player(this.shrimpGameApp.getUser().getName(), 5);
+            player2 = new Player(packetData[2], 5);
+            player3 = new Player(packetData[3], 5);
+            players = new HashMap<String, Player>();
+            players.put(player1.getName(), player1);
+            players.put(player2.getName(), player2);
+            players.put(player3.getName(), player3);
+            int numberOfRounds = Integer.parseInt(packetData[4]);
+            int roundTime = Integer.parseInt(packetData[5]);
+            String communicationRounds = packetData[6];
+            int communicationRoundTime = Integer.parseInt(packetData[7]);
+            int minShrimp = Integer.parseInt(packetData[8]);
+            int maxShrimp = Integer.parseInt(packetData[9]);
+            int islandNum = Integer.parseInt(packetData[10]);
+            String gameName = packetData[11];
+            GameSettings gameSettings = new GameSettings(3, numberOfRounds, roundTime,
+                                                         communicationRounds,
+                                                         communicationRoundTime, minShrimp,
+                                                         maxShrimp);
+            Game game = new Game(gameName, gameSettings, players, islandNum);
+            this.shrimpGameApp.setGameStarted(true);
+            this.shrimpGameApp.setGame(game);
+            this.shrimpGameApp.getLobbies().remove(this.shrimpGameApp.getSelectedLobby());
+            this.shrimpGameApp.setSelectedLobby(null);
 
-              this.createRoundTimer();
+            this.createRoundTimer();
 
-              Platform.runLater(() ->
-                                {
-                                  this.shrimpGameApp.updateLobbyTable(
-                                      this.shrimpGameApp.getLobbies());
-                                  this.shrimpGameApp.resetScoreboardTables();
-                                  this.shrimpGameApp.initGameScreens();
-                                  this.shrimpGameApp.setScene(
-                                      this.shrimpGameApp.getGameStartedScreen());
-                                  this.shrimpGameApp.getGame().getRoundTimer().start();
-                                });
-            }
+            Platform.runLater(() ->
+                              {
+                                this.shrimpGameApp.updateLobbyTable(
+                                    this.shrimpGameApp.getLobbies());
+                                this.shrimpGameApp.resetScoreboardTables();
+                                this.shrimpGameApp.initGameScreens();
+                                this.shrimpGameApp.setScene(
+                                    this.shrimpGameApp.getGameStartedScreen());
+                                this.shrimpGameApp.getGame().getRoundTimer().start();
+                              });
             break;
 
           case "ROUND_FINISHED":
-            synchronized (this.shrimpGameApp)
-            {
-              Map<Player, Integer> playerShrimpCaughtMap = new HashMap<Player, Integer>();
-              Map<Player, Integer> playerMoneyMap = new HashMap<Player, Integer>();
-              int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
-              int shrimpPrice = Integer.parseInt(packetData[2]);
-              this.shrimpGameApp.setAllPlayersCaughtShrimp(true);
-              player1 = this.shrimpGameApp.getGame().getPlayers().get(packetData[3]);
-              int player1shrimpCaught = Integer.parseInt(packetData[4]);
-              player1.setShrimpCaught(player1shrimpCaught);
-              int player1roundProfit = Integer.parseInt(packetData[5]);
-              player1.setRoundProfit(player1roundProfit);
-              player1.setPreviousTotalMoney(player1.getCurrentTotalMoney());
-              player1.setCurrentTotalMoney(
-                  player1.getCurrentTotalMoney() + player1.getRoundProfit());
-              shrimpGameApp.getGame().getPlayers().get(shrimpGameApp.getUser().getName())
-                           .setCurrentTotalMoney(player1.getCurrentTotalMoney());
-              playerShrimpCaughtMap.put(new Player(player1), player1shrimpCaught);
-              playerMoneyMap.put(new Player(player1), player1roundProfit);
-              player2 = this.shrimpGameApp.getGame().getPlayers().get(packetData[6]);
-              int player2shrimpCaught = Integer.parseInt(packetData[7]);
-              player2.setShrimpCaught(player2shrimpCaught);
-              int player2roundProfit = Integer.parseInt(packetData[8]);
-              player2.setRoundProfit(player2roundProfit);
-              player2.setPreviousTotalMoney(player2.getCurrentTotalMoney());
-              player2.setCurrentTotalMoney(
-                  player2.getCurrentTotalMoney() + player2.getRoundProfit());
-              playerShrimpCaughtMap.put(new Player(player2), player2shrimpCaught);
-              playerMoneyMap.put(new Player(player2), player2roundProfit);
+            Map<Player, Integer> playerShrimpCaughtMap = new HashMap<Player, Integer>();
+            Map<Player, Integer> playerMoneyMap = new HashMap<Player, Integer>();
+            int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
+            int shrimpPrice = Integer.parseInt(packetData[2]);
+            this.shrimpGameApp.setAllPlayersCaughtShrimp(true);
+            player1 = this.shrimpGameApp.getGame().getPlayers().get(packetData[3]);
+            int player1shrimpCaught = Integer.parseInt(packetData[4]);
+            player1.setShrimpCaught(player1shrimpCaught);
+            int player1roundProfit = Integer.parseInt(packetData[5]);
+            player1.setRoundProfit(player1roundProfit);
+            player1.setPreviousTotalMoney(player1.getCurrentTotalMoney());
+            player1.setCurrentTotalMoney(player1.getCurrentTotalMoney() + player1.getRoundProfit());
+            shrimpGameApp.getGame().getPlayers().get(shrimpGameApp.getUser().getName())
+                         .setCurrentTotalMoney(player1.getCurrentTotalMoney());
+            playerShrimpCaughtMap.put(new Player(player1), player1shrimpCaught);
+            playerMoneyMap.put(new Player(player1), player1roundProfit);
+            player2 = this.shrimpGameApp.getGame().getPlayers().get(packetData[6]);
+            int player2shrimpCaught = Integer.parseInt(packetData[7]);
+            player2.setShrimpCaught(player2shrimpCaught);
+            int player2roundProfit = Integer.parseInt(packetData[8]);
+            player2.setRoundProfit(player2roundProfit);
+            player2.setPreviousTotalMoney(player2.getCurrentTotalMoney());
+            player2.setCurrentTotalMoney(player2.getCurrentTotalMoney() + player2.getRoundProfit());
+            playerShrimpCaughtMap.put(new Player(player2), player2shrimpCaught);
+            playerMoneyMap.put(new Player(player2), player2roundProfit);
 
-              player3 = this.shrimpGameApp.getGame().getPlayers().get(packetData[9]);
-              int player3shrimpCaught = Integer.parseInt(packetData[10]);
-              player3.setShrimpCaught(player3shrimpCaught);
-              int player3roundProfit = Integer.parseInt(packetData[11]);
-              player3.setRoundProfit(player3roundProfit);
-              player3.setPreviousTotalMoney(player3.getCurrentTotalMoney());
-              player3.setCurrentTotalMoney(
-                  player3.getCurrentTotalMoney() + player3.getRoundProfit());
-              playerShrimpCaughtMap.put(new Player(player3), player3shrimpCaught);
-              playerMoneyMap.put(new Player(player3), player3roundProfit);
+            player3 = this.shrimpGameApp.getGame().getPlayers().get(packetData[9]);
+            int player3shrimpCaught = Integer.parseInt(packetData[10]);
+            player3.setShrimpCaught(player3shrimpCaught);
+            int player3roundProfit = Integer.parseInt(packetData[11]);
+            player3.setRoundProfit(player3roundProfit);
+            player3.setPreviousTotalMoney(player3.getCurrentTotalMoney());
+            player3.setCurrentTotalMoney(player3.getCurrentTotalMoney() + player3.getRoundProfit());
+            playerShrimpCaughtMap.put(new Player(player3), player3shrimpCaught);
+            playerMoneyMap.put(new Player(player3), player3roundProfit);
 
-              Round round = new Round(roundNum, shrimpPrice, playerShrimpCaughtMap, playerMoneyMap);
-              this.shrimpGameApp.getGame().getRounds().put(round.getNumber(), round);
-              this.shrimpGameApp.getGame().setCurrentRoundNum(roundNum + 1);
-              this.shrimpGameApp.initRoundResultsScreens();
-              this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
-                                .setShrimpCaught(-1);
-              Platform.runLater(() ->
-                                {
-                                  this.shrimpGameApp.setScene(
-                                      this.shrimpGameApp.getShrimpCaughtSummaryScreen());
-                                  this.shrimpGameApp.getGame().getRoundTimer().stop();
-                                  if (this.shrimpGameApp.getGame().getCurrentRoundNum()
-                                      <= this.shrimpGameApp.getGame().getSettings().getNumberOfRounds())
-                                  {
-                                    this.createRoundTimer();
-                                    this.shrimpGameApp.getGame().getRoundTimer().start();
-                                  }
-                                  this.shrimpGameApp.updateScoreboardTable(new ArrayList<>(
-                                      this.shrimpGameApp.getGame().getRounds().values()));
-                                });
-            }
+            Round round = new Round(roundNum, shrimpPrice, playerShrimpCaughtMap, playerMoneyMap);
+            this.shrimpGameApp.getGame().getRounds().put(round.getNumber(), round);
+            this.shrimpGameApp.getGame().setCurrentRoundNum(roundNum + 1);
+            this.shrimpGameApp.initRoundResultsScreens();
+            this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
+                              .setShrimpCaught(-1);
+            Platform.runLater(() ->
+                              {
+                                this.shrimpGameApp.setScene(
+                                    this.shrimpGameApp.getShrimpCaughtSummaryScreen());
+                                this.shrimpGameApp.getGame().getRoundTimer().stop();
+                                if (this.shrimpGameApp.getGame().getCurrentRoundNum()
+                                    <= this.shrimpGameApp.getGame().getSettings()
+                                                         .getNumberOfRounds()) {
+                                  this.createRoundTimer();
+                                  this.shrimpGameApp.getGame().getRoundTimer().start();
+                                }
+                                this.shrimpGameApp.updateScoreboardTable(new ArrayList<>(
+                                    this.shrimpGameApp.getGame().getRounds().values()));
+                              });
 
             break;
 
@@ -187,7 +177,12 @@ public class ServerUpdateListener implements Runnable {
         }
       }
       else {
-        this.shrimpGameApp.getServerConnection().getServerPackets().add(serverPacket);
+        ServerConnection serverConnection = this.shrimpGameApp.getServerConnection();
+        synchronized (serverConnection.getServerPackets()) {
+          serverConnection.getServerPackets().add(serverPacket);
+          serverConnection.getServerPackets().notify();
+
+        }
       }
     }
   }
@@ -195,8 +190,7 @@ public class ServerUpdateListener implements Runnable {
   /**
    * Creates the round timer.
    */
-  public void createRoundTimer()
-  {
+  public void createRoundTimer() {
     this.shrimpGameApp.getGame().setRoundTimer(
         new Timer(this.shrimpGameApp, this.shrimpGameApp.getRoundTimerLabels()));
     String[] gameCommunicationRounds =

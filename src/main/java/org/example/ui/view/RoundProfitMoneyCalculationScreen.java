@@ -165,7 +165,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                                   shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
                                 }
                                 else {
-                                  shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                                  shrimpGameApp.setScene(shrimpGameApp.getGameOverViewScoreboardScreen());
                                 }
                               }
                               else {
@@ -191,7 +191,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                                     shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
                                   }
                                   else {
-                                    shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                                    shrimpGameApp.setScene(shrimpGameApp.getGameOverViewScoreboardScreen());
                                   }
 
                                 }
@@ -240,7 +240,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                               shrimpGameApp.setScene(shrimpGameApp.getGameScreen());
                             }
                             else {
-                              shrimpGameApp.setScene(shrimpGameApp.getGameOverScreen());
+                              shrimpGameApp.setScene(shrimpGameApp.getGameOverViewScoreboardScreen());
                             }
                           }
                           else {

@@ -62,7 +62,7 @@ public class ServerConnection {
   private final String hostname;
   private final int port;
   private Socket socket;
-  private List<String> serverPackets;
+  private final List<String> serverPackets;
   private int serverPacketCounter;
   private BufferedWriter bufferedWriter;
   private BufferedReader bufferedReader;
@@ -81,48 +81,12 @@ public class ServerConnection {
   }
 
   /**
-   * Gets the {@link BufferedReader} of the server connection.
-   *
-   * @return the {@code BufferedReader} of the server connection.
-   */
-  public BufferedReader getBufferedReader() {
-    return this.bufferedReader;
-  }
-
-  /**
-   * Gets the {@link BufferedWriter} of the server connection.
-   *
-   * @return the {@code BufferedWriter} of the server connection.
-   */
-  public BufferedWriter getBufferedWriter() {
-    return this.bufferedWriter;
-  }
-
-  /**
    * Gets a {@link List} of server packets.
-   * 
+   *
    * @return a {@code List} of server packets.
    */
-  public List<String> getServerPackets() {
+  public synchronized List<String> getServerPackets() {
     return this.serverPackets;
-  }
-
-  /**
-   * Gets the server packet counter.
-   *
-   * @return the server packet counter.
-   */
-  public int getServerPacketCounter() {
-    return this.serverPacketCounter;
-  }
-
-  /**
-   * Sets the server packet counter.
-   *
-   * @param serverPacketCounter the {@code int} value to assign to the server packet counter.
-   */
-  public void setServerPacketCounter(int serverPacketCounter) {
-    this.serverPacketCounter = serverPacketCounter;
   }
 
   /**
@@ -183,14 +147,6 @@ public class ServerConnection {
    * @throws RuntimeException if there is a failure to receive the message from the server.
    */
   public String getNextServerPacket() {
-    try {
-      Thread.sleep(500);
-    }
-    catch (InterruptedException exception)
-    {
-      throw new RuntimeException(exception.getMessage());
-    }
-
     int serverPacketNum = this.serverPacketCounter;
     this.serverPacketCounter++;
     return this.serverPackets.get(serverPacketNum);
@@ -219,8 +175,20 @@ public class ServerConnection {
   public String[] sendUsernameRequest() {
     String[] username = new String[2];
     try {
+      int serverPacketsSize = this.getServerPackets().size();
       this.send("REQUEST_USERNAME " + ShrimpGameApp.VERSION);
-      String[] input = this.getNextServerPacket().split(" ");
+      String[] input = null;
+      synchronized (this.serverPackets) {
+        while (this.serverPackets.size() == serverPacketsSize) {
+          try {
+            this.serverPackets.wait();
+          }
+          catch (InterruptedException exception) {
+            throw new RuntimeException("Thread was interrupted");
+          }
+        }
+        input = this.getNextServerPacket().split(" ");
+      }
       if (input[0].equals("USERNAME")) {
         username[0] = input[1];
         username[1] = input[2];
@@ -253,14 +221,14 @@ public class ServerConnection {
   /**
    * Sends a request to the server to create a new lobby with the provided parameters.
    *
-   * @param lobbyName       the name of the lobby to be created.
-   * @param numPlayers      the maximum number of players allowed in the lobby.
-   * @param numRounds       the number of rounds to be played in the lobby.
-   * @param roundTime       the time limit in seconds for each round.
+   * @param lobbyName           the name of the lobby to be created.
+   * @param numPlayers          the maximum number of players allowed in the lobby.
+   * @param numRounds           the number of rounds to be played in the lobby.
+   * @param roundTime           the time limit in seconds for each round.
    * @param communicationRounds the communication rounds of the game.
-   * @param commRoundTime the time (in seconds) during the communication rounds.
-   * @param minShrimpKilograms the minimum amount of shrimp kilograms required to win a round.
-   * @param maxShrimpKilograms the maximum amount of shrimp kilograms required to win a round.
+   * @param commRoundTime       the time (in seconds) during the communication rounds.
+   * @param minShrimpKilograms  the minimum amount of shrimp kilograms required to win a round.
+   * @param maxShrimpKilograms  the maximum amount of shrimp kilograms required to win a round.
    * @throws RuntimeException if there is a failure to send the create lobby request to the server.
    */
   public void sendCreateLobbyRequest(String lobbyName, int numPlayers, int numRounds, int roundTime,
@@ -269,7 +237,8 @@ public class ServerConnection {
     try {
       this.send(
           "CREATE_LOBBY " + lobbyName + " " + numPlayers + " " + numRounds + " " + roundTime + " "
-          + communicationRounds + " " + commRoundTime + " " + minShrimpKilograms + " " + maxShrimpKilograms);
+          + communicationRounds + " " + commRoundTime + " " + minShrimpKilograms + " "
+          + maxShrimpKilograms);
     }
     catch (RuntimeException exception) {
       throw new RuntimeException("Failed to send create lobby request to the server.");
@@ -278,14 +247,27 @@ public class ServerConnection {
 
   /**
    * Gets the existing lobbies by sending a REQUEST_LOBBY_LIST request to the server.
-   * 
+   *
    * @return the existing lobbies.
    */
   public List<Lobby> getExistingLobbies() {
     List<Lobby> lobbies = new ArrayList<Lobby>();
     try {
+      int serverPacketsSize = this.serverPackets.size();
       this.send("REQUEST_LOBBY_LIST");
-      String[] input = this.getNextServerPacket().split(" ");
+      String[] input = null;
+      synchronized (this.serverPackets) {
+
+        while (this.serverPackets.size() == serverPacketsSize) {
+          try {
+            this.serverPackets.wait();
+          }
+          catch (InterruptedException exception) {
+            throw new RuntimeException("Thread was interrupted");
+          }
+        }
+        input = this.getNextServerPacket().split(" ");
+      }
       if (input[0].equals("LOBBY_LIST")) {
         for (int index = 1; index < input.length; index++) {
           String[] lobby = input[index].split("\\.");
@@ -312,8 +294,20 @@ public class ServerConnection {
    */
   public void sendJoinLobbyRequest(String lobbyName) {
     try {
+      int serverPacketsSize = this.serverPackets.size();
       this.send("JOIN_LOBBY " + lobbyName);
-      String response = this.getNextServerPacket();
+      String response = "";
+      synchronized (this.serverPackets) {
+        while (this.serverPackets.size() == serverPacketsSize) {
+          try {
+            this.serverPackets.wait();
+          }
+          catch (InterruptedException exception) {
+            throw new RuntimeException("Thread was interrupted");
+          }
+        }
+        response = this.getNextServerPacket();
+      }
       if (response.equals("LOBBY_FULL")) {
         throw new RuntimeException("Failed to join the lobby because the lobby is full.");
       }
@@ -329,13 +323,25 @@ public class ServerConnection {
 
   /**
    * Sends a LEAVE_LOBBY request to the server.
-   * 
+   *
    * @throws RuntimeException if there is a failure to send the message to the server.
    */
   public void sendLeaveLobbyRequest() throws RuntimeException {
     try {
+      int serverPacketsSize = this.serverPackets.size();
       this.send("LEAVE_LOBBY");
-      String response = this.getNextServerPacket();
+      String response = "";
+      synchronized (this.serverPackets) {
+        while (this.serverPackets.size() == serverPacketsSize) {
+          try {
+            this.serverPackets.wait();
+          }
+          catch (InterruptedException exception) {
+            throw new RuntimeException("Thread was interrupted");
+          }
+        }
+        response = this.getNextServerPacket();
+      }
       if (!response.equals("LEFT_SUCCESS")) {
         throw new RuntimeException("Failed to leave the lobby.");
       }
@@ -347,7 +353,7 @@ public class ServerConnection {
 
   /**
    * Sends a catch shrimp message to the server with a specified amount of shrimp to catch.
-   * 
+   *
    * @param shrimpToCatch the amount of shrimp to catch.
    * @throws RuntimeException if there is a failure to send the message to the server.
    */
@@ -362,7 +368,7 @@ public class ServerConnection {
 
   /**
    * Sends a specified written message to the server.
-   * 
+   *
    * @param message the message to send.
    * @throws RuntimeException if there is a failure to send the message to the server.
    */

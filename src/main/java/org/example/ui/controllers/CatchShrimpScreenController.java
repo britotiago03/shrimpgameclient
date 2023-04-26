@@ -28,8 +28,7 @@ public class CatchShrimpScreenController {
 
   /**
    * Handles pressing the "Ok" button.
-   * 
-   * @param catchShrimpTextFld the text area with the amount of shrimp to catch.
+   *
    * @param errorLbl the label displaying an error if the amount is invalid.
    */
   public void handleOkButton(TextArea catchShrimpTextArea, Label errorLbl) {
@@ -59,10 +58,24 @@ public class CatchShrimpScreenController {
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
           try {
+            int serverPacketsSize =
+                this.shrimpGameApp.getServerConnection().getServerPackets().size();
             this.shrimpGameApp.getServerConnection().sendCatchShrimpRequest(shrimpCaught);
+            String response = "";
+            synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
+              while (this.shrimpGameApp.getServerConnection().getServerPackets().size()
+                     == serverPacketsSize) {
+                try {
+                  this.shrimpGameApp.getServerConnection().getServerPackets().wait();
+                }
+                catch (InterruptedException exception) {
+                  throw new RuntimeException("Thread was interrupted");
+                }
+              }
+              response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
+            }
             this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
                               .setShrimpCaught(shrimpCaught);
-            String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
 
             if (response.equals("CAUGHT_SUCCESSFULLY")) {
               Alert successDialog = new Alert(Alert.AlertType.INFORMATION);
@@ -78,17 +91,14 @@ public class CatchShrimpScreenController {
               errorLbl.setVisible(false);
               this.shrimpGameApp.addIconToDialog(successDialog);
 
-              synchronized (this.shrimpGameApp)
-              {
-                if (this.shrimpGameApp.allPlayersCaughtShrimp()) {
-                  this.shrimpGameApp.setScene(this.shrimpGameApp.getShrimpCaughtSummaryScreen());
-                }
-                else {
-                  int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
-                  successDialog.showAndWait();
-                  if (this.shrimpGameApp.getGame().getCurrentRoundNum() == roundNum) {
-                    this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
-                  }
+              if (this.shrimpGameApp.allPlayersCaughtShrimp()) {
+                this.shrimpGameApp.setScene(this.shrimpGameApp.getShrimpCaughtSummaryScreen());
+              }
+              else {
+                int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
+                successDialog.showAndWait();
+                if (this.shrimpGameApp.getGame().getCurrentRoundNum() == roundNum) {
+                  this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
                 }
               }
             }

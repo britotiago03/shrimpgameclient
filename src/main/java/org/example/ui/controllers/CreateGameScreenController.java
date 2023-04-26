@@ -118,12 +118,22 @@ public class CreateGameScreenController {
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
           try {
-            String response;
-            synchronized (this.shrimpGameApp.getServerConnection())
-            {
-              this.shrimpGameApp.getServerConnection().sendCreateLobbyRequest(
-                  gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
-                  commRoundTime, minShrimp, maxShrimp);
+            int serverPacketsSize =
+                this.shrimpGameApp.getServerConnection().getServerPackets().size();
+            this.shrimpGameApp.getServerConnection().sendCreateLobbyRequest(
+                gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
+                commRoundTime, minShrimp, maxShrimp);
+            String response = "";
+            synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
+              while (this.shrimpGameApp.getServerConnection().getServerPackets().size()
+                     == serverPacketsSize) {
+                try {
+                  this.shrimpGameApp.getServerConnection().getServerPackets().wait();
+                }
+                catch (InterruptedException exception) {
+                  throw new RuntimeException("Thread was interrupted");
+                }
+              }
               response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
             }
 

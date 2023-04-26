@@ -21,9 +21,17 @@ public class GameOverScreenController {
     this.shrimpGameApp.addIconToDialog(confirmDialog);
     Optional<ButtonType> result = confirmDialog.showAndWait();
     if (result.isPresent() && result.get() == ButtonType.OK) {
-      shrimpGameApp.setScene(shrimpGameApp.getMainScreen());
-      shrimpGameApp.setGameStarted(false);
-      shrimpGameApp.updateChatMessageGrid(new ArrayList<String>());
+      this.shrimpGameApp.setScene(this.shrimpGameApp.getMainScreen());
+      this.shrimpGameApp.setGameStarted(false);
+      this.shrimpGameApp.updateChatMessageGrid(new ArrayList<String>());
     }
+  }
+
+  public void handleViewChatButton() {
+    this.shrimpGameApp.setScene(this.shrimpGameApp.getGameOverViewChatScreen());
+  }
+
+  public void handleViewScoreboardButton() {
+    this.shrimpGameApp.setScene(this.shrimpGameApp.getGameOverViewScoreboardScreen());
   }
 }

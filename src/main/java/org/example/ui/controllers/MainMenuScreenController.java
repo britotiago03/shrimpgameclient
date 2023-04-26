@@ -1,5 +1,6 @@
 package org.example.ui.controllers;
 
+import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -85,11 +86,21 @@ public class MainMenuScreenController {
     Optional<String> result = dialog.showAndWait();
     if (result.isPresent()) {
       try {
-        String serverResponse;
-        synchronized (this.shrimpGameApp.getServerConnection())
-        {
-          this.shrimpGameApp.getServerConnection().connect();
-          this.shrimpGameApp.getServerConnection().sendBecomeAdminRequest(result.get());
+        this.shrimpGameApp.getServerConnection().connect();
+        int serverPacketsSize =
+            this.shrimpGameApp.getServerConnection().getServerPackets().size();
+        this.shrimpGameApp.getServerConnection().sendBecomeAdminRequest(result.get());
+        String serverResponse = "";
+        synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
+          while (this.shrimpGameApp.getServerConnection().getServerPackets().size()
+                 == serverPacketsSize) {
+            try {
+              this.shrimpGameApp.getServerConnection().getServerPackets().wait();
+            }
+            catch (InterruptedException exception) {
+              throw new RuntimeException("Thread was interrupted");
+            }
+          }
           serverResponse = this.shrimpGameApp.getServerConnection().getNextServerPacket();
         }
         if (serverResponse.equals("BECOME_ADMIN_SUCCESSFUL")) {

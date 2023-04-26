@@ -52,8 +52,25 @@ public class ChatScreenController {
           throw new IllegalArgumentException("Message cannot be greater than 300 characters.");
         }
         try {
+          int serverPacketsSize =
+              this.shrimpGameApp.getServerConnection().getServerPackets().size();
           this.shrimpGameApp.getServerConnection().sendMessageRequest(trimmedMessage);
-          this.shrimpGameApp.getServerConnection().getNextServerPacket();
+          String response = "";
+          synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
+            while (this.shrimpGameApp.getServerConnection().getServerPackets().size()
+                   == serverPacketsSize) {
+              try {
+                this.shrimpGameApp.getServerConnection().getServerPackets().wait();
+              }
+              catch (InterruptedException exception) {
+                throw new RuntimeException("Thread was interrupted");
+              }
+            }
+            response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
+          }
+          if (!response.equals("MESSAGE_RECEIVED")) {
+            throw new RuntimeException("Failed to send message.");
+          }
           errorLbl.setVisible(false);
         } catch (RuntimeException exception) {
           Alert errorDialog = new Alert(Alert.AlertType.ERROR);

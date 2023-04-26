@@ -49,12 +49,24 @@ public class Timer {
             if (!this.shrimpGameApp.getGame().getPlayers().get(
                 this.shrimpGameApp.getUser().getName()).hasCaughtShrimp()) {
               int minShrimpKg = this.shrimpGameApp.getGame().getSettings().getMinShrimpKilograms();
-              synchronized (this.shrimpGameApp.getServerConnection()) {
-                this.shrimpGameApp.getServerConnection().sendCatchShrimpRequest(minShrimpKg);
-                String response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
-                if (!response.equals("CAUGHT_SUCCESSFULLY")) {
-                  throw new RuntimeException("Failed to catch shrimp.");
+              int serverPacketsSize =
+                  this.shrimpGameApp.getServerConnection().getServerPackets().size();
+              this.shrimpGameApp.getServerConnection().sendCatchShrimpRequest(minShrimpKg);
+              String response = "";
+              synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
+                while (this.shrimpGameApp.getServerConnection().getServerPackets().size()
+                       == serverPacketsSize) {
+                  try {
+                    this.shrimpGameApp.getServerConnection().getServerPackets().wait();
+                  }
+                  catch (InterruptedException exception) {
+                    throw new RuntimeException("Thread was interrupted");
+                  }
                 }
+                response = this.shrimpGameApp.getServerConnection().getNextServerPacket();
+              }
+              if (!response.equals("CAUGHT_SUCCESSFULLY")) {
+                throw new RuntimeException("Failed to catch shrimp.");
               }
               this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
                                 .setShrimpCaught(minShrimpKg);

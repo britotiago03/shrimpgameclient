@@ -39,7 +39,8 @@ import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.ui.view.CatchShrimpScreen;
 import org.example.ui.view.CreateGameScreen;
-import org.example.ui.view.GameOverScreen;
+import org.example.ui.view.GameOverViewChatScreen;
+import org.example.ui.view.GameOverViewScoreboardScreen;
 import org.example.ui.view.GameScreen;
 import org.example.ui.view.GameStartedScreen;
 import org.example.ui.view.GameTutorialScreen;
@@ -53,8 +54,9 @@ import org.example.ui.view.ShrimpPriceCalculationScreen;
 
 /**
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
- * the JavaFX {@link javafx.application.Application Application} class and provides the main method 
- * for launching the application. The class also manages the different scenes and controllers used in the
+ * the JavaFX {@link javafx.application.Application Application} class and provides the main method
+ * for launching the application. The class also manages the different scenes and controllers
+ * used in the
  * application, as well as the server connection and executor service.
  *
  * @author Tiago Brito
@@ -79,7 +81,8 @@ public class ShrimpGameApp extends Application {
   private Scene shrimpCaughtSummaryScreen;
   private Scene shrimpPriceCalculationScreen;
   private Scene roundProfitMoneyCalculationScreen;
-  private Scene gameOverScreen;
+  private Scene gameOverViewScoreboardScreen;
+  private Scene gameOverViewChatScreen;
   private Lobby selectedLobby;
   private User user;
   private ServerConnection serverConnection;
@@ -101,6 +104,7 @@ public class ShrimpGameApp extends Application {
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
   private List<Label> roundTimerLabels;
+  private Thread serverUpdateListener;
 
   /**
    * The {@code start} method is called when the application is launched. It initializes the main
@@ -272,7 +276,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Returns a {@code boolean} value based on whether the game has started or not.
-   * 
+   *
    * @return {@code true} if the game has started, or {@code false} if it has not.
    */
   public boolean isGameStarted() {
@@ -281,9 +285,9 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets a {@code boolean} value based on whether the game has started or not.
-   * 
-   * @param gameStarted a {@code boolean} value that is either {@code true} if the 
-   * game has started, or {@code false} if it has not.
+   *
+   * @param gameStarted a {@code boolean} value that is either {@code true} if the
+   *                    game has started, or {@code false} if it has not.
    */
   public void setGameStarted(boolean gameStarted) {
     this.gameStarted = gameStarted;
@@ -291,7 +295,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Returns a {@code boolean} value based on whether all players have caught shrimp or not.
-   * 
+   *
    * @return {@code true} if all players have caught shrimp, or {@code false} if they have not.
    */
   public boolean allPlayersCaughtShrimp() {
@@ -301,17 +305,19 @@ public class ShrimpGameApp extends Application {
   /**
    * Sets a {@code boolean} value based on whether all players have caught shrimp or not.
    *
-   * @param allPlayersCaughtShrimp a {@code boolean} value that is either {@code true} if all 
-   * players have caught shrimp, or {@code false} if they have not.
+   * @param allPlayersCaughtShrimp a {@code boolean} value that is either {@code true} if all
+   *                               players have caught shrimp, or {@code false} if they have not.
    */
   public void setAllPlayersCaughtShrimp(boolean allPlayersCaughtShrimp) {
     this.allPlayersCaughtShrimp = allPlayersCaughtShrimp;
   }
 
   /**
-   * Returns a {@code boolean} value based on whether the scoreboard table view is initialized or not.
-   * 
-   * @return {@code true} if the scoreboard table view is initialized, or {@code false} if it is not.
+   * Returns a {@code boolean} value based on whether the scoreboard table view is initialized or
+   * not.
+   *
+   * @return {@code true} if the scoreboard table view is initialized, or {@code false} if it is
+   * not.
    */
   public boolean isScoreboardTableViewInitialized() {
     return this.scoreboardTableViewInitialized;
@@ -319,19 +325,20 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets a {@code boolean} value based on whether the scoreboard table view is initialized or not.
-   * 
-   * @param scoreboardTableViewInitialized a {@code boolean} value that is either {@code true} if 
-   * the scoreboard table view is initialized, or {@code false} if it is not.
+   *
+   * @param scoreboardTableViewInitialized a {@code boolean} value that is either {@code true} if
+   *                                       the scoreboard table view is initialized, or {@code
+   *                                       false} if it is not.
    */
   public void setScoreboardTableViewInitialized(boolean scoreboardTableViewInitialized) {
     this.scoreboardTableViewInitialized = scoreboardTableViewInitialized;
   }
 
   /**
-   * Returns a {@code boolean} value based on whether the game over scoreboard table 
+   * Returns a {@code boolean} value based on whether the game over scoreboard table
    * view is initialized or not.
-   * 
-   * @return {@code true} if the game over scoreboard table view is initialized, 
+   *
+   * @return {@code true} if the game over scoreboard table view is initialized,
    * or {@code false} if it is not.
    */
   public boolean isGameOverScoreboardTableviewInitialized() {
@@ -339,11 +346,13 @@ public class ShrimpGameApp extends Application {
   }
 
   /**
-   * Sets a {@code boolean} value based on whether the game over scoreboard table 
+   * Sets a {@code boolean} value based on whether the game over scoreboard table
    * view is initialized or not.
-   * 
-   * @param gameOverScoreboardTableviewInitialized a {@code boolean} value that is either 
-   * {@code true} if the game over scoreboard table view is initialized, or {@code false} if it is not.
+   *
+   * @param gameOverScoreboardTableviewInitialized a {@code boolean} value that is either
+   *                                               {@code true} if the game over scoreboard table
+   *                                               view is initialized, or {@code false} if it is
+   *                                               not.
    */
   public void setGameOverScoreboardTableviewInitialized(
       boolean gameOverScoreboardTableviewInitialized) {
@@ -352,7 +361,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the chat message {@code GridPane}.
-   * 
+   *
    * @return the chat message {@code GridPane}.
    */
   public GridPane getChatMessageGrid() {
@@ -361,7 +370,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the labels that displays timer.
-   * 
+   *
    * @return a {@code List} of labels for displaying time.
    */
   public List<Label> getRoundTimerLabels() {
@@ -370,7 +379,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the selected {@code Lobby}.
-   * 
+   *
    * @return the selected {@code Lobby}.
    */
   public Lobby getSelectedLobby() {
@@ -379,11 +388,16 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets the selected {@code Lobby}.
-   * 
+   *
    * @param selectedLobby the selected {@code Lobby}.
    */
   public void setSelectedLobby(Lobby selectedLobby) {
     this.selectedLobby = selectedLobby;
+  }
+
+  public Thread getServerUpdateListener()
+  {
+    return this.serverUpdateListener;
   }
 
   /**
@@ -431,7 +445,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the user.
-   * 
+   *
    * @return the user.
    */
   public User getUser() {
@@ -440,7 +454,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the game.
-   * 
+   *
    * @return the game.
    */
   public Game getGame() {
@@ -449,7 +463,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets the game.
-   * 
+   *
    * @param game the game to set.
    */
   public void setGame(Game game) {
@@ -458,7 +472,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the {@link List} of lobbies.
-   * 
+   *
    * @return a {@code List} of lobbies.
    */
   public List<Lobby> getLobbies() {
@@ -467,7 +481,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets the {@link List} of lobbies.
-   * 
+   *
    * @param lobbies the {@code List} of lobbies to set.
    */
   public void setLobbies(List<Lobby> lobbies) {
@@ -595,13 +609,18 @@ public class ShrimpGameApp extends Application {
    *
    * @return the game over scene.
    */
-  public Scene getGameOverScreen() {
-    return this.gameOverScreen;
+  public Scene getGameOverViewScoreboardScreen() {
+    return this.gameOverViewScoreboardScreen;
+  }
+
+  public Scene getGameOverViewChatScreen() {
+    return this.gameOverViewChatScreen;
   }
 
   /**
    * Initializes the server connection to the game server.
-   * Returns a primitive String array containing the username and whether the user is an admin or not.
+   * Returns a primitive String array containing the username and whether the user is an admin or
+   * not.
    * If the initialization fails, a {@link RuntimeException} is thrown.
    *
    * @return a primitive array containing the username and whether the user is an admin or not.
@@ -614,8 +633,8 @@ public class ShrimpGameApp extends Application {
     try {
       this.serverConnection.connect();
       // Create Update Listener
-      Thread updateListener = new Thread(new ServerUpdateListener(this));
-      updateListener.start();
+      this.serverUpdateListener = new Thread(new ServerUpdateListener(this));
+      this.serverUpdateListener.start();
       input = this.serverConnection.sendUsernameRequest();
     }
     catch (RuntimeException exception) {
@@ -678,7 +697,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Updates the lobby table.
-   * 
+   *
    * @param lobbies the lobbies to update the table with.
    */
   public void updateLobbyTable(List<Lobby> lobbies) {
@@ -689,7 +708,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Sets the scoreboard table view.
-   * 
+   *
    * @param scoreboardTableView the scoreboard to set to the table.
    */
   public void setScoreboardTableView(TableView<Round> scoreboardTableView) {
@@ -895,7 +914,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Updates the scoreboard table.
-   * 
+   *
    * @param rounds the rounds to update the table with.
    */
   public void updateScoreboardTable(List<Round> rounds) {
@@ -916,7 +935,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Updates the chat message grid.
-   * 
+   *
    * @param messages a {@link List} of messages to update the chat message grid with.
    */
   public void updateChatMessageGrid(List<String> messages) {
@@ -955,7 +974,9 @@ public class ShrimpGameApp extends Application {
     this.catchShrimpScreen = CatchShrimpScreen.getCatchShrimpScene(this);
     this.gameScreen = GameScreen.getMainScene(this, false);
     this.gameCaughtShrimpScreen = GameScreen.getMainScene(this, true);
-    this.gameOverScreen = GameOverScreen.getGameOverScreen(this);
+    this.gameOverViewScoreboardScreen =
+        GameOverViewScoreboardScreen.getGameOverViewScoreboardScreen(this);
+    this.gameOverViewChatScreen = GameOverViewChatScreen.getGameOverViewChatScreen(this);
   }
 
   /**

@@ -57,7 +57,7 @@ public abstract class GameScreen {
    */
   public static void initOverviewBackgroundImage() {
     OVERVIEW_BACKGROUND = new Image(
-        ShrimpGameApp.class.getResource("/images/overview.jpg").toExternalForm());
+        ShrimpGameApp.class.getResource("/images/overview_gif.gif").toExternalForm());
   }
 
   /**
@@ -517,7 +517,6 @@ public abstract class GameScreen {
           messageTextArea.setWrapText(true);
 
           Label dateLbl = new Label(datePart);
-          dateLbl.getStyleClass().add("date-label");
 
           chatGrid.add(usernameLbl, 0, row);
           chatGrid.add(messageTextArea, 1, row);

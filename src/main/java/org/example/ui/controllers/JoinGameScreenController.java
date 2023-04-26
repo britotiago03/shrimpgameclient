@@ -34,28 +34,22 @@ public class JoinGameScreenController {
    */
   public void handleJoinButton(Lobby selectedLobby) {
     try {
-      synchronized (this.shrimpGameApp.getServerConnection())
-      {
-        this.shrimpGameApp.getServerConnection().sendJoinLobbyRequest(selectedLobby.getLobbyName());
-      }
+      this.shrimpGameApp.getServerConnection().sendJoinLobbyRequest(selectedLobby.getLobbyName());
       Alert successDialog = new Alert(Alert.AlertType.INFORMATION);
       successDialog.setTitle("Success");
       successDialog.setHeaderText(null);
       successDialog.setContentText("Joined the lobby successfully!");
       this.shrimpGameApp.addIconToDialog(successDialog);
       this.shrimpGameApp.setSelectedLobby(selectedLobby);
-      synchronized (this.shrimpGameApp)
+      if (this.shrimpGameApp.isGameStarted())
       {
-        if (this.shrimpGameApp.isGameStarted())
+        this.shrimpGameApp.setScene(this.shrimpGameApp.getGameStartedScreen());
+      }
+      else {
+        successDialog.showAndWait();
+        if (!this.shrimpGameApp.isGameStarted())
         {
-          this.shrimpGameApp.setScene(this.shrimpGameApp.getGameStartedScreen());
-        }
-        else {
-          successDialog.showAndWait();
-          if (!this.shrimpGameApp.isGameStarted())
-          {
-            this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
-          }
+          this.shrimpGameApp.setScene(this.shrimpGameApp.getJoinedGameScreen());
         }
       }
     }
@@ -76,10 +70,7 @@ public class JoinGameScreenController {
    */
   public void handleLeaveButton() {
     try {
-      synchronized (this.shrimpGameApp.getServerConnection())
-      {
-        this.shrimpGameApp.getServerConnection().sendLeaveLobbyRequest();
-      }
+      this.shrimpGameApp.getServerConnection().sendLeaveLobbyRequest();
       this.shrimpGameApp.setSelectedLobby(null);
     }
     catch (RuntimeException exception) {
