@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -24,7 +23,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.example.model.GameResult;
 import org.example.model.MessageComparator;
 import org.example.ui.controllers.CatchShrimpScreenController;
@@ -72,7 +70,7 @@ public class ShrimpGameApp extends Application {
   public static final String VERSION = "1.7.3";
   private static final String HOSTNAME = "34.88.118.44";
   private static final int PORT = 8080;
-  private Scene mainScreen;
+  private Scene mainScreen; 
   private Scene mainAdminScreen;
   private Scene createGameScreen;
   private Scene joinGameScreen;
@@ -232,6 +230,11 @@ public class ShrimpGameApp extends Application {
     return this.gameOverScoreboardTableview;
   }
 
+  /**
+   * Gets the game results table view.
+   * 
+   * @return a {@code TableView} object of {@code GameResult} for the results of the game.
+   */
   public TableView<GameResult> getGameResultTableView() {
     return this.gameResultTableView;
   }
@@ -290,6 +293,11 @@ public class ShrimpGameApp extends Application {
     return this.gameOverScreenController;
   }
 
+  /**
+   * Gets the controller for the {@code DownloadGameDataScreen} object.
+   * 
+   * @return gets the controller for the {@code DownloadGameDataScreen} object.
+   */
   public DownloadGameDataScreenController getDownloadGameDataScreenController() {
     return this.downloadGameDataScreenController;
   }
@@ -517,6 +525,11 @@ public class ShrimpGameApp extends Application {
     this.lobbies = lobbies;
   }
 
+  /**
+   * Gets the game results.
+   * 
+   * @return a list of {@code GameResult} objects for the results of the game.
+   */
   public List<GameResult> getGameResults() {
     return this.gameResults;
   }
@@ -655,6 +668,11 @@ public class ShrimpGameApp extends Application {
     return this.gameOverViewChatScreen;
   }
 
+  /**
+   * Gets the download game data screen.
+   * 
+   * @return a {@code DownloadGameDataScreen} object for the screen for downloading game results.
+   */
   public Scene getDownloadGameDataScreen() {
     return this.downloadGameDataScreen;
   }
@@ -975,6 +993,11 @@ public class ShrimpGameApp extends Application {
     this.setGameOverScoreboardTableviewInitialized(false);
   }
 
+  /**
+   * Sets the game results table view.
+   * 
+   * @param gameResultTableView the {@code TableView} object to assign to the game results table view.
+   */
   public void setGameResultTableView(TableView<GameResult> gameResultTableView) {
     TableColumn<GameResult, String> finishedGameNameCol = new TableColumn<>("Finished Games");
     gameResultTableView.setPlaceholder(new Label("There are no finished games yet"));
@@ -1042,6 +1065,11 @@ public class ShrimpGameApp extends Application {
     gameResultTableView.setItems(observableGameResults);
   }
 
+  /**
+   * Updates the game result table.
+   * 
+   * @param gameResults the results to update the table with.
+   */
   public void updateGameResultTable(List<GameResult> gameResults) {
     ObservableList<GameResult> observableGameResults = FXCollections.observableArrayList(
         gameResults);

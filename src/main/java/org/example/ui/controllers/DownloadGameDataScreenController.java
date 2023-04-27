@@ -3,7 +3,6 @@ package org.example.ui.controllers;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +10,9 @@ import javafx.stage.FileChooser;
 import org.example.ShrimpGameApp;
 import org.example.model.GameResult;
 
+/**
+ * Represents the controller for the {@code DownloadGameDataScreen} scene.
+ */
 public class DownloadGameDataScreenController {
   private final ShrimpGameApp shrimpGameApp;
 
@@ -27,6 +29,7 @@ public class DownloadGameDataScreenController {
    * Handles the "Join" button being pressed.
    * Sends a join lobby request to the server and updates the UI accordingly.
    *
+   * @param gameResult the results of the game.
    */
   public void handleDownloadGameButton(GameResult gameResult) {
     // Construct the CSV file name using the game name and time finished
