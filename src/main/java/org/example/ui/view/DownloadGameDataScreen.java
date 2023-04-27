@@ -19,7 +19,16 @@ import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.model.GameResult;
 
+/**
+ * Represents the screen for downloading the game results.
+ */
 public abstract class DownloadGameDataScreen {
+  /**
+   * Gets a new {@link javafx.scene.Scene Scene} object representing the screen for downloading the game results.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} for getting information about the game.
+   * @return the screen for downloading the game results.
+   */
   public static Scene getDownloadGameDataScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);

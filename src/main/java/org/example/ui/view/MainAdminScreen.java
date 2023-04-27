@@ -36,11 +36,9 @@ import org.example.ShrimpGameApp;
 public abstract class MainAdminScreen {
   /**
    * Returns a {@link javafx.scene.Scene Scene} object representing the main screen for
-   * administrators
-   * of the Shrimp Game application.
+   * administrators of the Shrimp Game application.
    *
-   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other
-   *                      resources.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other resources.
    * @return a {@code Scene} object representing the main screen for administrators.
    */
   public static Scene getMainAdminScreen(ShrimpGameApp shrimpGameApp) {
