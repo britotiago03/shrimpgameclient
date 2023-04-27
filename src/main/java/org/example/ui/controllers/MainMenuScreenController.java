@@ -1,6 +1,5 @@
 package org.example.ui.controllers;
 
-import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;

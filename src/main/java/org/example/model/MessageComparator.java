@@ -5,9 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * Represents a message comparator.
+ */
 public class MessageComparator implements Comparator<String> {
   private final SimpleDateFormat dateFormat;
 
+  /**
+   * Creates a new instance of {@code MessageComparator}.
+   */
   public MessageComparator() {
     this.dateFormat = new SimpleDateFormat("HH:mm:ss");
   }

@@ -1,7 +1,5 @@
 package org.example.ui.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;

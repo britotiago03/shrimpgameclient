@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -21,13 +20,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
 import org.example.model.MessageComparator;
-import org.example.model.Round;
 
+/**
+ * This class represents the game over screen that show the chat from the game.
+ */
 public abstract class GameOverViewChatScreen {
+  /**
+   * Returns a new {@link javafx.scene.Scene Scene} representing the game over screen showing chat.
+   * 
+   * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
+   * @return a {@code Scene} object representing the game over screen that shows the chat.
+   */
   public static Scene getGameOverViewChatScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);
