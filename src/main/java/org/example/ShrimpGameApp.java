@@ -2,9 +2,11 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -17,6 +19,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -65,7 +68,7 @@ import org.example.ui.view.ShrimpPriceCalculationScreen;
  */
 public class ShrimpGameApp extends Application {
   private Stage primaryStage;
-  public static final String VERSION = "1.7.1";
+  public static final String VERSION = "1.7.2";
   private static final String HOSTNAME = "34.88.118.44";
   private static final int PORT = 8080;
   private Scene mainScreen;
@@ -395,8 +398,7 @@ public class ShrimpGameApp extends Application {
     this.selectedLobby = selectedLobby;
   }
 
-  public Thread getServerUpdateListener()
-  {
+  public Thread getServerUpdateListener() {
     return this.serverUpdateListener;
   }
 

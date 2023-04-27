@@ -98,6 +98,8 @@ public class CatchShrimpScreenController {
                 int roundNum = this.shrimpGameApp.getGame().getCurrentRoundNum();
                 successDialog.showAndWait();
                 if (this.shrimpGameApp.getGame().getCurrentRoundNum() == roundNum) {
+                  GameScreen.setOPTION("Overview");
+                  this.shrimpGameApp.initGameScreens();
                   this.shrimpGameApp.setScene(this.shrimpGameApp.getGameCaughtShrimpScreen());
                 }
               }

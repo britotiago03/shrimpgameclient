@@ -100,6 +100,16 @@
     -fx-stroke-width: 2px;
 }
 
+.low-time-label {
+    -fx-font-size: 30px;
+    -fx-font-family: 'Helvetica';
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 30, 0.5, 0, 0);
+    -fx-stroke: black;
+    -fx-stroke-width: 2px;
+}
+
 .menu-label {
     -fx-font-size: 15px;
     -fx-font-family: 'Helvetica';

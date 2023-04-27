@@ -41,6 +41,15 @@ public class Timer {
         timeLeftLbl.setText(timeLeftStr);
       }
 
+      if (this.secondsLeft == 30) {
+        for (Label timeLeftLbl : timeLabels) {
+          timeLeftLbl.getStyleClass().add("low-time-label"); ;
+        }
+      }
+      else if (this.secondsLeft == 20) {
+        this.shrimpGameApp.setScene(this.shrimpGameApp.getCatchShrimpScreen());
+      }
+
       // If the time is up, stop the timeline
       if (this.secondsLeft == 0) {
         this.timeline.stop();
