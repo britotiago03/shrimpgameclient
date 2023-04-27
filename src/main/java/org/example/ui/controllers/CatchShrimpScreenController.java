@@ -28,7 +28,8 @@ public class CatchShrimpScreenController {
 
   /**
    * Handles pressing the "Ok" button.
-   *
+   * 
+   * @param catchShrimpTextFld the text area with the amount of shrimp to catch.
    * @param errorLbl the label displaying an error if the amount is invalid.
    */
   public void handleOkButton(TextArea catchShrimpTextArea, Label errorLbl) {

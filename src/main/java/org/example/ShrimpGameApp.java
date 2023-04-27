@@ -2,11 +2,9 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -19,7 +17,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -59,8 +56,7 @@ import org.example.ui.view.ShrimpPriceCalculationScreen;
  * The {@code ShrimpGameApp} class is the main class for the Shrimp Game application. It extends
  * the JavaFX {@link javafx.application.Application Application} class and provides the main method
  * for launching the application. The class also manages the different scenes and controllers
- * used in the
- * application, as well as the server connection and executor service.
+ * used in the application, as well as the server connection and executor service.
  *
  * @author Tiago Brito
  * @version 1.3.0
@@ -398,6 +394,11 @@ public class ShrimpGameApp extends Application {
     this.selectedLobby = selectedLobby;
   }
 
+  /**
+   * Gets the {@code ServerUpdateListener}.
+   * 
+   * @return a {@code Thread} object representing the server update listener.
+   */
   public Thread getServerUpdateListener() {
     return this.serverUpdateListener;
   }
@@ -607,14 +608,19 @@ public class ShrimpGameApp extends Application {
   }
 
   /**
-   * Returns the game over scene.
+   * Returns the game over scene that shows the scoreboard.
    *
-   * @return the game over scene.
+   * @return the game over scene showing the scoreboard.
    */
   public Scene getGameOverViewScoreboardScreen() {
     return this.gameOverViewScoreboardScreen;
   }
 
+  /**
+   * Gets the game over scene that shows the chat.
+   * 
+   * @return the game over scene showing the chat
+   */
   public Scene getGameOverViewChatScreen() {
     return this.gameOverViewChatScreen;
   }
