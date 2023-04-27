@@ -40,7 +40,7 @@ public class ChatScreenController {
         for (int index = 0; index < input.length; index++) {
           message.append(input[index]);
           if (index < input.length - 1) {
-            message.append(".");
+            message.append("⁞");
           }
         }
 

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,8 +100,8 @@ public class ServerConnection {
       try {
         this.socket = new Socket();
         this.socket.connect(new InetSocketAddress(this.hostname, this.port), 5000);
-        this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+        this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
       }
       catch (IOException exception) {
         throw new RuntimeException("Failed to connect to the server.");

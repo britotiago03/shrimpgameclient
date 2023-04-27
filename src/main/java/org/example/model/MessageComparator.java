@@ -21,8 +21,8 @@ public class MessageComparator implements Comparator<String> {
   @Override
   public int compare(String message1, String message2) {
     try {
-      String[] parts1 = message1.split("\\.");
-      String[] parts2 = message2.split("\\.");
+      String[] parts1 = message1.split("☐");
+      String[] parts2 = message2.split("☐");
 
       Date date1 = this.dateFormat.parse(parts1[2]);
       Date date2 = this.dateFormat.parse(parts2[2]);

@@ -17,27 +17,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import org.example.ShrimpGameApp;
-import org.example.model.Lobby;
+import org.example.model.GameResult;
 
-/**
- * The {@code JoinGameScreen} abstract class represents the screen for users to join a game lobby in the
- * Shrimp Game application. It contains a static method which returns a Scene object
- * representing the join game screen. This class is responsible for displaying the lobby list, providing a
- * button to join a selected lobby, and setting the background image of the join game screen.
- *
- * @author Tiago Brito
- * @version 1.3.0
- * @since 2023-04-02
- */
-public abstract class JoinGameScreen {
-  /**
-   * Returns a {@link javafx.scene.Scene Scene} object representing the screen for users to join a game lobby 
-   * in the Shrimp Game application.
-   *
-   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other resources.
-   * @return a {@code Scene} object representing the join game screen.
-   */
-  public static Scene getJoinGameScreen(ShrimpGameApp shrimpGameApp) {
+public abstract class DownloadGameDataScreen {
+  public static Scene getDownloadGameDataScreen(ShrimpGameApp shrimpGameApp) {
     VBox root = new VBox();
     root.setSpacing(20);
     root.setPadding(new Insets(50, 0, 50, 0));
@@ -46,28 +29,28 @@ public abstract class JoinGameScreen {
         shrimpGameApp.getClass().getResource("/css/styles.css").toExternalForm());
     Font helvetica = Font.loadFont("file:/fonts/Helvetica.ttf", 24);
 
-    Label headingLbl = new Label("Lobby List");
+    Label headingLbl = new Label("Download Game Data");
     headingLbl.setFont(helvetica);
     headingLbl.getStyleClass().add("title-label");
 
-    TableView<Lobby> lobbyTableView = shrimpGameApp.getJoinGameLobbyTableView();
-    shrimpGameApp.setLobbyTableView(lobbyTableView);
+    TableView<GameResult> gameResultTableView = shrimpGameApp.getGameResultTableView();
+    shrimpGameApp.setGameResultTableView(gameResultTableView);
 
-    Button joinBtn = new Button("JOIN");
-    joinBtn.setPrefWidth(320);
-    joinBtn.setPrefHeight(80);
-    joinBtn.setOnAction(event ->
-                        {
-                          Lobby selectedLobby =
-                              lobbyTableView.getSelectionModel().getSelectedItem();
-                          if (selectedLobby != null) {
-                            shrimpGameApp.getJoinGameScreenController().handleJoinButton(
-                                selectedLobby);
-                          }
-                        });
+    Button downloadGameBtn = new Button("DOWNLOAD GAME");
+    downloadGameBtn.setPrefWidth(350);
+    downloadGameBtn.setPrefHeight(80);
+    downloadGameBtn.setOnAction(event ->
+                                {
+                                  GameResult selectedGameResult =
+                                      gameResultTableView.getSelectionModel().getSelectedItem();
+                                  if (selectedGameResult != null) {
+                                    shrimpGameApp.getDownloadGameDataScreenController()
+                                                 .handleDownloadGameButton(selectedGameResult);
+                                  }
+                                });
 
     Button returnBtn = new Button("RETURN");
-    returnBtn.setPrefWidth(320);
+    returnBtn.setPrefWidth(350);
     returnBtn.setPrefHeight(80);
     returnBtn.setOnAction(event ->
                           {
@@ -79,7 +62,8 @@ public abstract class JoinGameScreen {
     VBox.setVgrow(spacer1, Priority.ALWAYS);
     VBox.setVgrow(spacer2, Priority.ALWAYS);
 
-    root.getChildren().addAll(spacer1, headingLbl, lobbyTableView, joinBtn, returnBtn, spacer2);
+    root.getChildren().addAll(spacer1, headingLbl, gameResultTableView, downloadGameBtn, returnBtn,
+                              spacer2);
     root.setAlignment(Pos.CENTER);
 
     // Set the background image for the lobby list screen

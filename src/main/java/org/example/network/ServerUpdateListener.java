@@ -1,12 +1,16 @@
 package org.example.network;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
 import org.example.ShrimpGameApp;
 import org.example.model.Game;
+import org.example.model.GameResult;
 import org.example.model.GameSettings;
 import org.example.model.Lobby;
 import org.example.model.Player;
@@ -163,12 +167,92 @@ public class ServerUpdateListener implements Runnable {
             String message = packetData[3];
             String date = packetData[4];
             this.shrimpGameApp.getGame().getMessages().add(
-                username + "." + message.replace(".", " ") + "." + date);
+                username + "☐" + message.replace("⁞", " ") + "☐" + date);
             Platform.runLater(() ->
                               {
                                 this.shrimpGameApp.updateChatMessageGrid(
                                     this.shrimpGameApp.getGame().getMessages());
                               });
+            break;
+
+          case "FINISHED_GAME":
+            String finishedGameName = packetData[2];
+            String finishedGameNum = packetData[3];
+            String[] finishedGamePlayerNames = packetData[4].split("\\.");
+            String[] finishedGameRoundsData = packetData[5].split(",");
+            String[] finishedGameSettings = packetData[6].split("\\.");
+            String[] finishedGameChat = new String[2];
+            if (!packetData[7].equals("NO_CHAT")) {
+              finishedGameChat = packetData[7].split("◊");
+            }
+
+            String gameResultName = finishedGameName + " " + finishedGameNum;
+
+            List<String> csvData = new ArrayList<>();
+            csvData.add("Game Name");
+            csvData.add(gameResultName);
+            csvData.add("");
+            csvData.add("Game/Lobby Settings");
+            csvData.add("Number of Players in Lobby,Number of Rounds,Round Time,Communication "
+                        + "Rounds,Comm Round Time,Minimum Shrimp kg,Maximum Shrimp kg");
+            csvData.add(finishedGameSettings[0] + "," + finishedGameSettings[1] + ","
+                        + finishedGameSettings[2] + "," + finishedGameSettings[3] + ","
+                        + finishedGameSettings[4] + "," + finishedGameSettings[5] + ","
+                        + finishedGameSettings[6]);
+            csvData.add("");
+            csvData.add("");
+            csvData.add("");
+            csvData.add("");
+            csvData.add("Rounds," + finishedGamePlayerNames[0] + " Shrimp Caught,"
+                        + finishedGamePlayerNames[1] + " Shrimp Caught,"
+                        + finishedGamePlayerNames[2] + " Shrimp Caught," + "Total Shrimp Caught,"
+                        + "Shrimp Price,Profit / Shrimp kg," + finishedGamePlayerNames[0] + " "
+                        + "Round Profit," + finishedGamePlayerNames[0] + " Total Profit,"
+                        + finishedGamePlayerNames[1] + " Round Profit," + finishedGamePlayerNames[1]
+                        + " Total Profit," + finishedGamePlayerNames[2] + " " + "Round Profit,"
+                        + finishedGamePlayerNames[2] + " Total Profit");
+            for (int index = 0; index < finishedGameRoundsData.length; index++) {
+              String[] roundData = finishedGameRoundsData[index].split("\\.");
+              csvData.add(
+                  roundData[0] + "," + roundData[1] + "," + roundData[2] + "," + roundData[3] + ","
+                  + roundData[4] + "," + roundData[5] + "," + roundData[6] + "," + roundData[7]
+                  + "," + roundData[8] + "," + roundData[9] + "," + roundData[10] + ","
+                  + roundData[11] + "," + roundData[12]);
+            }
+            csvData.add("");
+            csvData.add("");
+            csvData.add("");
+            csvData.add("");
+            csvData.add("Game Chat");
+            csvData.add("Player,Message,Time");
+            if (!packetData[7].equals("NO_CHAT")) {
+              for (int index = 0; index < finishedGameChat.length; index++) {
+                String[] chatData = finishedGameChat[index].split("☐");
+                csvData.add(chatData[0] + "," + chatData[1].replace("⁞", " ") + "," + chatData[2]);
+              }
+            }
+            else {
+              csvData.add("No Chat");
+            }
+
+
+            Date now = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+            String formattedTime = dateFormat.format(calendar.getTime());
+            GameResult gameResult = new GameResult(gameResultName,
+                                                   Integer.parseInt(finishedGameSettings[1]),
+                                                   csvData, formattedTime);
+
+            this.shrimpGameApp.getGameResults().add(gameResult);
+
+            Platform.runLater(() ->
+                              {
+                                this.shrimpGameApp.updateGameResultTable(
+                                    this.shrimpGameApp.getGameResults());
+                              });
+
             break;
 
           default:

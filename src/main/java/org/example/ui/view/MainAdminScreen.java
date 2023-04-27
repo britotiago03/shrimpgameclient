@@ -21,10 +21,12 @@ import javafx.scene.layout.VBox;
 import org.example.ShrimpGameApp;
 
 /**
- * The {@code MainAdminScreen} abstract class represents the main screen for administrators of the Shrimp
- * Game application. It contains a static method, {@link #getMainAdminScreen(ShrimpGameApp)}, which returns a
- * {@link javafx.scene.Scene Scene} object representing the main screen for administrators. 
- * This class is responsible for displaying the welcome message, providing buttons to create a game, 
+ * The {@code MainAdminScreen} abstract class represents the main screen for administrators of
+ * the Shrimp
+ * Game application. It contains a static method, {@link #getMainAdminScreen(ShrimpGameApp)},
+ * which returns a
+ * {@link javafx.scene.Scene Scene} object representing the main screen for administrators.
+ * This class is responsible for displaying the welcome message, providing buttons to create a game,
  * join a game, and quit the game, and setting the background image of the main screen.
  *
  * @author Tiago Brito
@@ -33,10 +35,12 @@ import org.example.ShrimpGameApp;
  */
 public abstract class MainAdminScreen {
   /**
-   * Returns a {@link javafx.scene.Scene Scene} object representing the main screen for administrators 
+   * Returns a {@link javafx.scene.Scene Scene} object representing the main screen for
+   * administrators
    * of the Shrimp Game application.
    *
-   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other resources.
+   * @param shrimpGameApp the {@link ShrimpGameApp} object used to set the scene and get other
+   *                      resources.
    * @return a {@code Scene} object representing the main screen for administrators.
    */
   public static Scene getMainAdminScreen(ShrimpGameApp shrimpGameApp) {
@@ -53,13 +57,19 @@ public abstract class MainAdminScreen {
 
     Button createGameBtn = new Button("CREATE GAME");
     createGameBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getCreateGameScreen()));
-    createGameBtn.setPrefWidth(320);
+    createGameBtn.setPrefWidth(450);
     createGameBtn.setPrefHeight(80);
 
     Button joinGameBtn = new Button("JOIN GAME");
     joinGameBtn.setOnAction(event -> shrimpGameApp.setScene(shrimpGameApp.getJoinGameScreen()));
-    joinGameBtn.setPrefWidth(320);
+    joinGameBtn.setPrefWidth(450);
     joinGameBtn.setPrefHeight(80);
+
+    Button downloadDataBtn = new Button("DOWNLOAD GAME DATA");
+    downloadDataBtn.setOnAction(
+        event -> shrimpGameApp.setScene(shrimpGameApp.getDownloadGameDataScreen()));
+    downloadDataBtn.setPrefWidth(450);
+    downloadDataBtn.setPrefHeight(80);
 
     Button quitBtn = new Button("QUIT");
     quitBtn.setOnAction(event ->
@@ -76,7 +86,7 @@ public abstract class MainAdminScreen {
                             Platform.exit();
                           }
                         });
-    quitBtn.setPrefWidth(320);
+    quitBtn.setPrefWidth(450);
     quitBtn.setPrefHeight(80);
 
     Region spacer1 = new Region();
@@ -85,7 +95,8 @@ public abstract class MainAdminScreen {
     VBox.setVgrow(spacer2, Priority.ALWAYS);
 
 
-    root.getChildren().addAll(spacer1, welcomeLbl, createGameBtn, joinGameBtn, quitBtn, spacer2);
+    root.getChildren().addAll(spacer1, welcomeLbl, createGameBtn, joinGameBtn, downloadDataBtn,
+                              quitBtn, spacer2);
     root.setAlignment(Pos.CENTER);
 
     Image backgroundImage = new Image(

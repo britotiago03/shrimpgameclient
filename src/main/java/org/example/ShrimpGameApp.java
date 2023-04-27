@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -23,10 +24,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.example.model.GameResult;
 import org.example.model.MessageComparator;
 import org.example.ui.controllers.CatchShrimpScreenController;
 import org.example.ui.controllers.ChatScreenController;
 import org.example.ui.controllers.CreateGameScreenController;
+import org.example.ui.controllers.DownloadGameDataScreenController;
 import org.example.ui.controllers.GameOverScreenController;
 import org.example.ui.controllers.JoinGameScreenController;
 import org.example.ui.controllers.MainMenuScreenController;
@@ -39,6 +43,7 @@ import org.example.network.ServerConnection;
 import org.example.network.ServerUpdateListener;
 import org.example.ui.view.CatchShrimpScreen;
 import org.example.ui.view.CreateGameScreen;
+import org.example.ui.view.DownloadGameDataScreen;
 import org.example.ui.view.GameOverViewChatScreen;
 import org.example.ui.view.GameOverViewScoreboardScreen;
 import org.example.ui.view.GameScreen;
@@ -82,6 +87,7 @@ public class ShrimpGameApp extends Application {
   private Scene roundProfitMoneyCalculationScreen;
   private Scene gameOverViewScoreboardScreen;
   private Scene gameOverViewChatScreen;
+  private Scene downloadGameDataScreen;
   private Lobby selectedLobby;
   private User user;
   private ServerConnection serverConnection;
@@ -91,15 +97,18 @@ public class ShrimpGameApp extends Application {
   private CatchShrimpScreenController catchShrimpScreenController;
   private GameOverScreenController gameOverScreenController;
   private ChatScreenController chatScreenController;
+  private DownloadGameDataScreenController downloadGameDataScreenController;
   private TableView<Lobby> joinGameLobbyTableView;
   private TableView<Lobby> joinedGameLobbyTableView;
   private TableView<Round> scoreboardTableview;
   private TableView<Round> gameOverScoreboardTableview;
+  private TableView<GameResult> gameResultTableView;
   private GridPane chatMessageGrid;
   private boolean scoreboardTableViewInitialized;
   private boolean gameOverScoreboardTableviewInitialized;
   private Game game;
   private List<Lobby> lobbies;
+  private List<GameResult> gameResults;
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
   private List<Label> roundTimerLabels;
@@ -132,10 +141,12 @@ public class ShrimpGameApp extends Application {
     this.joinedGameLobbyTableView = new TableView<Lobby>();
     this.scoreboardTableview = new TableView<Round>();
     this.gameOverScoreboardTableview = new TableView<Round>();
+    this.gameResultTableView = new TableView<GameResult>();
     this.scoreboardTableViewInitialized = false;
     this.gameOverScoreboardTableviewInitialized = false;
     this.chatMessageGrid = new GridPane();
     this.roundTimerLabels = new ArrayList<Label>();
+    this.gameResults = new ArrayList<GameResult>();
     this.createUser();
     this.gameStarted = false;
     this.mainMenuScreenController = new MainMenuScreenController(this);
@@ -144,12 +155,14 @@ public class ShrimpGameApp extends Application {
     this.catchShrimpScreenController = new CatchShrimpScreenController(this);
     this.chatScreenController = new ChatScreenController(this);
     this.gameOverScreenController = new GameOverScreenController(this);
+    this.downloadGameDataScreenController = new DownloadGameDataScreenController(this);
     this.mainScreen = MainScreen.getMainScreen(this);
     this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
     this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
     this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
     this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
     this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
+    this.downloadGameDataScreen = DownloadGameDataScreen.getDownloadGameDataScreen(this);
     this.setScene(this.getGameTutorialScreen());
     GameScreen.initOverviewBackgroundImage();
   }
@@ -219,6 +232,10 @@ public class ShrimpGameApp extends Application {
     return this.gameOverScoreboardTableview;
   }
 
+  public TableView<GameResult> getGameResultTableView() {
+    return this.gameResultTableView;
+  }
+
   /**
    * Returns the {@code MainMenuScreenController} object that manages the main menu screen.
    *
@@ -271,6 +288,10 @@ public class ShrimpGameApp extends Application {
    */
   public GameOverScreenController getGameOverScreenController() {
     return this.gameOverScreenController;
+  }
+
+  public DownloadGameDataScreenController getDownloadGameDataScreenController() {
+    return this.downloadGameDataScreenController;
   }
 
   /**
@@ -396,7 +417,7 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the {@code ServerUpdateListener}.
-   * 
+   *
    * @return a {@code Thread} object representing the server update listener.
    */
   public Thread getServerUpdateListener() {
@@ -416,11 +437,16 @@ public class ShrimpGameApp extends Application {
                             this.getClass().getResource("/images/shrimp_logo.png")
                                 .toExternalForm());
                         this.primaryStage.getIcons().add(icon);
+
+
                         this.primaryStage.setScene(scene);
+
+
                         this.primaryStage.setTitle("Shrimp Game");
                         this.primaryStage.setMinHeight(600);
                         this.primaryStage.setMinWidth(700);
                         this.primaryStage.show();
+
                       });
   }
 
@@ -489,6 +515,10 @@ public class ShrimpGameApp extends Application {
    */
   public void setLobbies(List<Lobby> lobbies) {
     this.lobbies = lobbies;
+  }
+
+  public List<GameResult> getGameResults() {
+    return this.gameResults;
   }
 
   /**
@@ -618,11 +648,15 @@ public class ShrimpGameApp extends Application {
 
   /**
    * Gets the game over scene that shows the chat.
-   * 
+   *
    * @return the game over scene showing the chat
    */
   public Scene getGameOverViewChatScreen() {
     return this.gameOverViewChatScreen;
+  }
+
+  public Scene getDownloadGameDataScreen() {
+    return this.downloadGameDataScreen;
   }
 
   /**
@@ -818,7 +852,7 @@ public class ShrimpGameApp extends Application {
     roundProfitCol.setReorderable(false);
     roundProfitCol.prefWidthProperty().bind(scoreboardTableView.widthProperty().multiply(0.1));
 
-    TableColumn<Round, Integer> totalMoneyCol = new TableColumn<>("Total Money");
+    TableColumn<Round, Integer> totalMoneyCol = new TableColumn<>("Total Profit");
     totalMoneyCol.setCellValueFactory(cellData ->
                                       {
                                         Map<String, Player> players =
@@ -941,6 +975,79 @@ public class ShrimpGameApp extends Application {
     this.setGameOverScoreboardTableviewInitialized(false);
   }
 
+  public void setGameResultTableView(TableView<GameResult> gameResultTableView) {
+    TableColumn<GameResult, String> finishedGameNameCol = new TableColumn<>("Finished Games");
+    gameResultTableView.setPlaceholder(new Label("There are no finished games yet"));
+    finishedGameNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+    finishedGameNameCol.setResizable(false);
+    finishedGameNameCol.setReorderable(false);
+    finishedGameNameCol.prefWidthProperty().bind(gameResultTableView.widthProperty().multiply(0.5));
+
+    TableColumn<GameResult, Integer> gameRoundsCol = new TableColumn<>("Rounds");
+    gameRoundsCol.setCellValueFactory(new PropertyValueFactory<>("numberOfRounds"));
+    gameRoundsCol.setResizable(false);
+    gameRoundsCol.setReorderable(false);
+    gameRoundsCol.prefWidthProperty().bind(gameResultTableView.widthProperty().multiply(0.2));
+
+    TableColumn<GameResult, String> timeEndedCol = new TableColumn<>("Time Ended");
+    timeEndedCol.setCellValueFactory(new PropertyValueFactory<>("timeFinished"));
+    timeEndedCol.setResizable(false);
+    timeEndedCol.setReorderable(false);
+    timeEndedCol.prefWidthProperty().bind(gameResultTableView.widthProperty().multiply(0.3));
+
+    gameResultTableView.getColumns().addAll(finishedGameNameCol, gameRoundsCol, timeEndedCol);
+    finishedGameNameCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(empty || item == null ? "" : item);
+        setStyle("-fx-alignment: CENTER;");
+      }
+    });
+
+    gameRoundsCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(Integer item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setText("");
+        }
+        else {
+          GameResult gameResult = getTableView().getItems().get(getIndex());
+          int rounds = gameResult.getNumberOfRounds();
+          String text = String.format("" + rounds);
+          setText(text);
+        }
+      }
+    });
+
+    timeEndedCol.setCellFactory(tc -> new TableCell<>() {
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) {
+          setText("");
+        }
+        else {
+          GameResult gameResult = getTableView().getItems().get(getIndex());
+          String timeEnded = gameResult.getTimeFinished();;
+          setText(timeEnded);
+        }
+      }
+    });
+
+    List<GameResult> gameResults = new ArrayList<>();
+    ObservableList<GameResult> observableGameResults = FXCollections.observableArrayList(
+        gameResults);
+    gameResultTableView.setItems(observableGameResults);
+  }
+
+  public void updateGameResultTable(List<GameResult> gameResults) {
+    ObservableList<GameResult> observableGameResults = FXCollections.observableArrayList(
+        gameResults);
+    this.gameResultTableView.setItems(observableGameResults);
+  }
+
   /**
    * Updates the chat message grid.
    *
@@ -951,7 +1058,7 @@ public class ShrimpGameApp extends Application {
     Collections.sort(messages, new MessageComparator());
     int row = 0;
     for (String message : messages) {
-      String[] messageParts = message.split("\\.");
+      String[] messageParts = message.split("☐");
       String usernamePart = messageParts[0];
       String messagePart = messageParts[1];
       String datePart = messageParts[2];

@@ -503,7 +503,7 @@ public abstract class GameScreen {
         Collections.sort(messages, new MessageComparator());
         int row = 0;
         for (String message : messages) {
-          String[] messageParts = message.split("\\.");
+          String[] messageParts = message.split("☐");
           String usernamePart = messageParts[0];
           String messagePart = messageParts[1];
           String datePart = messageParts[2];
