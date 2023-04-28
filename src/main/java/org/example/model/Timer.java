@@ -78,8 +78,6 @@ public class Timer {
               if (!response.equals("CAUGHT_SUCCESSFULLY")) {
                 throw new RuntimeException("Failed to catch shrimp.");
               }
-              this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
-                                .setShrimpCaught(minShrimpKg);
             }
           }
           catch (RuntimeException exception) {

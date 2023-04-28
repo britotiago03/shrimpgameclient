@@ -140,6 +140,9 @@ public class ShrimpGameApp extends Application {
       // Set a shutdown hook to delete the lock file when the application is closed
       Runtime.getRuntime().addShutdownHook(new Thread(() -> lockFile.delete()));
 
+      // Add a shutdown hook to catch the application exit signal and delete the lock file
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> lockFile.delete()));
+
       // Initialize the rest of the application as normal
       this.initializePrimaryStage(stage);
       this.initializeTableViews();
