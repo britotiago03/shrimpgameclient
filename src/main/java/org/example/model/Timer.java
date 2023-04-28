@@ -44,7 +44,6 @@ public class Timer {
       if (this.secondsLeft == 30) {
         for (Label timeLeftLbl : timeLabels) {
           timeLeftLbl.getStyleClass().add("low-time-label");
-          ;
         }
       }
       else if (this.secondsLeft == 20 && !this.shrimpGameApp.getGame().getPlayers().get(

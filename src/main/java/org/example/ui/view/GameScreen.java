@@ -41,7 +41,6 @@ public abstract class GameScreen {
   private static VBox RULES;
   private static VBox CHAT;
   private static Image OVERVIEW_BACKGROUND;
-  public static List<Label> amountOfShrimpCaughtValueLabels = new ArrayList<>();
 
   /**
    * Sets the OPTION field.
@@ -238,7 +237,7 @@ public abstract class GameScreen {
       playerStats.add(shrimpCaughtLbl, 0, 0);
 
       Label shrimpCaughtValueLbl = new Label("0kg");
-      GameScreen.amountOfShrimpCaughtValueLabels.add(shrimpCaughtValueLbl);
+      shrimpGameApp.getAmountOfShrimpCaughtValueLabels().add(shrimpCaughtValueLbl);
       shrimpCaughtValueLbl.getStyleClass().add("info-label");
       playerStats.add(shrimpCaughtValueLbl, 1, 0);
 

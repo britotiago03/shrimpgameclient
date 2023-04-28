@@ -1,5 +1,7 @@
 package org.example;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +69,7 @@ import org.example.ui.view.ShrimpPriceCalculationScreen;
  */
 public class ShrimpGameApp extends Application {
   private Stage primaryStage;
-  public static final String VERSION = "1.7.3";
+  public static final String VERSION = "1.7.4";
   private static final String HOSTNAME = "34.88.118.44";
   private static final int PORT = 8080;
   private Scene mainScreen; 
@@ -110,6 +112,7 @@ public class ShrimpGameApp extends Application {
   private boolean gameStarted;
   private boolean allPlayersCaughtShrimp;
   private List<Label> roundTimerLabels;
+  private List<Label> amountOfShrimpCaughtValueLabels;
   private Thread serverUpdateListener;
 
   /**
@@ -120,49 +123,39 @@ public class ShrimpGameApp extends Application {
    */
   @Override
   public void start(Stage stage) {
-    this.primaryStage = stage;
-    this.primaryStage.setOnCloseRequest(event ->
-                                        {
-                                          event.consume(); // prevent default close behavior
-                                          Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                                          this.addIconToDialog(alert);
-                                          alert.setTitle("Confirm Exit");
-                                          alert.setHeaderText("Are you sure you want to exit?");
-                                          alert.setContentText("Any unsaved changes will be lost.");
-                                          Optional<ButtonType> result = alert.showAndWait();
-                                          if (result.get() == ButtonType.OK) {
-                                            System.exit(0);
-                                            Platform.exit();
-                                          }
-                                        });
-    this.joinGameLobbyTableView = new TableView<Lobby>();
-    this.joinedGameLobbyTableView = new TableView<Lobby>();
-    this.scoreboardTableview = new TableView<Round>();
-    this.gameOverScoreboardTableview = new TableView<Round>();
-    this.gameResultTableView = new TableView<GameResult>();
-    this.scoreboardTableViewInitialized = false;
-    this.gameOverScoreboardTableviewInitialized = false;
-    this.chatMessageGrid = new GridPane();
-    this.roundTimerLabels = new ArrayList<Label>();
-    this.gameResults = new ArrayList<GameResult>();
-    this.createUser();
-    this.gameStarted = false;
-    this.mainMenuScreenController = new MainMenuScreenController(this);
-    this.joinGameScreenController = new JoinGameScreenController(this);
-    this.createGameScreenController = new CreateGameScreenController(this);
-    this.catchShrimpScreenController = new CatchShrimpScreenController(this);
-    this.chatScreenController = new ChatScreenController(this);
-    this.gameOverScreenController = new GameOverScreenController(this);
-    this.downloadGameDataScreenController = new DownloadGameDataScreenController(this);
-    this.mainScreen = MainScreen.getMainScreen(this);
-    this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
-    this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
-    this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
-    this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
-    this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
-    this.downloadGameDataScreen = DownloadGameDataScreen.getDownloadGameDataScreen(this);
-    this.setScene(this.getGameTutorialScreen());
-    GameScreen.initOverviewBackgroundImage();
+    try {
+      // Create a lock file to prevent multiple instances of the application from running simultaneously
+      File lockFile = new File(System.getProperty("user.home"), ".myApplication.lock");
+      if (!lockFile.createNewFile()) {
+        // Lock file already exists, so another instance of the application is already running
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        this.addIconToDialog(alert);
+        alert.setTitle("Error");
+        alert.setHeaderText("Another instance of the application is already running.");
+        alert.setContentText("Please close the other instance before running this one.");
+        alert.showAndWait();
+        System.exit(1); // Exit the application with an error code
+      }
+
+      // Set a shutdown hook to delete the lock file when the application is closed
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> lockFile.delete()));
+
+      // Initialize the rest of the application as normal
+      this.initializePrimaryStage(stage);
+      this.initializeTableViews();
+      this.initializeGameComponents();
+      this.initializeControllers();
+      this.initializeScenes();
+      this.initializeGameScreen();
+    } catch (IOException e) {
+      // Failed to create the lock file
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle("Error");
+      alert.setHeaderText("Failed to start the application.");
+      alert.setContentText("Please try again later.");
+      alert.showAndWait();
+      System.exit(1); // Exit the application with an error code
+    }
   }
 
   /**
@@ -172,6 +165,67 @@ public class ShrimpGameApp extends Application {
    */
   public static void main(String[] args) {
     launch(args);
+  }
+
+  private void initializePrimaryStage(Stage stage) {
+    this.primaryStage = stage;
+    this.primaryStage.setOnCloseRequest(event -> {
+      event.consume();
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      this.addIconToDialog(alert);
+      alert.setTitle("Confirm Exit");
+      alert.setHeaderText("Are you sure you want to exit?");
+      alert.setContentText("Any unsaved changes will be lost.");
+      Optional<ButtonType> result = alert.showAndWait();
+      if (result.get() == ButtonType.OK) {
+        System.exit(0);
+        Platform.exit();
+      }
+    });
+  }
+
+  private void initializeTableViews() {
+    this.joinGameLobbyTableView = new TableView<>();
+    this.joinedGameLobbyTableView = new TableView<>();
+    this.scoreboardTableview = new TableView<>();
+    this.gameOverScoreboardTableview = new TableView<>();
+    this.gameResultTableView = new TableView<>();
+    this.scoreboardTableViewInitialized = false;
+    this.gameOverScoreboardTableviewInitialized = false;
+  }
+
+  private void initializeGameComponents() {
+    this.chatMessageGrid = new GridPane();
+    this.roundTimerLabels = new ArrayList<>();
+    this.amountOfShrimpCaughtValueLabels = new ArrayList<>();
+    this.gameResults = new ArrayList<>();
+    this.createUser();
+    this.gameStarted = false;
+  }
+
+  private void initializeControllers() {
+    this.mainMenuScreenController = new MainMenuScreenController(this);
+    this.joinGameScreenController = new JoinGameScreenController(this);
+    this.createGameScreenController = new CreateGameScreenController(this);
+    this.catchShrimpScreenController = new CatchShrimpScreenController(this);
+    this.chatScreenController = new ChatScreenController(this);
+    this.gameOverScreenController = new GameOverScreenController(this);
+    this.downloadGameDataScreenController = new DownloadGameDataScreenController(this);
+  }
+
+  private void initializeScenes() {
+    this.mainScreen = MainScreen.getMainScreen(this);
+    this.mainAdminScreen = MainAdminScreen.getMainAdminScreen(this);
+    this.createGameScreen = CreateGameScreen.getCreateGameScreen(this);
+    this.joinGameScreen = JoinGameScreen.getJoinGameScreen(this);
+    this.joinedGameScreen = JoinedGameScreen.getJoinedGameScreen(this);
+    this.gameTutorialScreen = GameTutorialScreen.getGameTutorialScreen(this);
+    this.downloadGameDataScreen = DownloadGameDataScreen.getDownloadGameDataScreen(this);
+  }
+
+  private void initializeGameScreen() {
+    this.setScene(this.getGameTutorialScreen());
+    GameScreen.initOverviewBackgroundImage();
   }
 
   /**
@@ -397,12 +451,20 @@ public class ShrimpGameApp extends Application {
   }
 
   /**
-   * Gets the labels that displays timer.
+   * Gets the labels that display the round timer.
    *
-   * @return a {@code List} of labels for displaying time.
+   * @return a {@code List} of labels that display the round timer.
    */
   public List<Label> getRoundTimerLabels() {
     return this.roundTimerLabels;
+  }
+
+  /**
+   * Gets the labels that display the amount of shrimp caught by the player.
+   * @return a {@code List} of labels that display the amount of shrimp caught by the player.
+   */
+  public List<Label> getAmountOfShrimpCaughtValueLabels() {
+    return this.amountOfShrimpCaughtValueLabels;
   }
 
   /**

@@ -11,7 +11,7 @@ import org.example.ui.view.CatchShrimpScreen;
 
 /**
  * Represents the controller for {@code CatchShrimpScreen}.
- * 
+ *
  * @see CatchShrimpScreen
  */
 public class CatchShrimpScreenController {
@@ -19,7 +19,7 @@ public class CatchShrimpScreenController {
 
   /**
    * Creates a new instance of {@code CatchShrimpScreenController}.
-   * 
+   *
    * @param shrimpGameApp the {@code ShrimpGameApp} object used to get the game information.
    */
   public CatchShrimpScreenController(ShrimpGameApp shrimpGameApp) {
@@ -28,8 +28,7 @@ public class CatchShrimpScreenController {
 
   /**
    * Handles pressing the "Ok" button.
-   * 
-   * @param catchShrimpTextFld the text area with the amount of shrimp to catch.
+   *
    * @param errorLbl the label displaying an error if the amount is invalid.
    */
   public void handleOkButton(TextArea catchShrimpTextArea, Label errorLbl) {
@@ -45,7 +44,8 @@ public class CatchShrimpScreenController {
               "Amount of shrimp cannot be less than " + this.shrimpGameApp.getGame().getSettings()
                                                                           .getMinShrimpKilograms());
         }
-        else if (shrimpCaught > this.shrimpGameApp.getGame().getSettings().getMaxShrimpKilograms()) {
+        else if (shrimpCaught > this.shrimpGameApp.getGame().getSettings()
+                                                  .getMaxShrimpKilograms()) {
           throw new IllegalArgumentException(
               "Amount of shrimp cannot be greater than " + this.shrimpGameApp.getGame()
                                                                              .getSettings()
@@ -84,8 +84,8 @@ public class CatchShrimpScreenController {
               successDialog.setHeaderText(null);
               successDialog.setContentText("Caught shrimp successfully!");
 
-              for (Label amountOfShrimpCaughtValueLbl : GameScreen.amountOfShrimpCaughtValueLabels)
-              {
+              for (Label amountOfShrimpCaughtValueLbl :
+                  this.shrimpGameApp.getAmountOfShrimpCaughtValueLabels()) {
                 amountOfShrimpCaughtValueLbl.setText(shrimpCaught + "kg");
               }
               catchShrimpTextArea.setText("");
