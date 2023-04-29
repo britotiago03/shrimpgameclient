@@ -121,7 +121,8 @@ public class CreateGameScreenController {
             int serverPacketsSize =
                 this.shrimpGameApp.getServerConnection().getServerPackets().size();
             this.shrimpGameApp.getServerConnection().sendCreateLobbyRequest(
-                gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime, communicationRounds,
+                gameLobbyNameField.getText(), maxPlayers, numRounds, roundTime,
+                communicationRounds.replace(",", "+"),
                 commRoundTime, minShrimp, maxShrimp);
             String response = "";
             synchronized (this.shrimpGameApp.getServerConnection().getServerPackets()) {
