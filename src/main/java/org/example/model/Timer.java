@@ -40,6 +40,16 @@ public class Timer {
       for (Label timeLeftLbl : timeLabels) {
         timeLeftLbl.setText(timeLeftStr);
       }
+      if (this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
+                            .getShrimpCaught() != -1) {
+        for (Label amountOfShrimpCaughtValueLbl :
+            this.shrimpGameApp.getAmountOfShrimpCaughtValueLabels()) {
+          amountOfShrimpCaughtValueLbl.setText(
+              this.shrimpGameApp.getGame().getPlayers().get(this.shrimpGameApp.getUser().getName())
+                                .getShrimpCaught() + "kg");
+        }
+      }
+
 
       if (this.secondsLeft == 30) {
         for (Label timeLeftLbl : timeLabels) {

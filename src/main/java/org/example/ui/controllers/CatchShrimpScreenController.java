@@ -84,10 +84,6 @@ public class CatchShrimpScreenController {
               successDialog.setHeaderText(null);
               successDialog.setContentText("Caught shrimp successfully!");
 
-              for (Label amountOfShrimpCaughtValueLbl :
-                  this.shrimpGameApp.getAmountOfShrimpCaughtValueLabels()) {
-                amountOfShrimpCaughtValueLbl.setText(shrimpCaught + "kg");
-              }
               catchShrimpTextArea.setText("");
               errorLbl.setVisible(false);
               this.shrimpGameApp.addIconToDialog(successDialog);
