@@ -147,7 +147,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                                 RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
                                 shrimpGameApp.setAllPlayersCaughtShrimp(false);
                                 String[] communicationRounds =
-                                    shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                                    shrimpGameApp.getGame().getSettings().getCommunicationRounds().split("\\+");
                                 List<Integer> commRoundNums = new ArrayList<Integer>();
                                 for (String communicationRound : communicationRounds) {
                                   commRoundNums.add(Integer.parseInt(communicationRound));
@@ -173,7 +173,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                                 if (currentStep > stepLabels.length) {
                                   shrimpGameApp.setAllPlayersCaughtShrimp(false);
                                   String[] communicationRounds =
-                                      shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                                      shrimpGameApp.getGame().getSettings().getCommunicationRounds().split("\\+");
                                   List<Integer> commRoundNums = new ArrayList<Integer>();
                                   for (String communicationRound : communicationRounds) {
                                     commRoundNums.add(Integer.parseInt(communicationRound));
@@ -222,7 +222,7 @@ public abstract class RoundProfitMoneyCalculationScreen {
                             RoundProfitMoneyCalculationScreen.setAllLabelsVisible(false);
                             shrimpGameApp.setAllPlayersCaughtShrimp(false);
                             String[] communicationRounds =
-                                shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+                                shrimpGameApp.getGame().getSettings().getCommunicationRounds().split("\\+");
                             List<Integer> commRoundNums = new ArrayList<Integer>();
                             for (String communicationRound : communicationRounds) {
                               commRoundNums.add(Integer.parseInt(communicationRound));

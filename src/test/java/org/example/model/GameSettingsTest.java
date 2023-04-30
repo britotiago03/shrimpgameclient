@@ -36,7 +36,7 @@ public class GameSettingsTest {
         int numberOfPlayers = 3;
         int numberOfRounds = 8;
         int roundTime = 120;
-        String communicationRounds = "4,6";
+        String communicationRounds = "4+6";
         int communicationRoundTime = 600;
         int minShrimpKilograms = 0;
         int maxShrimpKilograms = 75;

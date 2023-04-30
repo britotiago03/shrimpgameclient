@@ -454,7 +454,7 @@ public abstract class GameScreen {
       titleContainer.getChildren().addAll(roundInfo, titleLbl);
 
       String[] communicationRounds =
-          shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+          shrimpGameApp.getGame().getSettings().getCommunicationRounds().split("\\+");
       List<Integer> commRoundNums = new ArrayList<Integer>();
       for (String communicationRound : communicationRounds) {
         commRoundNums.add(Integer.parseInt(communicationRound));
@@ -545,7 +545,7 @@ public abstract class GameScreen {
             "Communication is not allowed in round " + shrimpGameApp.getGame().getCurrentRoundNum()
             + ".\n\nCommunication is only allowed in rounds: " + shrimpGameApp.getGame()
                                                                               .getSettings()
-                                                                              .getCommunicationRounds();
+                                                                              .getCommunicationRounds().replace("+", ",");
         Label infoLbl = new Label(info);
         infoLbl.setWrapText(true);
         infoLbl.setFont(Font.font("Helvetica", 20));

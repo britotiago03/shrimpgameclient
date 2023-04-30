@@ -277,7 +277,7 @@ public class ServerUpdateListener implements Runnable {
     this.shrimpGameApp.getGame().setRoundTimer(
         new Timer(this.shrimpGameApp, this.shrimpGameApp.getRoundTimerLabels()));
     String[] gameCommunicationRounds =
-        this.shrimpGameApp.getGame().getSettings().getCommunicationRounds().split(",");
+        this.shrimpGameApp.getGame().getSettings().getCommunicationRounds().split("\\+");
     List<Integer> commRoundNums = new ArrayList<Integer>();
     for (String communicationRound : gameCommunicationRounds) {
       commRoundNums.add(Integer.parseInt(communicationRound));
